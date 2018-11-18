@@ -3,15 +3,15 @@
   switches:
     motion_detect:
       friendly_name: Motion Detection
-      command_on: 'curl -X POST http://homecam-pi.local:8765/action/1/preset2/?_=1536287565718&_username=admin&_signature=edf9c5c21e1ce51b421a33006c59c8c2c05ad19b'
-      command_off: 'curl -X POST http://homecam-pi.local:8765/action/1/preset1/?_=1536287562202&_username=admin&_signature=c4535475cf3f48a861e998e959e506f764ea7483'
+      command_on: !secret switches_motion_on
+      command_off: !secret switches_motion_off
 
 #- platform: command_line
 #  switches:
 #    reef_cooler_pump_switch:
 #      friendly_name: Reef Cooler Pump
-#      command_on: 'curl -X POST http://reefcam.local:8765/action/1/preset2/?_=1535005531202&_username=admin&_signature=944f33c8a3b5f20d3da3aadcd1f49cfbe496f7c0'
-#      command_off: 'curl -X POST http://reefcam.local:8765/action/1/preset3/?_=1535005527187&_username=admin&_signature=6eeae8c59897145b5d8774b0c5d16dd700c0c6df'
+#      command_on: !secret switches_pump_on
+#      command_off: !secret switches_pump_off
 
 - platform: template
   switches:
@@ -342,6 +342,6 @@
 #  switches:
 #    3dprinter_light:
 #      friendly_name: 3D Printer Light
-#      command_on: 'curl -X POST http://octopi.local/plugin/enclosure/setNeopixel?red=255&green=255&blue=255&index_id=1&apikey=D46893BD9B1E40E8B7137F5BDDDD614E'
-#      command_off: 'curl -X POST http://octopi.local/plugin/enclosure/setNeopixel?red=0&green=0&blue=0&index_id=1&apikey=D46893BD9B1E40E8B7137F5BDDDD614E'
+#      command_on:  !secret switches_printer_light_on
+#      command_off: !secret switches_printer_light_off
 

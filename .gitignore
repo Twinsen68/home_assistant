@@ -20,10 +20,12 @@ cookie
 gtfs
 www
 panels
+ui-lovelace.yaml.sb*
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
 ip_bans.yaml
 secrets.yaml
+zone.yaml
 known_devices.yaml
 device_tracker.yaml
 intent_script.yaml
