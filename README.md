@@ -1,5 +1,4 @@
-# home_assistant
-Custom Home Assistant Config
+# Custom Home Assistant Config
 
 My Home Assistant Installation is pretty in-depth and I've gotton some questions about it, so I thought I'd post the main files here. Hope it helps some other folks.
 
