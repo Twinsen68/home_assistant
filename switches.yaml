@@ -333,3 +333,10 @@
 #      command_on:  !secret switches_printer_light_on
 #      command_off: !secret switches_printer_light_off
 
+#Switch for OctoFishFeeder
+- platform: command_line
+  switches:
+    octofishfeeder:
+      friendly_name: Octo Fish Feeder
+      command_on: !secret switches_octofishfeeder_on
+      command_off: !secret switches_octofishfeeder_off

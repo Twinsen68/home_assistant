@@ -152,7 +152,6 @@
 - alias: Turn on Amazon Waves at high tide
   trigger:
     platform: template
-#    value_template: '{{ states.sensor.local_time_24h.state == states.sensor.amazonnexthightide.state }}'
     value_template: '{{ strptime(states.sensor.time.state , "%k:%M") == strptime(states.sensor.amazonnexthightide.state , "%k:%M") }}'
   action:
     service: script.turn_on
@@ -161,7 +160,6 @@
 - alias: Turn on Amazon Waves again at low tide
   trigger:
     platform: template
-#    value_template: '{{ states.sensor.local_time_24h.state == states.sensor.amazonnextlowtide.state }}'
     value_template: '{{ strptime(states.sensor.time.state , "%k:%M") == strptime(states.sensor.amazonnextlowtide.state , "%k:%M") }}'
   action:
     service: script.turn_on
@@ -172,7 +170,6 @@
   trigger:
     platform: template
     value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefsunsettides.state , '%k:%M') }}"
-#    value_template: '{{ states.sensor.local_time_24h.state == states.sensor.reefsunsettides.state }}'
   action:
   - service: script.turn_on
     entity_id: script.reeftank_evening_fade_kessil
@@ -180,7 +177,6 @@
 - alias: Start Fade Up of Reef Lights at Sunrise
   trigger:
     platform: template
-#    value_template: '{{ states.sensor.local_time_24h.state == states.sensor.reefsunrisetides.state }}'
     value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.reefsunrisetides.state , '%H:%M') }}"
   action:
   - service: script.turn_on
@@ -190,7 +186,6 @@
   trigger:
     platform: template
     value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.amazonsunrisetides.state , '%H:%M') }}"
-#    value_template: '{{ states.sensor.local_time_24h.state == states.sensor.amazonsunrisetides.state }}'
   action:
   - service: script.turn_on
     entity_id: script.octotank_morning_on
@@ -199,14 +194,29 @@
   trigger:
     platform: template
     value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.amazonsunsettides.state , '%H:%M') }}"
-#    value_template: '{{ states.sensor.local_time_24h.state == states.sensor.amazonsunsettides.state }}'
   action:
   - service: script.turn_on
     entity_id: script.octotank_evening_off
 
-## Amazon Temp Regulation
+# Amazon Feeder
+- alias: Activate Feeder Script Morning
+  trigger:
+    platform: time
+    at: '09:15:00'
+  action:
+  - service: script.turn_on
+    entity_id: script.freshwater_feeder_script
 
- # This automation script runs when a value is received via Reef sensor: monthly_amazon_temp
+- alias: Activate Feeder Script Afternoon
+  trigger:
+    platform: time
+    at: '17:30:00'
+  action:
+  - service: script.turn_on
+    entity_id: script.freshwater_feeder_script
+
+## Amazon Temp Regulation
+# This automation script runs when a value is received via Reef sensor: monthly_amazon_temp
 - alias: Set Amazon Thermostat Max Daytime Selector
   trigger:
     platform: template
@@ -235,67 +245,6 @@
      data_template:
        entity_id: climate.octo_tank_therm
        temperature: '{{ states.sensor.monthly_amazon_temp.state | float - 0.5 }}'
-
-#- alias: Regulate Amazon Heater To On
-#  trigger:
-#    platform: template
-#    value_template: '{{ states.sensor.monthly_amazon_temp.state > states.sensor.mqtt_topic_octo_sysinfo_template_watertemp.state }}'
-#  action:
-#    service: switch.turn_on
-#    entity_id: switch.06200940dc4f22cbb432_2
-
-#- alias: Regulate Amazon Heater To Off
-#  trigger:
-#    platform: template
-#    value_template: '{{ states.sensor.monthly_amazon_temp.state < states.sensor.mqtt_topic_octo_sysinfo_template_watertemp.state }}'
-#  action:
-#    service: switch.turn_off
-#    entity_id: switch.06200940dc4f22cbb432_2
-
-## Reef Temp Regulation Daytime Avgs
-
-#- alias: Regulate Reef Heater To On Daytime Temp
-#  trigger:
-#    platform: template
-#    value_template: "{{ states.sensor.reef_avg_daily_temp.state | float - states.sensor.onlyreefcontrolpitemp.state | float > 0.5 }}"
-#  condition:
-#    condition: state
-#    entity_id: input_boolean.reef_temp_daytime_state
-#    state: 'on'
-#  action:
-#    service: switch.turn_on
-#    entity_id: switch.06200940dc4f22cbb94b_3
-
-
-#- alias: Regulate Reef Heater To On Daytime Temp
-#  trigger:
-#    - platform: state
-#      entity_id: sensor.onlyreefcontrolpitemp
-#  action:
-#    - condition: template
-#      value_template: "{{ states.sensor.reef_avg_daily_temp.state | float - states.sensor.onlyreefcontrolpitemp.state | float != 0.5 }}"
-#    - service_template: >-
-#        {% if states("input_boolean.reef_temp_daytime_state") == "on" %}
-#        {% if states(states.sensor.reef_avg_daily_temp.state | float - states.sensor.onlyreefcontrolpitemp.state) | float > 0.5 %}
-#          switch.turn_on
-#        {% elif states("input_boolean.reef_temp_daytime_state") == "on" %}
-#        {% if states(states.sensor.reef_avg_daily_temp.state | float - states.sensor.onlyreefcontrolpitemp.state) | float < 0.5 %}
-#          switch.turn_off
-#        {% endif %}
-#    entity_id: switch.06200940dc4f22cbb94b_3
-
-#- alias: Regulate Reef Heater To Off Daytime Temp
-#  trigger:
-#    platform: template
-#    value_template: "{{ states.sensor.onlyreefcontrolpitemp.state | float - states.sensor.reef_avg_daily_temp.state | float > 0.5 }}"
-#  condition:
-#    condition: state
-#    entity_id: input_boolean.reef_temp_daytime_state
-#    state: 'on'
-#  action:
-#    service: switch.turn_off
-#    entity_id: switch.06200940dc4f22cbb94b_3
-
 
  # This automation script runs when a value is received via Reef sensor: reef_low_avg_daily_temp
 - alias: Set Reef Thermostat Max Daytime Selector
@@ -326,34 +275,6 @@
      data_template:
        entity_id: climate.reef_tank_therm
        temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float }}'
-
-## Reef Temp Regulation Nightime Avgs
-
-#- alias: Regulate Reef Heater To On Nightime Temp
-#  trigger:
-#    platform: template
-#    value_template: '{{ states.sensor.reef_low_avg_daily_temp.state > states.sensor.onlyreefcontrolpitemp.state }}'
-#    value_template: "{{ states.sensor.reef_low_avg_daily_temp.state | float - states.sensor.onlyreefcontrolpitemp.state | float > 0.5 }}"
-#  condition:
-#    condition: state
-#    entity_id: input_boolean.reef_temp_nightime_state
-#    state: 'on'
-#  action:
-#    service: switch.turn_on
-#    entity_id: switch.06200940dc4f22cbb94b_3
-
-#- alias: Regulate Reef Heater To Off Nightime Temp
-#  trigger:
-#    platform: template
-#    value_template: '{{ states.sensor.reef_low_avg_daily_temp.state < states.sensor.onlyreefcontrolpitemp.state }}'
-#    value_template: "{{ states.sensor.onlyreefcontrolpitemp.state | float - states.sensor.reef_low_avg_daily_temp.state | float > 0.5 }}"
-#  condition:
-#    condition: state
-#    entity_id: input_boolean.reef_temp_nightime_state
-#    state: 'on'
-#  action:
-#    service: switch.turn_off
-#    entity_id: switch.06200940dc4f22cbb94b_3
 
 - alias: Regulate Reef Heater To Off on Low Misread
   trigger:
@@ -387,20 +308,6 @@
     service: switch.turn_off
     entity_id: switch.2437254184f3eb695276
 
-#Turn on sump pump off on timer
-#- alias: Reef Sump Pump Low Off Doublecheck
-#  trigger:
-#    - platform: time
-#      minutes: 6
-#      seconds: 00
-#  condition:
-#    condition: state
-#    entity_id: sensor.reefcontrolpifloat
-#    state: 'Low'
-#  action:
-#    service: switch.turn_off
-#    entity_id: switch.2437254184f3eb695276
-
 ## Vacuuming
 - alias: Vacuum on Schedule
   trigger:
@@ -418,45 +325,6 @@
     service: script.turn_on
     entity_id: script.roomba_turn_on
 
-#User Interface Sunset
-# IF: { input_select hass_template is changed by user OR home assistants boots up } THEN: { set theme to state given by input_select.hass_template }
-#- id: switch_hass_template
-#  alias: switch_hass_template
-#  trigger:
-#    - platform: state
-#      entity_id: input_select.hass_template
-#    - platform: homeassistant
-#      event: start
-#  action:
-#    - service: frontend.set_theme
-#      data_template:
-#        name: "{{ states.input_select.hass_template.state }}"
-
-# IF: { sun.sun goes under horizon } THEN: { set theme to night mode }
-#- alias: day_to_night_theme
-#  trigger:
-#    - platform: state
-#      entity_id: sun.sun
-#      from: 'above_horizon'
-#      to: 'below_horizon'
-#  action:
-#    - service: input_select.select_option
-#      data:
-#        entity_id: input_select.hass_template
-#        option: 'midnight'
-
-# IF: { sun.sun is up } THEN: { set theme to day mode }
-#- alias: night_to_day_theme
-#  trigger:
-#    - platform: state
-#      entity_id: sun.sun
-#      from: 'below_horizon'
-#      to: 'above_horizon'
-#  action:
-#    - service: input_select.select_option
-#      data:
-#        entity_id: input_select.hass_template
-#        option: 'PmxDefault'
 
 #Alert if public IP Changes
 - alias: ip_change_alert

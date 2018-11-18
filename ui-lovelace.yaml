@@ -1615,7 +1615,16 @@ views:
               - font-size: 12px
               - font-weight: bold
           - type: "custom:button-card"
-            color_type: blank-card
+            entity: script.freshwater_feeder_script
+            size: 25%
+            icon: mdi:track-light
+            color: rgba(219, 106, 0, 0.85)
+            name: Feeder
+            style:
+              - font-size: 12px
+              - font-weight: bold
+#          - type: "custom:button-card"
+#            color_type: blank-card
       - type: picture-elements
         image: /local/images/amazon-tide.jpg
         elements:

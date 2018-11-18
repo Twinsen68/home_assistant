@@ -202,6 +202,17 @@ roomba_turn_on:
         device: 55925028
         command: 'Medium'
 
+#Freshwater Feeder
+freshwater_feeder_script:  
+  alias: "Feed the Fish"
+  sequence:
+    - service: switch.turn_on
+      entity_id: switch.octofishfeeder
+    - delay:
+        seconds: 120
+    - service: switch.turn_off
+      entity_id: switch.octofishfeeder
+
 #Freshwater Waves
 freshwater_waves_on_script:  
   alias: "Turn On Freshwater Waves"
