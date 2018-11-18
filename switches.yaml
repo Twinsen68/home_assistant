@@ -326,18 +326,6 @@
       Referer: http://reefcontrolpi.local/
       Cookie: !secret reefcontrolpi_cookie
 
-#- platform: rest
-#  name: Reef Pump 1
-#  resource: http://reefcontrolpi.local/api/equipments/1
-#  username: !secret reefcontrolpi_username
-#  password: !secret reefcontrolpi_password
-#  authentication: basic  
-#  body_on: '{"id":"1","name":"Pump 1","outlet":"1","on":true}'
-#  body_off: '{"id":"1","name":"Pump 1","outlet":"1","on":false}'
-#  is_on_template: '{{ value_json.on }}'
-#  headers:
-#    Content-Type: application/json
-
 #- platform: command_line
 #  switches:
 #    3dprinter_light:

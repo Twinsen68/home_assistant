@@ -1,25 +1,12 @@
 homeassistant:
-  # Name of the location where Home Assistant is running
   name: !secret config_name
- # auth_providers:
- #  - type: homeassistant
-   # Uncomment next line if you want to enable legacy API password support
- #  - type: legacy_api_password
-  # Location required to calculate the time the sun rises and sets
   latitude: !secret config_lat
   longitude: !secret config_long
-  # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: !secret config_elev
-  # metric for Metric, imperial for Imperial
   unit_system: imperial
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: !secret config_tz
-  # Customization file
   customize: !include customize.yaml
   customize_glob: !include customize_glob.yaml
-
-# Show links to resources in log and frontend
-# introduction:
 
 # Enables the frontend
 frontend: 
@@ -41,28 +28,17 @@ config:
 http:
   # Secrets are defined in the file secrets.yaml
   api_password: !secret http_password
-  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
   base_url: !secret config_base_url
   ssl_key: !secret config_ssl_key
   ssl_certificate: !secret config_ssl_cert
 
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-# updater:
 
 custom_updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  # include_used_components: true
 
 #InfluxDB
 influxdb:
   host: !secret config_influxdb_host
   port: !secret config_influxdb_port
-#  username: !secret influxdb_username
-#  password: !secret influxdb_password
   database: home_assistant
   max_retries: 10
   include:
@@ -99,7 +75,6 @@ influxdb:
       - sensor.mqtt_topic_home_sysinfo_template_serverload
       - sensor.mqtt_topic_home_sysinfo_template_serverspeed
       - sensor.mqtt_topic_home_sysinfo_template_servertemp
-#1162      - sensor.server_temperature
       - sensor.battery_gabes_mate
       - sensor.ambient_temp_graph
       - sensor.dark_sky_minutely_summary
@@ -130,8 +105,6 @@ influxdb:
       - sensor.reefsysinfo_template_ip
       - sensor.reefsysinfo_template_version
       - sensor.reefsysinfo_template_uptime
-#1497      - sensor.reefsysinfo_template_cpu_temperature
-#1088      - sensor.onlyreefcontrolcpuload
       - sensor.onlyreefcontrolcpumemory
       - sensor.onlyreefcontrolpitemp
       - sensor.mqtt_topic_reef_water_level_template_level
@@ -228,7 +201,6 @@ logbook:
       - sensor.mqtt_topic_home_sysinfo_template_serverload
       - sensor.mqtt_topic_home_sysinfo_template_serverspeed
       - sensor.mqtt_topic_home_sysinfo_template_servertemp
-#1162      - sensor.server_temperature
       - sensor.battery_gabes_mate
       - sensor.ambient_temp_graph
       - sensor.dark_sky_minutely_summary
@@ -259,8 +231,6 @@ logbook:
       - sensor.reefsysinfo_template_ip
       - sensor.reefsysinfo_template_version
       - sensor.reefsysinfo_template_uptime
-#1497      - sensor.reefsysinfo_template_cpu_temperature
-#1088      - sensor.onlyreefcontrolcpuload
       - sensor.onlyreefcontrolcpumemory
       - sensor.onlyreefcontrolpitemp
       - sensor.mqtt_topic_reef_water_level_template_level
@@ -320,7 +290,6 @@ recorder:
       - sensor.mqtt_topic_home_sysinfo_template_serverload
       - sensor.mqtt_topic_home_sysinfo_template_serverspeed
       - sensor.mqtt_topic_home_sysinfo_template_servertemp
-#1162      - sensor.server_temperature
       - sensor.battery_gabes_mate
       - sensor.ambient_temp_graph
       - sensor.dark_sky_minutely_summary
@@ -351,8 +320,6 @@ recorder:
       - sensor.reefsysinfo_template_ip
       - sensor.reefsysinfo_template_version
       - sensor.reefsysinfo_template_uptime
-#1497      - sensor.reefsysinfo_template_cpu_temperature
-#1088      - sensor.onlyreefcontrolcpuload
       - sensor.onlyreefcontrolcpumemory
       - sensor.onlyreefcontrolpitemp
       - sensor.mqtt_topic_reef_water_level_template_level
@@ -375,12 +342,7 @@ recorder:
       - sensor.dark_sky_daily_low_temperature
       - sensor.dark_sky_temperature
 
-#Dummy sensors for state cards
 binary_sensor:
-#  - platform: mqtt
-#    state_topic: dummy/floorplan/sensor
-#    name: Floorplan
-
   - platform: octoprint
     name: OctoPrint Status
     monitored_conditions:
@@ -398,17 +360,6 @@ panel_custom:
 weather: 
   - platform: darksky
     api_key: !secret darksky_api_key
-
-# Media Player through BT Speaker
-media_player:
-  - platform: floorplan_speaker
-    name: my_lovelace_player
-#  - platform: tts_bluetooth_speaker
-#    address: FC:65:DE:0F:A2:EE  # Required - for example, 00:2F:AD:12:0D:42
-#    volume: 0.35                   # Optional - default is 0.5
-#    pre_silence_duration: 1       # Optional - No. of seconds silence before the TTS (default is 0)
-#    post_silence_duration: 0.5    # Optional - No. of seconds silence after the TTS (default is 0)
-#    cache_dir: /tmp/tts           # Optional - make sure it matches the same setting in TTS config
 
 # Pandora through Pianobar
 media_player 2:
@@ -433,12 +384,6 @@ alexa:
 #IFTTT
 ifttt:
   key: !secret ifttt_key
-
-#USPS
-#usps:
-#  username: !secret usps_username
-#  password: !secret usps_password
-#  driver: phantomjs 
 
 #Tuya Smart Switches
 tuya:
@@ -520,13 +465,12 @@ input_text:
 #    minutes: 20
 #  max_entries: 1
 
-input_select: !include input_select.yaml
 scene: !include scenes.yaml
 zone: !include zone.yaml
 input_datetime: !include input_datetime.yaml
 input_boolean: !include input_boolean.yaml
 input_number: !include input_number.yaml
-#input_select: !include input_select.yaml
+input_select: !include input_select.yaml
 history_graph: !include history_graph.yaml
 climate: !include climate.yaml
 rest_command: !include rest_command.yaml

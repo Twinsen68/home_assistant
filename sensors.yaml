@@ -455,7 +455,6 @@
       value_template: '{{ states.sensor.octocam_water_level_raw.state.split("|")[0] }}'
     mqtt_topic_octo_water_level_template_time:
       friendly_name: "Amazon Water Level Last Flip"
-#      value_template: '{{ states.sensor.octocam_water_level_raw.state.split("|")[1] }}'
       value_template: >
         {%- set date = as_timestamp(states.sensor.octocam_water_level_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
@@ -637,26 +636,6 @@
   unit_of_measurement: 'pH'
   value_template: '{{ (value.split(",")[2]) | round(1) }}'
 
-#Get reef float sensor 
-# Replaced by reefPi
-#- platform: mqtt
-#  state_topic: 'water-level-reef/reading'
-#  name: Reef Water Level Raw
-#  value_template: "{{ value }}"
-
-#- platform: template
-#  scan_interval: 120
-#  sensors:
-#    mqtt_topic_reef_water_level_template_level:
-#      friendly_name: "Reef Water Level"
-#      value_template: '{{ states.sensor.reef_water_level_raw.state.split("|")[0] }}'
-#    mqtt_topic_reef_water_level_template_time:
-#      friendly_name: "Reef Water Level Last Flip"
-#      value_template: '{{ states.sensor.reef_water_level_raw.state.split("|")[1] }}'
-#      value_template: >
-#        {%- set date = as_timestamp(states.sensor.reef_water_level_raw.state.split("at ")[1]) -%}
-#        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
-
 #Scrape For Reef Temp
 - platform: scrape
   resource: http://www.surf-forecast.com/breaks/Kuta-Beach/seatemp
@@ -685,17 +664,6 @@
   unit_of_measurement: '°C'
   value_template: '{{ (value.split(" ")[1].split(" ")[0]) | round(1) }}'
 
-#- platform: template
-#  sensors:
-#    reef_avg_daily_temp:
-#      friendly_name: "NOAA Daily Avg Reef Temp"
-#      unit_of_measurement: "°F"
-#      entity_id: sensor.reef_avg_daily_temp
-#      value_template: >-
-#        {{ ((float(states.sensor.noaa_daily_min_reef_temp.state) + #float(states.sensor.noaa_daily_max_reef_temp.state)) / 2) | round(1) }}
-#      value_template: >-
-#         {{ ((states('sensor.noaa_daily_min_reef_temp')|float + states('sensor.noaa_daily_max_reef_temp')|float) / 2) | round(1) }}
-
 - platform: min_max
   name: reef_avg_daily_temp
   type: mean
@@ -703,34 +671,12 @@
     - sensor.noaa_daily_min_reef_temp
     - sensor.noaa_daily_max_reef_temp
 
-#- platform: template
-#  sensors:
-#    reef_high_avg_daily_temp:
-#      friendly_name: "NOAA Daily High Avg Reef Temp"
-#      unit_of_measurement: "°F"
-#      entity_id: sensor.reef_high_avg_daily_temp
-#      value_template: >-
-#         {{ ((states('sensor.reef_avg_daily_temp')|float + states('sensor.noaa_daily_max_reef_temp')|float) / 2) | round(1) }}
-#      value_template: >-
-#        {{ ((float(states.sensor.reef_avg_daily_temp.state) + float(states.sensor.noaa_daily_max_reef_temp.state)) / 2) | round(1) }}
-
 - platform: min_max
   name: reef_high_avg_daily_temp
   type: mean
   entity_ids:
     - sensor.reef_avg_daily_temp
     - sensor.noaa_daily_max_reef_temp
-
-#- platform: template
-#  sensors:
-#    reef_low_avg_daily_temp:
-#      friendly_name: "NOAA Daily Low Avg Reef Temp"
-#      entity_id: sensor.reef_low_avg_daily_temp
-#      unit_of_measurement: "°F"
-#      value_template: >-
-#         {{ ((states('sensor.noaa_daily_min_reef_temp')|float + states('sensor.reef_avg_daily_temp')|float) / 2) | round(1) }}
-#      value_template: >-
-#        {{ ((float(states.sensor.noaa_daily_min_reef_temp.state) + float(states.sensor.reef_avg_daily_temp.state)) / 2) | round(1) }}
 
 - platform: min_max
   name: reef_low_avg_daily_temp
@@ -923,11 +869,6 @@
   options: 
 #    arrival_time: "{{ states('sensor.nextcal_start_time') }}"
     mode: transit
-
-#Owntracks Location Data
-#- platform: mqtt
-#  name: "Gabe Owntracks"
-#  state_topic: "owntracks/hassio/GabesMatePhone"
 
 - platform: template
   sensors:
@@ -1205,7 +1146,6 @@
       content-type: application/json
       Referer: http://reefcontrolpi.local/
       Cookie: !secret reefcontrolpi_cookie
-#  value_template: '{{ value_json.channels["1"].profile.config.value }}'
   value_template: >-
     {% set lightbright_status = value_json.channels["1"].profile.config.value | int %}
     {% if lightbright_status == 0 %}Off
@@ -1233,7 +1173,6 @@
       content-type: application/json
       Referer: http://reefcontrolpi.local/
       Cookie: !secret reefcontrolpi_cookie
-#  value_template: '{{ value_json.channels["0"].profile.config.value }}'
   value_template: >-
     {% set lightcolor_status = value_json.channels["0"].profile.config.value | int %}
     {% if lightcolor_status == 0 %}
@@ -1270,7 +1209,6 @@
       content-type: application/json
       Referer: http://reefcontrolpi.local/
       Cookie: !secret reefcontrolpi_cookie
-#  value_template: '{{ value_json.channels["2"].profile.config.value }}'
   value_template: >-
     {% set pump_1_status = value_json.channels["2"].profile.config.value | int %}
     {% if pump_1_status == 99 %}On
@@ -1333,7 +1271,6 @@
       content-type: application/json
       Referer: http://reefcontrolpi.local/
       Cookie: !secret reefcontrolpi_cookie
-#  value_template: '{{ value_json.channels["7"].profile.config.value }}'
   value_template: >-
     {% set pump_2_status = value_json.channels["7"].profile.config.value | int %}
     {% if pump_2_status == 99 %}On
@@ -1357,7 +1294,6 @@
       content-type: application/json
       Referer: http://reefcontrolpi.local/
       Cookie: !secret reefcontrolpi_cookie
-#  value_template: '{{ value_json.on }}'
   value_template: >-
     {% set float_status = value_json.on %}
     {% if float_status == false %}OK
@@ -1376,12 +1312,6 @@
 #    - on
 #  resource: http://reefcontrolpi.local/api/equipments/1
 #  value_template: '{{ value_json.on }}'
-
-#Misfit tracker through Google Fit
-#- platform: rest
-#  name: Misfit Fitness Tracker
-#  method: POST
-#  resource: https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate
 
 #alarm clock
 - platform: template

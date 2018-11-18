@@ -5,17 +5,6 @@
 #      - WK Some Station
 #    initial: WKFU 1111
 #    icon: mdi:radio 
-#
-#- hass_template:
-#    name: Choose Template
-#    options:
-#     - default
-#     - midnight
-#     - dark_theme
-#    - PmxDefault
-#     - PmxMonolight
-#    initial: default
-#    icon: mdi:theme-light-dark
 
 harmony:
   name: Harmony
