@@ -1,0 +1,1397 @@
+# Weather prediction
+- platform: darksky
+  api_key: 47302abad0a80b7a95092b3071e94f62
+  forecast:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  prefer_icons: 1
+  update_interval:
+    # At least one of these must be specified:
+    days: 0
+    hours: 0
+    minutes: 15
+    seconds: 0
+    milliseconds: 0
+  monitored_conditions:
+    - summary
+    - icon
+    - nearest_storm_distance
+    - precip_type
+    - precip_intensity
+    - precip_probability
+    - precip_accumulation
+    - temperature
+    - apparent_temperature
+    - dew_point
+    - wind_speed
+    - wind_bearing
+    - cloud_cover
+    - humidity
+    - pressure
+    - visibility
+    - ozone
+    - minutely_summary
+    - hourly_summary
+    - daily_summary
+    - temperature_max
+    - temperature_min
+    - precip_intensity_max
+    - uv_index
+
+  sensors:
+    icon: sensor.dark_sky_icon
+    temperature: sensor.dark_sky_temperature
+    apparent_temperature: sensor.dark_sky_apparent_temperature
+    humidity: sensor.dark_sky_humidity
+    precip_probability: sensor.dark_sky_precip_probability
+    precip_intensity: sensor.dark_sky_precip_intensity
+    precip_type: sensor.dark_sky_precip
+    pressure: sensor.dark_sky_pressure
+    wind_speed: sensor.dark_sky_wind_speed
+    wind_bearing: sensor.dark_sky_wind_bearing
+    forecast_icon: sensor.dark_sky_icon_1
+    forecast_temperature_min: sensor.dark_sky_daily_low_temperature_1
+    forecast_temperature_max: sensor.dark_sky_daily_high_temperature_1
+    forecast_precip_probability: sensor.dark_sky_precip_probability_1
+    forecast_precip_type: sensor.dark_sky_precip_1
+  weather_now:
+    friendly_name: "Currently"
+    value_template: >
+      {{states.sensor.dark_sky_summary.state}}
+    entity_picture_template: >-
+      {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon.state ~ '.png'}}      
+  weather_week_text:  
+    friendly_name: "Week"
+    value_template: >
+      {{states.sensor.dark_sky_daily_summary.state}}      
+  wind_bearing_text:
+    value_template: >-
+      {% if 11.25 <= states('sensor.dark_sky_wind_bearing')|float < 33.75 %}
+         NNE 
+      {% elif 33.75 <= states('sensor.dark_sky_wind_bearing')|float < 56.25 %}
+         NE
+      {% elif 56.25 <= states('sensor.dark_sky_wind_bearing')|float < 78.75 %}
+         ENE
+      {% elif 78.75 <= states('sensor.dark_sky_wind_bearing')|float < 101.25 %}
+         E
+      {% elif 101.25 <= states('sensor.dark_sky_wind_bearing')|float < 123.75 %}
+         ESE
+      {% elif 123.75 <= states('sensor.dark_sky_wind_bearing')|float < 146.25 %}
+         SE
+      {% elif 146.25 <= states('sensor.dark_sky_wind_bearing')|float < 168.75 %}
+         SSE
+      {% elif 168.75 <= states('sensor.dark_sky_wind_bearing')|float < 191.25 %}
+         S
+      {% elif 191.25 <= states('sensor.dark_sky_wind_bearing')|float < 213.75 %}
+         SSW
+      {% elif 213.75 <= states('sensor.dark_sky_wind_bearing')|float < 236.25 %}
+         SW
+      {% elif 236.25 <= states('sensor.dark_sky_wind_bearing')|float < 258.75 %}
+         WSW
+      {% elif 258.75 <= states('sensor.dark_sky_wind_bearing')|float < 281.25 %}
+         W
+      {% elif 281.25 <= states('sensor.dark_sky_wind_bearing')|float < 303.75 %}
+         WNW
+      {% elif 303.75 <= states('sensor.dark_sky_wind_bearing')|float < 326.25 %}
+         NW
+      {% elif 326.25 <= states('sensor.dark_sky_wind_bearing')|float < 348.75 %}
+         NNW
+      {% else %}
+         N 
+      {% endif %}      
+  wind_bearing:
+    friendly_name: "Wind Bearing"
+    value_template: "{{ states.sensor.dark_sky_wind_bearing.state }}° / {{ states.sensor.wind_bearing_text.state }}"
+    entity_picture_template: >
+      {% if is_state('sensor.wind_bearing_text', 'NNE') %}
+        /local/compass_points/fromNNE.png
+      {% elif is_state('sensor.wind_bearing_text', 'NE') %}
+        /local/compass_points/fromNE.png
+      {% elif is_state('sensor.wind_bearing_text', 'ENE') %}
+        /local/compass_points/fromENE.png
+      {% elif is_state('sensor.wind_bearing_text', 'E') %}
+        /local/compass_points/fromE.png
+      {% elif is_state('sensor.wind_bearing_text', 'ESE') %}
+        /local/compass_points/fromESE.png
+      {% elif is_state('sensor.wind_bearing_text', 'SE') %}
+        /local/compass_points/fromSE.png
+      {% elif is_state('sensor.wind_bearing_text', 'SSE') %}
+        /local/compass_points/fromSSE.png
+      {% elif is_state('sensor.wind_bearing_text', 'S') %}
+        /local/compass_points/fromS.png
+      {% elif is_state('sensor.wind_bearing_text', 'SSW') %}
+        /local/compass_points/fromSSW.png
+      {% elif is_state('sensor.wind_bearing_text', 'SW') %}
+        /local/compass_points/fromSW.png
+      {% elif is_state('sensor.wind_bearing_text', 'WSW') %}
+        /local/compass_points/fromWSW.png
+      {% elif is_state('sensor.wind_bearing_text', 'W') %}
+        /local/compass_points/fromW.png
+      {% elif is_state('sensor.wind_bearing_text', 'WNW') %}
+        /local/compass_points/fromWNW.png
+      {% elif is_state('sensor.wind_bearing_text', 'NW') %}
+        /local/compass_points/fromNW.png
+      {% elif is_state('sensor.wind_bearing_text', 'NNW') %}
+        /local/compass_points/fromNNW.png
+      {% elif is_state('sensor.wind_bearing_text', 'N') %}
+        /local/compass_points/fromN.png
+      {% endif %}
+  wind:
+    friendly_name: "Wind"
+    value_template: "{{ states.sensor.dark_sky_wind_speed.state|round(0) }} mph {{ states.sensor.wind_bearing_text.state }}"
+
+- platform: season
+
+- platform: template
+  sensors:
+    weekday:
+      friendly_name: 'Weekday'
+      value_template: '{{ now().strftime("%A") }}'
+    forecast_today:
+      friendly_name: "Today's Forecast"
+      value_template: >
+        {{states.sensor.dark_sky_daily_high_temperature.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon", "cloudy") %}
+          mdi:weather-cloudy   
+          {% elif is_state("sensor.dark_sky_icon", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon", "sleet") %}
+          mdi:weather-snowy-rain
+        {% elif is_state("sensor.dark_sky_icon", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy            
+        {% else %}
+          error
+        {% endif %}    
+    forecast_1:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (1 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >          
+        {{states.sensor.dark_sky_daily_high_temperature_1.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_1.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_1.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_1", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_1", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon_1", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_1", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_1", "sleet") %}
+          mdi:weather-snowy-rain
+        {% elif is_state("sensor.dark_sky_icon_1", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_1", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_1", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_1", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_1", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy            
+        {% else %}
+          error
+        {% endif %}
+  
+    forecast_2:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (2 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >          
+        {{states.sensor.dark_sky_daily_high_temperature_2.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_2.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_2.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_2", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_2", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon_2", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_2", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_2", "sleet") %}
+          mdi:weather-snowy-rain 
+        {% elif is_state("sensor.dark_sky_icon_2", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_2", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_2", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_2", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_2", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy            
+        {% else %}
+          error
+        {% endif %}
+               
+    forecast_3:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (3 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >          
+        {{states.sensor.dark_sky_daily_high_temperature_3.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_3.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_3.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_3", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_3", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon_3", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_3", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_3", "sleet") %}
+          mdi:weather-snowy-rain 
+        {% elif is_state("sensor.dark_sky_icon_3", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_3", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_3", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_3", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_3", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy
+        {% else %}
+          error
+        {% endif %}
+      
+    forecast_4:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (4 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >          
+        {{states.sensor.dark_sky_daily_high_temperature_4.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_4.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_4.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_4", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_4", "clear-night") %}
+          mdi:weather-night            
+        {% elif is_state("sensor.dark_sky_icon_4", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_4", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_4", "sleet") %}
+          mdi:weather-snowy-rain 
+        {% elif is_state("sensor.dark_sky_icon_4", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_4", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_4", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_4", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_4", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy
+        {% else %}
+          error
+        {% endif %}
+    forecast_5:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (5 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >
+        {{states.sensor.dark_sky_daily_high_temperature_5.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_5.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_5.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_5", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_5", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon_5", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_5", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_5", "sleet") %}
+          mdi:weather-snowy-rain 
+        {% elif is_state("sensor.dark_sky_icon_5", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_5", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_5", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_5", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_5", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy
+        {% else %}
+          error
+        {% endif %}
+         
+    forecast_6:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (6 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >          
+          {{states.sensor.dark_sky_daily_high_temperature_6.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_6.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_6.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_6", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_6", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon_6", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_6", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_6", "sleet") %}
+          mdi:weather-snowy-rain  
+        {% elif is_state("sensor.dark_sky_icon_6", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_6", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_6", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_6", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_6", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy
+        {% else %}
+          error
+        {% endif %}
+    forecast_7:
+      friendly_name_template: >
+        {%- set date = as_timestamp(now()) + (7 * 86400 ) -%}
+        {{ date | timestamp_custom("%A (%-m/%-d)") }}
+      value_template: >
+          {{states.sensor.dark_sky_daily_high_temperature_7.state|round(0)}}°/{{states.sensor.dark_sky_daily_low_temperature_7.state|round(0)}}°/{{states.sensor.dark_sky_precip_probability_7.state|round(0)}}%
+      icon_template: >-
+        {% if is_state("sensor.dark_sky_icon_7", "clear-day") %}
+          mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon_7", "clear-night") %}
+          mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon_7", "cloudy") %}
+          mdi:weather-cloudy   
+        {% elif is_state("sensor.dark_sky_icon_7", "rain") %}
+          mdi:weather-pouring        
+        {% elif is_state("sensor.dark_sky_icon_7", "sleet") %}
+          mdi:weather-snowy-rain 
+        {% elif is_state("sensor.dark_sky_icon_7", "snow") %}
+          mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon_7", "wind") %}
+          mdi:weather-windy
+        {% elif is_state("sensor.dark_sky_icon_7", "fog") %}
+          mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon_7", "partly-cloudy-day") %}
+          mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon_7", "partly-cloudy-night") %}
+          mdi:weather-partlycloudy
+        {% else %}
+          error
+        {% endif %}
+
+# Time Date
+- platform: time_date
+  display_options:
+    - 'time'
+    - 'date'
+    - 'date_time'
+    - 'time_date'
+    - 'time_utc'
+    - 'beat'
+
+#World Tides use for fishtanks
+- platform: worldtidesinfo
+  api_key: 07cd8bd9-5e2a-446d-a29a-dbdcd3fdcc84
+  name: Bali Reef Tides
+  latitude: -7.250445
+  longitude: 112.768845
+  scan_interval: 43200
+
+- platform: command_line
+  name: Server Temperature
+  command: "cat /sys/class/thermal/thermal_zone0/temp"
+  unit_of_measurement: '°C'
+  value_template: '{{ value | multiply(0.001) | int | round(1) }}'
+
+- platform: mqtt
+  state_topic: 'temp-home/reading'
+  name: HomeCam Info Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  sensors:
+    mqtt_topic_home_sysinfo_template:
+      friendly_name: "HomeCam Temperature"
+      value_template: '{{ states.sensor.homecam_info_raw.state | float | round(1) }}'
+      unit_of_measurement: '°C'
+    mqtt_topic_home_sysinfo_template_serverload:
+      friendly_name: "HomeCam Server Load"
+      value_template: '{{ states.sensor.homecam_info_raw.state.split(",")[1] | int | round(3) }}'
+    mqtt_topic_home_sysinfo_template_serverspeed:
+      friendly_name: "HomeCam Server Speed"
+      value_template: '{{ states.sensor.homecam_info_raw.state.split(",")[2].split("k")[0] | int | round(1) }}'
+      unit_of_measurement: 'kB/s'
+    mqtt_topic_home_sysinfo_template_ambient_temperature:
+      friendly_name: "HomeCam Ambient Temperature"
+      value_template: '{{ states.sensor.homecam_info_raw.state.split(",")[3] | multiply(0.001) | round(1) }}'
+      unit_of_measurement: '°C'
+
+- platform: mqtt
+  state_topic: 'water-level-octo/reading'
+  name: OctoCam Water Level Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  scan_interval: 120
+  sensors:
+    mqtt_topic_octo_water_level_template_level:
+      friendly_name: "Amazon Water Level"
+      value_template: '{{ states.sensor.octocam_water_level_raw.state.split("|")[0] }}'
+    mqtt_topic_octo_water_level_template_time:
+      friendly_name: "Amazon Water Level Last Flip"
+#      value_template: '{{ states.sensor.octocam_water_level_raw.state.split("|")[1] }}'
+      value_template: >
+        {%- set date = as_timestamp(states.sensor.octocam_water_level_raw.state.split("at ")[1]) -%}
+        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
+
+- platform: mqtt
+  state_topic: 'temp-octo/reading'
+  name: OctoCam Info Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  scan_interval: 120
+  sensors:
+    mqtt_topic_octo_sysinfo_template_servertemp:
+      friendly_name: "Amazon Server Temp"
+      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[0] | round(1) }}'
+      unit_of_measurement: '°C'
+    mqtt_topic_octo_sysinfo_template_serverload:
+      friendly_name: "Amazon Server Load"
+      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[1] | int | round(3) }}'
+    mqtt_topic_octo_sysinfo_template_serverspeed:
+      friendly_name: "Amazon Server Speed"
+      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[2].split("k")[0] | int | round(1) }}'
+      unit_of_measurement: 'kB/s'
+    mqtt_topic_octo_sysinfo_template_watertemp:
+      friendly_name: "Amazon Tank Water Temperature"
+      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[3] | multiply(0.001) | round(1) }}'
+      unit_of_measurement: '°C'
+
+- platform: mqtt
+  name: 'USPS Mail'
+  state_topic: '/usps/mails'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: USPS Packages
+  state_topic: '/usps/packages'
+  value_template: "{{ value }}"
+
+- platform: template
+  sensors:
+    reef_time_low_tide:
+      friendly_name: "Next Reef Time Low Tide"
+      value_template: '{{ states.sensor.bali_reef_tides.attributes.low_tide_time_utc.split("T")[1].split("+")[0] }}'
+      unit_of_measurement: 'time'
+    reef_time_high_tide:
+      friendly_name: "Next Reef Time High Tide"
+      value_template: '{{ states.sensor.bali_reef_tides.attributes.high_tide_time_utc.split("T")[1].split("+")[0] }}'
+      unit_of_measurement: 'time'
+
+# Track the sun in the Amazon
+- platform: yweather
+  woeid: 455833
+  name: AmazonWeather
+  monitored_conditions:
+    - weather
+    - weather_current
+    - temp_min
+    - temp_max
+    - wind_speed
+    - pressure
+    - visibility
+    - humidity
+    - temperature
+
+# Track the sun in Bali
+- platform: yweather
+  woeid: 2291072
+  name: ReefWeather
+  monitored_conditions:
+    - weather
+    - weather_current
+    - temp_min
+    - temp_max
+    - wind_speed
+    - pressure
+    - visibility
+    - humidity
+    - temperature
+
+- platform: template
+  sensors:
+    local_time_ampm:
+      entity_id: sensor.local_time_ampm
+      friendly_name: "Local Time AM/PM"
+      value_template: '{{ now().time().strftime("%-I:%M %P") }}'
+
+- platform: template
+  sensors:
+    local_time_24h:
+      entity_id: sensor.local_time_24h
+      friendly_name: "Local Time 24h No Zero"
+      value_template: '{{ now().time().strftime("%k:%M") }}'
+
+- platform: template
+  sensors:
+    pretty_date_time:
+      entity_id: sensor.pretty_date_time
+      friendly_name: "Today"
+      value_template: >
+        {%- set date = as_timestamp(now()) -%}
+        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
+
+- platform: template
+  sensors:
+    pretty_date:
+      entity_id: sensor.pretty_date
+      friendly_name: "Today"
+      value_template: >
+        {%- set date = as_timestamp(now()) -%}
+        {{ date | timestamp_custom("%B %d, %Y") }}
+
+- platform: template
+  sensors:
+    pretty_month:
+      friendly_name: "Month"
+      entity_id: sensor.pretty_month
+      value_template: >
+        {%- set date = as_timestamp(now()) -%}
+        {{ date | timestamp_custom("%B") }}
+
+#Scrape for Amazon Tides
+- platform: scrape
+  resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
+  select: "div#grafico_estado_actual_texto_pleamar"
+  name: AmazonNextHighTide
+  entity_id: sensor.amazonnexthightide
+  scan_interval: 14400
+  value_template: '{{ value.split("de ")[1].split(" h")[0] }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
+  select: "div#grafico_estado_actual_texto_bajamar"
+  name: AmazonNextLowTide
+  entity_id: sensor.amazonnextlowtide
+  scan_interval: 14400
+  value_template: '{{ value.split("de ")[1].split(" h")[0] }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
+  select: "#amanecer_anochecer_datos_salida_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
+  name: AmazonSunriseTides
+  entity_id: sensor.amazonsunrisetides
+  scan_interval: 7200
+  value_template: '{{ (value.split(" h")[0]) }}'
+#  value_template: "{{ (value.split(' h')[0])|timestamp_custom('%k:%M', false) }}"
+
+- platform: scrape
+  resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
+  select: "#amanecer_anochecer_datos_puesta_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
+  name: AmazonSunsetTides
+  entity_id: sensor.amazonsunsettides
+  scan_interval: 7200
+  value_template: '{{ (value.split(" h")[0]) }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
+  select: "#c_grafico_temp_agua_fondo #c_grafico_temp_agua_txt_grados_agua_actual"
+  name: AmazonWaterTempTides
+  scan_interval: 7200
+  value_template: '{{ (value.split("°C")[0]) }}'
+
+- platform: mqtt
+  name: 'Monthly Amazon Temp Raw'
+  state_topic: '/amazon-data/temp'
+  entity_id: sensor.monthly_amazon_temp_raw
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Monthly Amazon Temp'
+  state_topic: '/amazon-data/temp'
+  entity_id: sensor.monthly_amazon_temp
+  unit_of_measurement: '°C'
+  value_template: '{{ (value.split(",")[1].split(",")[0]) | round(1) }}'
+
+- platform: mqtt
+  name: 'Monthly Amazon pH'
+  state_topic: '/amazon-data/temp'
+  entity_id: sensor.monthly_amazon_ph
+  unit_of_measurement: 'pH'
+  value_template: '{{ (value.split(",")[2]) | round(1) }}'
+
+#Get reef float sensor 
+# Replaced by reefPi
+#- platform: mqtt
+#  state_topic: 'water-level-reef/reading'
+#  name: Reef Water Level Raw
+#  value_template: "{{ value }}"
+
+#- platform: template
+#  scan_interval: 120
+#  sensors:
+#    mqtt_topic_reef_water_level_template_level:
+#      friendly_name: "Reef Water Level"
+#      value_template: '{{ states.sensor.reef_water_level_raw.state.split("|")[0] }}'
+#    mqtt_topic_reef_water_level_template_time:
+#      friendly_name: "Reef Water Level Last Flip"
+#      value_template: '{{ states.sensor.reef_water_level_raw.state.split("|")[1] }}'
+#      value_template: >
+#        {%- set date = as_timestamp(states.sensor.reef_water_level_raw.state.split("at ")[1]) -%}
+#        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
+
+#Scrape For Reef Temp
+- platform: scrape
+  resource: http://www.surf-forecast.com/breaks/Kuta-Beach/seatemp
+  select: "div#contdiv span.temp"
+  name: ReefOceanTemp
+  force_update: true
+  scan_interval: 3600
+
+- platform: mqtt
+  name: 'NOAA Daily Reef Temp Raw'
+  state_topic: '/noaa-reef/temp'
+  value_template: "{{ value }}"
+  entity_id: sensor.noaa_daily_reef_temp_raw
+
+- platform: mqtt
+  name: 'NOAA Daily Min Reef Temp'
+  entity_id: sensor.noaa_daily_min_reef_temp
+  state_topic: '/noaa-reef/temp'
+  unit_of_measurement: '°C'
+  value_template: '{{ (value.split(" ")[0]) | round(1) }}'
+
+- platform: mqtt
+  name: 'NOAA Daily Max Reef Temp'
+  entity_id: sensor.noaa_daily_max_reef_temp
+  state_topic: '/noaa-reef/temp'
+  unit_of_measurement: '°C'
+  value_template: '{{ (value.split(" ")[1].split(" ")[0]) | round(1) }}'
+
+#- platform: template
+#  sensors:
+#    reef_avg_daily_temp:
+#      friendly_name: "NOAA Daily Avg Reef Temp"
+#      unit_of_measurement: "°F"
+#      entity_id: sensor.reef_avg_daily_temp
+#      value_template: >-
+#        {{ ((float(states.sensor.noaa_daily_min_reef_temp.state) + #float(states.sensor.noaa_daily_max_reef_temp.state)) / 2) | round(1) }}
+#      value_template: >-
+#         {{ ((states('sensor.noaa_daily_min_reef_temp')|float + states('sensor.noaa_daily_max_reef_temp')|float) / 2) | round(1) }}
+
+- platform: min_max
+  name: reef_avg_daily_temp
+  type: mean
+  entity_ids:
+    - sensor.noaa_daily_min_reef_temp
+    - sensor.noaa_daily_max_reef_temp
+
+#- platform: template
+#  sensors:
+#    reef_high_avg_daily_temp:
+#      friendly_name: "NOAA Daily High Avg Reef Temp"
+#      unit_of_measurement: "°F"
+#      entity_id: sensor.reef_high_avg_daily_temp
+#      value_template: >-
+#         {{ ((states('sensor.reef_avg_daily_temp')|float + states('sensor.noaa_daily_max_reef_temp')|float) / 2) | round(1) }}
+#      value_template: >-
+#        {{ ((float(states.sensor.reef_avg_daily_temp.state) + float(states.sensor.noaa_daily_max_reef_temp.state)) / 2) | round(1) }}
+
+- platform: min_max
+  name: reef_high_avg_daily_temp
+  type: mean
+  entity_ids:
+    - sensor.reef_avg_daily_temp
+    - sensor.noaa_daily_max_reef_temp
+
+#- platform: template
+#  sensors:
+#    reef_low_avg_daily_temp:
+#      friendly_name: "NOAA Daily Low Avg Reef Temp"
+#      entity_id: sensor.reef_low_avg_daily_temp
+#      unit_of_measurement: "°F"
+#      value_template: >-
+#         {{ ((states('sensor.noaa_daily_min_reef_temp')|float + states('sensor.reef_avg_daily_temp')|float) / 2) | round(1) }}
+#      value_template: >-
+#        {{ ((float(states.sensor.noaa_daily_min_reef_temp.state) + float(states.sensor.reef_avg_daily_temp.state)) / 2) | round(1) }}
+
+- platform: min_max
+  name: reef_low_avg_daily_temp
+  type: mean
+  entity_ids:
+    - sensor.reef_avg_daily_temp
+    - sensor.noaa_daily_min_reef_temp
+
+- platform: template
+  sensors:
+    reef_ocean_temp_c:
+      friendly_name: "Reef Ocean Temp Celsius"
+      value_template: '{{ (float(states("sensor.reefoceantemp"))) }}'
+    reef_ocean_temp_f:
+      unit_of_measurement: '°F'
+      friendly_name: "Reef Ocean Temp Fahrenheit"
+      value_template: '{{ ((float(states("sensor.reef_ocean_temp_c")) * 9 / 5 )  +  32) | round(1) }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
+  select: "#amanecer_anochecer_datos_salida_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
+  entity_id: sensor.reefsunrisetides
+  name: ReefSunriseTides
+  scan_interval: 7200
+  value_template: '{{ (value.split(" h")[0]) }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
+  select: "#amanecer_anochecer_datos_puesta_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
+  entity_id: sensor.reefsunsettides
+  name: ReefSunsetTides
+  scan_interval: 7200
+  value_template: '{{ (value.split(" h")[0]) }}'
+
+#Speedtest
+- platform: speedtest
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
+- platform: uptime
+  name: Time Online
+  unit_of_measurement: hours
+
+- platform: command_line
+  name: DB File System Size
+  command: !secret config_db_fs_command
+  unit_of_measurement: 'MB'
+  value_template: '{{ value | int - 1 }}'
+
+- platform: sql
+  db_url: !secret config_db_fs_url
+  queries:
+    - name: "MariaDB Database Size"
+      query: 'SELECT table_schema "database", Round(Sum(data_length + index_length)/1024/1024, 1) "value" FROM information_schema.tables WHERE table_schema="hass_db" GROUP BY table_schema;'
+      column: 'value'
+      unit_of_measurement: MB
+
+#Empire State Colors
+- platform: scrape
+  resource: http://www.esbnyc.com/explore/tower-lights
+  select: 'h1:nth-of-type(2)'
+  name: EmpireStateLights
+  friendly_name: "Empire State Building Lights"
+  scan_interval: 10800
+
+- platform: scrape
+  resource: http://www.esbnyc.com/explore/tower-lights
+  select: 'img:nth-of-type(5)'
+  attribute: src
+  name: empire_state_lights_pic_url
+  scan_interval: 1800
+  value_template: >
+    {% set url = value.split("sites/")[1] %}
+    {% set prefix = "http://www.esbnyc.com/sites/" %}
+    {{ [prefix, url] | join("") }}
+
+#Calendars
+- platform: template
+  sensors:
+    template_calendar_next:
+      friendly_name: Next Event
+      value_template: '{{ states.calendar.gabethisisgabescom.attributes.message }}'
+
+- platform: template
+  sensors:
+    nextcal_location:
+      value_template: '{{ states.calendar.gabethisisgabescom.attributes.location }}'
+      friendly_name: 'Calendar Location'
+      unit_of_measurement: 'address'
+    nextcal_start_time:
+      value_template: '{{ states.calendar.gabethisisgabescom.attributes.start_time| timestamp_custom("%h %d, %Y %k:%M %P")}}'
+      friendly_name: 'Start Time'
+    nextcal_end_time:
+      value_template: '{{ states.calendar.gabethisisgabescom.attributes.end_time| timestamp_custom("%h %d, %Y %k:%M %P") }}'
+      friendly_name: 'End Time'
+    nextcal_message:
+      value_template: '{{ states.calendar.gabethisisgabescom.attributes.message }}'
+      friendly_name: 'Event'
+    new_nextcal_location:
+      value_template: '{% if is_state("sensor.nextcal_location", "None") %}{{ zone.home }}{% else %}{{ states.calendar.gabethisisgabescom.attributes.location }}{% endif %}' 
+      friendly_name: 'Location'
+    nextcal_calc_leave_time:
+      value_template: '{{ (as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - states.sensor.home_to_next_appt.attributes.duration.split(" ")[0] | int *60 ) | timestamp_custom("%m %d, %Y %-I:%M %p") }}'
+      friendly_name: 'Leave Time'
+    nextcal_sys_time:
+      value_template: '{{ (now().strftime("%s") | int | timestamp_custom("%A %h %d, %Y %k:%M %P")) }}'
+
+- platform: template
+  sensors:
+    template_calendar_birthday:
+       friendly_name: Upcoming Birthday
+       value_template: '{{ states.calendar.contacts.attributes.message }}'
+    template_calendar_birthday_date:
+      value_template: '{{ states.calendar.contacts.attributes.start_time| timestamp_custom("%h %d, %Y %k:%M %P")}}'
+      friendly_name: 'Date'
+
+#Bustime Sensors
+- platform: gtfs_realtime
+  name: Next Bus
+  trip_update_url: !secret gtfs_bus_trip_update_url
+  vehicle_position_url: !secret gtfs_bus_trip_position_url
+  offset: 7
+  departures:
+  - name: M14A Crosstown at Clinton Street
+    route: M14A
+    stopid: 401150
+  - name: 'M15SBS Uptown Allen & Grand'
+    route: "M15-SBS"
+    stopid: 405320
+  - name: M15 Local Uptown Allen & Grand
+    route: M15
+    stopid: 405320
+
+- platform: gtfs_realtime
+  name: Essex Subway B D F M
+  trip_update_url: !secret gtfs_subway1_trip_update_url
+  offset: 10
+  departures:
+  - name: Northbound F Delancey St
+    stopid: F15N
+    route: F
+  - name: Northbound M Essex St
+    stopid: M18N
+    route: M
+  - name: Northbound B Grand St
+    stopid: D22N
+    route: B
+  - name: Northbound D Grand St
+    stopid: D22N
+    route: D
+  - name: Southbound F East Broadway
+    stopid: F16S
+    route: F
+
+- platform: gtfs_realtime
+  name: Essex Subway J Z
+  trip_update_url: !secret gtfs_subway2_trip_update_url
+  offset: 10
+  departures:
+  - name: Northbound J Essex St
+    stopid: M18N
+    route: J
+  - name: Northbound Z Essex St
+    stopid: M18N
+    route: Z
+
+- platform: google_travel_time
+  name: Home to Work
+  api_key: !secret google_travel_time_api_key
+  origin: !secret google_travel_time_origin
+  destination: !secret google_travel_time_destination
+  options:
+    mode: transit
+
+- platform: google_travel_time
+  name: Work to Home
+  api_key: !secret google_travel_time_api_key
+  destination: !secret google_travel_time_origin
+  origin: !secret google_travel_time_destination
+  options:
+    mode: transit
+
+- platform: google_travel_time
+  name: Home to Next Appt
+  api_key: !secret google_travel_time_api_key
+  origin: !secret google_travel_time_origin
+  destination: sensor.new_nextcal_location
+  options: 
+#    arrival_time: "{{ states('sensor.nextcal_start_time') }}"
+    mode: transit
+
+#Owntracks Location Data
+#- platform: mqtt
+#  name: "Gabe Owntracks"
+#  state_topic: "owntracks/hassio/GabesMatePhone"
+
+- platform: template
+  sensors:
+    battery_gabes_mate:
+      friendly_name: "Battery Status"
+      value_template: '{{ states.device_tracker.gabes_mate.attributes.battery|default(0)|int() }}'
+      entity_id: sensor.battery_gabes_mate
+      unit_of_measurement: "%"
+      icon_template: >
+        {% set battery_level = states.device_tracker.hassio_gabesmatephone.attributes.battery|default(0)|int %}
+        {% set battery_round = (battery_level / 10) |int * 10 %}
+        {% if battery_round >= 100 %}
+          mdi:battery
+        {% elif battery_round > 0 %}
+          mdi:battery-{{ battery_round }}
+        {% else %}
+          mdi:battery-alert
+        {% endif %}
+
+#System Monitor
+- platform: version
+  name: HA Installed Version
+  scan_interval: 86400
+
+- platform: rpi_power
+  name: RPi Power Status
+
+- platform: command_line
+  name: "HA Uptime"
+  command: !secret config_db_uptime_command
+  scan_interval: 720
+  value_template: >-
+    {% set uptime = value | int %}
+    {% set seconds = uptime % 60 %}
+    {% set minutes = ((uptime % 3600) / 60) | int %}
+    {% set hours = ((uptime % 86400) / 3600) | int %}
+    {% set days = (uptime / 86400) | int %}
+    {%- if days > 0 -%}
+      {%- if days == 1 -%}
+        1 day
+      {%- else -%}
+        {{ days }} days
+      {%- endif -%}
+      {{ ', ' }}
+    {%- endif -%}
+    {%- if hours > 0 -%}
+      {%- if hours == 1 -%}
+        1 hour
+      {%- else -%}
+        {{ hours }} hours
+      {%- endif -%}
+      {{ ', ' }}
+    {%- endif -%}
+    {%- if minutes > 0 -%}
+      {%- if minutes == 1 -%}
+        1 minute
+      {%- else -%}
+        {{ minutes }} minutes
+      {%- endif -%}
+    {%- endif -%}
+
+- platform: dnsip
+  name: "IP Address"
+
+- platform: feedparser
+  name: Engineering Feed
+  feed_url: 'https://www.sciencedaily.com/rss/matter_energy/engineering.xml'
+  date_format: '%a, %b %d %I:%M %p'
+  inclusions:
+    - title
+    - link
+    - description
+    - image
+    - pubDate
+  exclusions:
+    - language
+
+- platform: history_stats
+  name: stats_work
+  entity_id: device_tracker.gabes_mate
+  state: 'Work'
+  type: time
+  end: '{{ now() }}'
+  duration:
+    days: 7
+
+- platform: history_stats
+  name: stats_home
+  entity_id: device_tracker.gabes_mate
+  state: 'home'
+  type: time
+  end: '{{ now() }}'
+  duration:
+    days: 7
+
+#OctoPrint 3D Printer
+- platform: octoprint
+  name: OctoPrint
+  monitored_conditions:
+    - Current State
+    - Temperatures
+    - Job Percentage
+    - Time Elapsed
+    - Time Remaining
+
+- platform: template
+  sensors:
+    octoprint_hotend:
+      friendly_name: 'Hotend Actual'
+      value_template: "{{ ((states.sensor.octoprint_actual_tool0_temp.state | float-32) | float*(5/9)) | round(2) }} °C"
+    octoprint_bed:
+      friendly_name: 'Bed Actual'
+      value_template: "{{ ((states.sensor.octoprint_actual_bed_temp.state | float-32) | float*(5/9)) | round(2) }} °C"
+    octoprint_hotend_target:
+      friendly_name: 'Hotend Target'
+      value_template: "{{ ((states.sensor.octoprint_target_tool0_temp.state | float-32) | float*(5/9)) | round(2) }} °C"
+    octoprint_bed_target:
+      friendly_name: 'Bed Target'
+      value_template: "{{ ((states.sensor.octoprint_target_bed_temp.state | float-32) | float*(5/9)) | round(2) }} °C"
+    octoprint_time_elapsed_format:
+      friendly_name: 'Printing Time Elapsed'
+      value_template: >-
+        {% set etime = states.sensor.octoprint_time_elapsed.state | int %}
+        {% set seconds = etime % 60 %}
+        {% set minutes = ((etime % 3600) / 60) | int %}
+        {% set hours = ((etime % 86400) / 3600) | int %}
+        {% set days = (etime / 86400) | int %}
+        {%- if days > 0 -%}
+          {%- if days == 1 -%}
+            1 day
+          {%- else -%}
+            {{ days }} days
+          {%- endif -%}
+          {{ ', ' }}
+        {%- endif -%}
+        {%- if hours > 0 -%}
+          {%- if hours == 1 -%}
+            1 hour
+          {%- else -%}
+            {{ hours }} hours
+          {%- endif -%}
+          {{ ', ' }}
+        {%- endif -%}
+        {%- if minutes > 0 -%}
+          {%- if minutes == 1 -%}
+            1 minute
+          {%- else -%}
+            {{ minutes }} minutes
+          {%- endif -%}
+        {%- endif -%}
+    octoprint_time_remaining_format:
+      friendly_name: 'Printing Time Remaining'
+      value_template: >-
+        {% set rtime = states.sensor.octoprint_time_remaining.state | int %}
+        {% set seconds = rtime % 60 %}
+        {% set minutes = ((rtime % 3600) / 60) | int %}
+        {% set hours = ((rtime % 86400) / 3600) | int %}
+        {% set days = (rtime / 86400) | int %}
+        {%- if days > 0 -%}
+          {%- if days == 1 -%}
+            1 day
+          {%- else -%}
+            {{ days }} days
+          {%- endif -%}
+          {{ ', ' }}
+        {%- endif -%}
+        {%- if hours > 0 -%}
+          {%- if hours == 1 -%}
+            1 hour
+          {%- else -%}
+            {{ hours }} hours
+          {%- endif -%}
+          {{ ', ' }}
+        {%- endif -%}
+        {%- if minutes > 0 -%}
+          {%- if minutes == 1 -%}
+            1 minute
+          {%- else -%}
+            {{ minutes }} minutes
+          {%- endif -%}
+        {%- endif -%}
+
+#ReefControlPi Data
+- platform: rest
+  name: ReefControlPiSysUptime
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  json_attributes:
+    - name
+    - ip
+    - uptime
+    - cpu_temperature
+    - version
+  resource: http://reefcontrolpi.local/api/info
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: template
+  sensors:
+    reefsysinfo_template_name:
+      value_template: '{{ states.sensor.reefcontrolpisysuptime.attributes.name }}'
+      friendly_name: Reef Server Name
+      entity_id: sensor.reefsysinfo_template_name
+    reefsysinfo_template_version:
+      value_template: '{{ states.sensor.reefcontrolpisysuptime.attributes.version }}'
+      friendly_name: Reef Server Version
+      entity_id: sensor.rreefsysinfo_template_version
+    reefsysinfo_template_uptime:
+      value_template: '{{ states.sensor.reefcontrolpisysuptime.attributes.uptime }}'
+      friendly_name: Reef Server Uptime
+      entity_id: sensor.reefsysinfo_template_uptime
+    reefsysinfo_template_ip:
+      value_template: '{{ states.sensor.reefcontrolpisysuptime.attributes.ip }}'
+      friendly_name: Reef Server IP
+      entity_id: sensor.reefsysinfo_template_ip
+    reefsysinfo_template_cpu_temperature:
+      value_template: '{{ states.sensor.reefcontrolpisysuptime.attributes.cpu_temperature }}'
+      friendly_name: Reef Server CPU Temp
+      entity_id: sensor.reefsysinfo_template_cpu_temperature
+
+- platform: rest
+  name: OnlyReefControlPiTemp
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/tcs/1/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.current[-1].temperature | round(2) }}'
+  unit_of_measurement: '°F'
+
+- platform: rest
+  name: OnlyReefControlPiTempTime
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/tcs/1/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.current[-1].time }}'
+
+- platform: rest
+  name: ReefControlPiLightName
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/1
+  json_attributes:
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.name }}'
+
+- platform: rest
+  name: ReefControlPiLightBrightness
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/1
+  json_attributes:
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+#  value_template: '{{ value_json.channels["1"].profile.config.value }}'
+  value_template: >-
+    {% set lightbright_status = value_json.channels["1"].profile.config.value | int %}
+    {% if lightbright_status == 0 %}Off
+    {% elif lightbright_status == 1 %}Off
+    {% elif lightbright_status == 2 %}Off
+    {% elif lightbright_status <= 25 %}Low
+    {% elif lightbright_status <= 50 %}Medium
+    {% elif lightbright_status <= 75 %}High
+    {% elif lightbright_status > 75 %}Full
+    {% else %}n/a
+    {% endif %}
+  icon_color: >
+    if (state >= '10') return 'hs[98,158,81]'; 
+    return 'hs[191,27,0]';
+
+- platform: rest
+  name: ReefControlPiLightColor
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/1
+  json_attributes:
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+#  value_template: '{{ value_json.channels["0"].profile.config.value }}'
+  value_template: >-
+    {% set lightcolor_status = value_json.channels["0"].profile.config.value | int %}
+    {% if lightcolor_status == 0 %}
+    {% elif lightcolor_status == 1 %}
+    {% elif lightcolor_status == 2 %}
+    {% elif lightcolor_status <= 25 %}Blue
+    {% elif lightcolor_status <= 50 %}Lt Blue
+    {% elif lightcolor_status <= 75 %}Bl White
+    {% elif lightcolor_status > 75 %}White
+    {% else %}n/a
+    {% endif %}
+
+- platform: rest
+  name: ReefControlPiPump1Name
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/2
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.name }}'
+
+- platform: rest
+  name: ReefControlPiPump1Status
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/2
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+#  value_template: '{{ value_json.channels["2"].profile.config.value }}'
+  value_template: >-
+    {% set pump_1_status = value_json.channels["2"].profile.config.value | int %}
+    {% if pump_1_status == 99 %}On
+    {% elif pump_1_status == 2 %}Off
+    {% elif pump_1_status == 1 %}Off
+    {% elif pump_1_status == 0 %}Off
+    {% else %}n/a
+    {% endif %}
+  icon_color: >
+    if (state === '99') return 'hs[98,158,81]'; 
+    return 'hs[191,27,0]';
+
+- platform: rest
+  name: ReefControlPiPump1Forward
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/2
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.channels["3"].profile.config.value }}'
+
+- platform: rest
+  name: ReefControlPiPump1StatusReverse
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/2
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.channels["4"].profile.config.value }}'
+
+- platform: rest
+  name: ReefControlPiPump2Name
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/3
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.name }}'
+
+- platform: rest
+  name: ReefControlPiPump2Power
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/lights/3
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+#  value_template: '{{ value_json.channels["7"].profile.config.value }}'
+  value_template: >-
+    {% set pump_2_status = value_json.channels["7"].profile.config.value | int %}
+    {% if pump_2_status == 99 %}On
+    {% elif pump_2_status == 2 %}Off
+    {% elif pump_2_status == 1 %}Off
+    {% elif pump_2_status == 0 %}Off
+    {% else %}n/a
+    {% endif %}
+  icon_color: >
+    if (state === '99') return 'hs[98,158,81]'; 
+    return 'hs[191,27,0]';
+
+- platform: rest
+  name: ReefControlPiFloat
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reefcontrolpi.local/api/equipment/8
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+#  value_template: '{{ value_json.on }}'
+  value_template: >-
+    {% set float_status = value_json.on %}
+    {% if float_status == false %}OK
+    {% elif float_status == False %}OK
+    {% elif float_status == true %}Low
+    {% elif float_status == True %}Low
+    {% else %}n/a
+    {% endif %}
+
+#- platform: rest
+#  name: ReefControlPiPump1
+#  username: !secret reefcontrolpi_username
+#  password: !secret reefcontrolpi_password
+#  authentication: basic
+#  json_attributes:
+#    - on
+#  resource: http://reefcontrolpi.local/api/equipments/1
+#  value_template: '{{ value_json.on }}'
+
+#Misfit tracker through Google Fit
+#- platform: rest
+#  name: Misfit Fitness Tracker
+#  method: POST
+#  resource: https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate
+
+#alarm clock
+- platform: template
+  sensors:
+    alarm_time_off_day:
+      friendly_name: Alarm Time Off Day
+      value_template: '{{ "%0.02d:%0.02d" | format(states("input_number.alarm_hour") | int, states("input_number.alarm_minutes") | int) }}'
+
+- platform: template
+  sensors:
+    alarm_time_work_day:
+      friendly_name: Alarm Time Work Day
+      value_template: '{{ "%0.02d:%0.02d" | format(states("input_number.alarm_hour") | int, states("input_number.alarm_minutes") | int) }}'

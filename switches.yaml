@@ -1,0 +1,347 @@
+#Switch for Motion Detection
+- platform: command_line
+  switches:
+    motion_detect:
+      friendly_name: Motion Detection
+      command_on: 'curl -X POST http://homecam-pi.local:8765/action/1/preset2/?_=1536287565718&_username=admin&_signature=edf9c5c21e1ce51b421a33006c59c8c2c05ad19b'
+      command_off: 'curl -X POST http://homecam-pi.local:8765/action/1/preset1/?_=1536287562202&_username=admin&_signature=c4535475cf3f48a861e998e959e506f764ea7483'
+
+#- platform: command_line
+#  switches:
+#    reef_cooler_pump_switch:
+#      friendly_name: Reef Cooler Pump
+#      command_on: 'curl -X POST http://reefcam.local:8765/action/1/preset2/?_=1535005531202&_username=admin&_signature=944f33c8a3b5f20d3da3aadcd1f49cfbe496f7c0'
+#      command_off: 'curl -X POST http://reefcam.local:8765/action/1/preset3/?_=1535005527187&_username=admin&_signature=6eeae8c59897145b5d8774b0c5d16dd700c0c6df'
+
+- platform: template
+  switches:
+    harmony_fishtank_evening:
+      value_template: "{{ is_state('input_boolean.reeftank_evening_begin_boolean','on') }}"
+      friendly_name: Reef Tank Light On/Off
+      turn_on:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: '1'
+            device: 43857787
+      turn_off:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: '2'
+            device: 43857787
+
+- platform: template
+  switches:
+    reeftank_light_switch:
+      value_template: "{{ is_state('input_boolean.reeftank_morning_begin_boolean','on') }}"
+      friendly_name: Reef Tank Light On/Off
+      turn_on:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: ['PowerToggle','2']
+            device: 43857787
+      turn_off:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: 'Stop'
+            device: 43857787
+
+- platform: template
+  switches:
+    harmony_watch_roku:
+      value_template: "{{ is_state('input_boolean.watch_roku_switch_boolean','on') }}"
+      friendly_name: Watch Roku
+      turn_on:
+        service: remote.turn_on
+        entity_id: remote.gabes_harmony_hub
+        data:
+          activity: '26106880'
+      turn_off:
+        service: remote.turn_off
+        entity_id: remote.gabes_harmony_hub
+
+- platform: template
+  switches:
+    harmony_turn_on_roomba:
+      value_template: "{{ is_state('input_boolean.turn_on_roomba_switch_boolean','on') }}"
+      friendly_name: Turn Roomba On/Off
+      turn_on:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: 'Medium'
+            device: 55925028
+      turn_off:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: 'Pause'
+            device: 55925028
+      entity_picture_template: 'images/roomba.jpg'
+
+- platform: template
+  switches:
+    harmony_fishtank_morning:
+      value_template: "{{ is_state('input_boolean.reeftank_light_switch_boolean','on') }}"
+      friendly_name: Reef Tank Light On/Off
+      turn_on:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: ['PowerToggle','2','FastForward','FastForward','FastForward','FastForward','FastForward','FastForward','FastForward','FastForward']
+            device: 43857787
+      turn_off:
+        - service: remote.send_command
+          entity_id: remote.gabes_harmony_hub
+          data:
+            command: ['1','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Stop']
+            device: 43857787
+
+- platform: rest
+  name: Reef Pump 1
+  resource: http://reefcontrolpi.local/api/lights/2
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":99}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":99}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
+  body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
+  is_on_template: '{{ value_json.channels["3"].profile.config.value == 99 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Reef Pump 1 Reverse
+  resource: http://reefcontrolpi.local/api/lights/2
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":99}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":99}}}},"jack":"2"}'
+  body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
+  is_on_template: '{{ value_json.channels["4"].profile.config.value == 99 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Reef Pump 2
+  resource: http://reefcontrolpi.local/api/lights/3
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"3","name":"Pump 2","channels":{"5":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":5,"color":"","profile":{"type":"fixed","config":{"value":0}}},"6":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":6,"color":"","profile":{"type":"fixed","config":{"value":99}}},"7":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":7,"color":"","profile":{"type":"fixed","config":{"value":99}}}},"jack":"3"}'
+  body_off: '{"id":"3","name":"Pump 2","channels":{"5":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":5,"color":"","profile":{"type":"fixed","config":{"value":0}}},"6":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":6,"color":"","profile":{"type":"fixed","config":{"value":0}}},"7":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":7,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"3"}'
+  is_on_template: '{{ value_json.channels["7"].profile.config.value == 99 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+
+- platform: rest
+  name: Kessil Light Level 1
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":10}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 10 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 2
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":15}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":20}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 20 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 3
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":25}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":30}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 30 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 4
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":35}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":40}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 40 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 5
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":40}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":60}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 60 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 6
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":45}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":70}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 70 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 7
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":60}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":80}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 80 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 8
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":55}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":75}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 75 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 9
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":40}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":65}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 65 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 10
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":35}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":55}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 55 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 11
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":5}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":35}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 35 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Kessil Light Level 12
+  resource: http://reefcontrolpi.local/api/lights/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":25}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 25 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+#- platform: rest
+#  name: Reef Pump 1
+#  resource: http://reefcontrolpi.local/api/equipments/1
+#  username: !secret reefcontrolpi_username
+#  password: !secret reefcontrolpi_password
+#  authentication: basic  
+#  body_on: '{"id":"1","name":"Pump 1","outlet":"1","on":true}'
+#  body_off: '{"id":"1","name":"Pump 1","outlet":"1","on":false}'
+#  is_on_template: '{{ value_json.on }}'
+#  headers:
+#    Content-Type: application/json
+
+#- platform: command_line
+#  switches:
+#    3dprinter_light:
+#      friendly_name: 3D Printer Light
+#      command_on: 'curl -X POST http://octopi.local/plugin/enclosure/setNeopixel?red=255&green=255&blue=255&index_id=1&apikey=D46893BD9B1E40E8B7137F5BDDDD614E'
+#      command_off: 'curl -X POST http://octopi.local/plugin/enclosure/setNeopixel?red=0&green=0&blue=0&index_id=1&apikey=D46893BD9B1E40E8B7137F5BDDDD614E'
+

@@ -1,0 +1,35 @@
+- platform: generic_thermostat
+  name: Reef Tank Therm
+  heater: switch.06200940dc4f22cbb94b_3
+  target_sensor: sensor.onlyreefcontrolpitemp
+  min_temp: 74
+  max_temp: 88
+  ac_mode: False
+  target_temp: 78
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
+  min_cycle_duration:
+    seconds: 60
+  keep_alive:
+    minutes: 3
+  initial_operation_mode: "auto"
+  away_temp: 78
+  step: 0,01
+
+- platform: generic_thermostat
+  name: Octo Tank Therm
+  heater: switch.06200940dc4f22cbb432_2
+  target_sensor: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+  min_temp: 74
+  max_temp: 88
+  ac_mode: False
+  target_temp: 82
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
+  min_cycle_duration:
+    seconds: 60
+  keep_alive:
+    minutes: 3
+  initial_operation_mode: "auto"
+  away_temp: 80
+  step: 0,01

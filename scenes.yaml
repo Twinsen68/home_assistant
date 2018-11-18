@@ -1,0 +1,4 @@
+name: Bedroom wake up
+entities:
+  group.all_lights:
+    state: on

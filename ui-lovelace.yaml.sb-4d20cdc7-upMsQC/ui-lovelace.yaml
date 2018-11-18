@@ -1,0 +1,378 @@
+resources:
+  - url: /local/custom_ui/scripts/dark-sky-weather-card.js?v=4
+    type: js
+  - url: /local/custom_ui/scripts/monster-card.js?v=1
+    type: js
+background: center / cover no-repeat url("/local/images/rollins.jpg") fixed
+name: Apartment 10R
+views:
+- name: Apartment 10R
+  title: Apartment 10R
+  icon: mdi:domain
+  cards:
+  - type: entities
+    title: Hello!
+    entities:
+    - sensor.pretty_date_time
+    - sun.sun
+    - sensor.battery_gabes_mate
+    - sensor.stats_home
+    - sensor.stats_work
+  - type: entities
+    title: People
+    entities:
+    - device_tracker.gabes_mate
+  - type: picture-entity
+    entity: camera.gabeonmaps
+  - type: picture-entity
+    entity: camera.housecam
+  - type: entities
+    title: Lights
+    entities:
+    - light.bedroom
+    - light.bedroom_2
+    - light.custom_group_for_lights
+    - light.kitchen
+    - light.living_room
+    - light.office
+    - light.stairs
+    - light.kitchen_2
+    - light.table_lamp
+    - light.window
+  - type: picture-glance
+    title: Empire State Building
+    camera_image: camera.empirestatelights
+    entities: 
+      - sensor.empirestatelights
+  - type: vertical-stack
+    cards:
+      - type: picture-glance
+        title: Mailroom
+        entities:
+          - sensor.usps_mail
+          - sensor.usps_packages
+        camera_image: camera.usps_mail_pictures
+      - type: glance
+        column_width: 50%
+        entities:
+          - entity: sensor.usps_mail
+            name: Mail
+            icon: mdi:email-check
+          - entity: sensor.usps_packages
+            name: Packages
+            icon: mdi:package-varient
+  - type: entities
+    title: Devices
+    entities:
+    - device_tracker.macbook
+    - device_tracker.phone
+    - switch.motion_detect
+    - script.roomba_turn_on
+  - type: entities
+    title: Summary
+    entities:
+    - sensor.pretty_date
+    - sensor.dark_sky_minutely_summary
+    - sensor.dark_sky_apparent_temperature
+    - sensor.weather_now
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_humidity
+    - sensor.wind
+    - sensor.forecast_today
+    - sensor.forecast_0
+    - sensor.forecast_1
+  - type: history-graph
+    entities: 
+    - history_graph.temperature
+  - type: entities
+    title: Next Birthday
+    entities:
+    - sensor.template_calendar_birthday_date
+    - sensor.template_calendar_birthday
+  - type: entities
+    title: Crypto
+    entities:
+    - sensor.btc_exchange_rate
+    - sensor.coinbase_bch_wallet
+    - sensor.coinbase_eth_wallet
+    - sensor.coinbase_ltc_wallet
+    - sensor.coinbase_my_vault
+    - sensor.coinbase_my_wallet
+    - sensor.coinbase_usd_wallet
+    - sensor.eth_exchange_rate
+    - sensor.ltc_exchange_rate
+  - type: history-graph
+    entities: 
+    - history_graph.bitcoin
+- name: Reef Tank
+  title: Reef Tank
+  icon: mdi:ferry
+  cards:
+  - type: picture-entity
+    entity: camera.reefcam
+  - type: entities
+    title: Reef Weather
+    entities:
+    - sensor.reefweather_condition
+    - sensor.reefweather_current
+    - sensor.reefweather_humidity
+    - sensor.reefweather_pressure
+    - sensor.reefweather_temperature
+    - sensor.reefweather_temperature_max
+    - sensor.reefweather_temperature_min
+    - sensor.reefweather_wind_speed
+  - type: entities
+    title: Reef Server
+    entities:
+    - sensor.reefcam_server_load
+    - sensor.reefcam_speed
+    - sensor.reefcam_temperature
+    - script.reefcam_restart
+  - type: entities
+    title: Reef Temp
+    entities:
+    - sensor.reef_ocean_temp_f
+    - sensor.reef_ocean_temp_c
+    - sensor.reef_water_temperature
+  - type: history-graph
+    entities: 
+    - history_graph.reef_water_temp_sync
+  - type: entities
+    title: Reef Tank
+    entities:
+    - sensor.reef_water_temperature_c
+    - sensor.reefsunrisetides
+    - sensor.reefsunsettides
+    - switch.reeftank_light_switch
+    - switch.fishtank_blacklight_switch
+    - automation.start_fade_down_of_reef_lights_at_sunset
+    - automation.start_fade_up_of_reef_lights_at_sunrise
+    - automation.turn_on_reefcam_at_8am
+    - automation.turn_off_blacklight_at_11pm
+  - type: entities
+    title: Reef Tides
+    entities:
+    - sensor.bali_reef_tides
+  - type: history-graph
+    entities: 
+    - history_graph.reef_tides
+- name: Amazon Tank
+  title: Amazon Tank
+  icon: mdi:fish
+  cards:
+  - type: picture-entity
+    entity: camera.octocam
+  - type: entities
+    title: Amazon Weather
+    entities:
+    - sensor.amazonweather_condition
+    - sensor.amazonweather_current
+    - sensor.amazonweather_humidity
+    - sensor.amazonweather_pressure
+    - sensor.amazonweather_temperature
+    - sensor.amazonweather_temperature_max
+    - sensor.amazonweather_temperature_min
+    - sensor.amazonweather_wind_speed
+  - type: entities
+    title: Amazon Server
+    entities:
+    - sensor.octocam_server_load
+    - sensor.octocam_speed
+    - sensor.octocam_temperature
+    - script.octocam_restart
+  - type: entities
+    title: Amazon Tank
+    entities:
+    - sensor.amazonnexthightide
+    - sensor.amazonnextlowtide
+    - sensor.amazonsunrisetides
+    - sensor.amazonsunsettides
+    - sensor.amazonwatertemptides
+    - script.freshwater_waves_on_script
+    - automation.freshwater_lights_off_at_sunset
+    - automation.freshwater_lights_on_at_sunrise
+    - automation.turn_on_amazon_waves_again_at_low_tide
+    - automation.turn_on_amazon_waves_at_high_tide
+- name: Travel
+  title: Travel
+  icon: mdi:bus-clock
+  cards:
+  - type: entities
+    title: Summary
+    entities:
+    - sensor.pretty_date
+    - sensor.dark_sky_minutely_summary
+    - sensor.dark_sky_apparent_temperature
+    - sensor.weather_now
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_humidity
+    - sensor.wind
+    - sensor.forecast_today
+    - sensor.forecast_0
+    - sensor.forecast_1
+  - type: history-graph
+    entities: 
+    - history_graph.temperature
+  - type: entities
+    title: Bus Times
+    entities:
+    - sensor.m15_local_uptown_allen__grand
+    - sensor.m15sbs_uptown_allen__grand
+    - sensor.m14a_crosstown_at_clinton_street
+  - type: entities
+    title: Subway Times
+    entities:
+    - sensor.northbound_f_delancey_st
+    - sensor.northbound_m_essex_st
+    - sensor.northbound_b_grand_st
+    - sensor.northbound_d_grand_st
+    - sensor.southbound_f_east_broadway
+    - sensor.northbound_j_essex_st
+    - sensor.northbound_z_essex_st
+  - type: entities
+    title: Travel Time
+    entities:
+    - sensor.home_to_work
+    - sensor.work_to_home
+    - sensor.home_to_next_appt
+  - type: entities
+    title: Next Event
+    entities:
+    - sensor.nextcal_message
+    - sensor.new_nextcal_location
+    - sensor.nextcal_start_time
+    - sensor.nextcal_end_time
+    - sensor.home_to_next_appt
+    - sensor.nextcal_calc_leave_time
+  - type: picture-entity
+    entity: camera.next_appointment
+  - type: picture-entity
+    entity: camera.street_view
+- name: Weather
+  title: Weather Card
+  icon: mdi:weather-sunny
+  cards:
+  - type: custom:dark-sky-weather-card
+    entity_sun: sun.sun
+    entity_daily_summary: sensor.dark_sky_daily_summary
+    entity_current_conditions: sensor.dark_sky_icon  
+    entity_humidity: sensor.dark_sky_humidity
+    entity_pressure: sensor.dark_sky_pressure 
+    entity_temperature: sensor.dark_sky_temperature
+    entity_visibility: sensor.dark_sky_visibility
+    entity_wind_bearing: sensor.dark_sky_wind_bearing
+    entity_wind_speed: sensor.dark_sky_wind_speed
+    entity_forecast_high_temp_1: sensor.dark_sky_daytime_high_temperature_1
+    entity_forecast_high_temp_2: sensor.dark_sky_daytime_high_temperature_2
+    entity_forecast_high_temp_3: sensor.dark_sky_daytime_high_temperature_3
+    entity_forecast_high_temp_4: sensor.dark_sky_daytime_high_temperature_4
+    entity_forecast_high_temp_5: sensor.dark_sky_daytime_high_temperature_5
+    entity_forecast_low_temp_1: sensor.dark_sky_overnight_low_temperature
+    entity_forecast_low_temp_2: sensor.dark_sky_overnight_low_temperature_1
+    entity_forecast_low_temp_3: sensor.dark_sky_overnight_low_temperature_2
+    entity_forecast_low_temp_4: sensor.dark_sky_overnight_low_temperature_3
+    entity_forecast_low_temp_5: sensor.dark_sky_overnight_low_temperature_4
+    entity_forecast_icon_1: sensor.dark_sky_icon_1
+    entity_forecast_icon_2: sensor.dark_sky_icon_2
+    entity_forecast_icon_3: sensor.dark_sky_icon_3
+    entity_forecast_icon_4: sensor.dark_sky_icon_4
+    entity_forecast_icon_5: sensor.dark_sky_icon_5
+  - type: entities
+    title: Forecast
+    entities:
+    - sensor.dark_sky_daily_summary
+    - sensor.forecast_today
+    - sensor.forecast_0
+    - sensor.forecast_1
+    - sensor.forecast_2
+    - sensor.forecast_3
+    - sensor.forecast_4
+    - sensor.forecast_5
+    - sensor.forecast_6
+    - sensor.forecast_7
+  - type: entities
+    title: Summary
+    entities:
+    - sensor.pretty_date
+    - sensor.dark_sky_minutely_summary
+    - sensor.dark_sky_apparent_temperature
+    - sensor.weather_now
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_humidity
+    - sensor.wind
+    - sensor.forecast_today
+    - sensor.forecast_0
+    - sensor.forecast_1
+  - type: history-graph
+    entities: 
+    - history_graph.temperature
+  - type: entities
+    title: Precipitation
+    entities:
+    - sensor.dark_sky_daily_max_precip_intensity
+    - sensor.dark_sky_dew_point
+    - sensor.dark_sky_nearest_storm_distance
+    - sensor.dark_sky_precip
+    - sensor.dark_sky_precip_accumulation
+    - sensor.dark_sky_precip_intensity
+    - sensor.dark_sky_precip_probability
+    - sensor.dark_sky_visibility
+    - sensor.dark_sky_wind_bearing
+    - sensor.dark_sky_wind_speed
+  - type: picture-entity
+    entity: camera.weather_radar
+  - type: entities
+    title: More Details
+    entities:
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_daily_high_apparent_temperature
+    - sensor.dark_sky_daily_high_temperature
+    - sensor.dark_sky_daily_low_apparent_temperature
+    - sensor.dark_sky_daily_low_temperature
+    - sensor.dark_sky_humidity
+    - sensor.dark_sky_ozone
+    - sensor.dark_sky_pressure
+    - sensor.dark_sky_uv_index
+  - type: entities
+    title: More Weather Details
+    entities:
+    - sensor.weather_now
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_apparent_temperature
+    - sensor.dark_sky_humidity
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_wind_speed
+    - sensor.wind_bearing
+    - sensor.dark_sky_daily_max_precip_intensity
+- name: System
+  title: System
+  icon: mdi:server-network
+  cards:
+  - type: media-control
+    entity: media_player.roku_2ld558098368
+  - type: entities
+    title: Devices
+    entities:
+    - device_tracker.macbook
+    - device_tracker.phone
+    - switch.motion_detect
+    - script.roomba_turn_on
+  - type: entities
+    title: Speedtest
+    entities:
+    - sensor.speedtest_download
+    - sensor.speedtest_upload
+    - sensor.speedtest_ping
+  - type: history-graph
+    entities: 
+    - history_graph.fios_speed
+  - type: entities
+    title: Server Info
+    entities:
+    - sensor.myipopendnscom
+    - sensor.ha_installed_version
+    - sensor.ha_uptime
+    - sensor.db_file_size
+    - sensor.homecam_temperature
+    - sensor.server_temperature
+    - script.ha_restart

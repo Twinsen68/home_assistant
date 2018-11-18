@@ -1,0 +1,358 @@
+#Manual Backup Button
+backup:
+  alias: Backup HA Configuration Files
+  sequence:
+    - service: shell_command.backup_makewritable
+    - service: shell_command.backup_configuration
+    - service: shell_command.backup_groups
+    - service: shell_command.backup_customize
+    - service: shell_command.backup_scripts
+    - service: shell_command.backup_known_devices
+    - service: shell_command.backup_notification
+    - service: shell_command.backup_device_tracker
+    - service: shell_command.backup_appdaemon
+    - service: shell_command.backup_secrets
+
+#Manual Reefcam Restart Button
+reefcam_restart:
+  alias: Reefcam Restart
+  sequence:
+    - service: shell_command.reefcam_restart
+
+#Manual ReefControlPi Restart Button
+reef_control_restart:
+  alias: Reef Control Pi Restart
+  sequence:
+    - service: shell_command.reefcontrolpi_reboot
+
+#Manual Octocam Restart Button
+#octocam_restart:
+#  alias: Octocam Restart
+#  sequence:
+#    - service: shell_command.octocam_restart
+
+#Manual Home Assistant Restart Button
+ha_restart:
+  alias: Home Assistant Restart
+  sequence:
+    - service: shell_command.ha_reboot
+
+#Reef Tank Kessil Morning and Evening Light Fades
+reeftank_morning_fade_kessil:  
+  alias: "Reef Light Morning Fade Kessil"
+  sequence:
+    - delay:
+        seconds: 7200
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.reef_temp_nightime_state
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.reef_temp_daytime_state
+    - service: automation.trigger
+      entity_id: automation.set_reef_thermostat_max_daytime_selector
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_2
+    - service: automation.trigger
+      entity_id: automation.set_reef_thermostat_max_daytime_selector
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_4
+    - delay:
+        seconds: 480
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_1
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_2
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_3
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['PowerToggle','2']
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_4
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'FastForward'
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_5
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'FastForward'
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_6
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'FastForward'
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_7
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_8
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Rewind'
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_9
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Rewind'
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_10
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Rewind'
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_11
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_12
+
+reeftank_evening_fade_kessil:  
+  alias: "Reef Light Evening Fade Kessil"
+  sequence:
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Stop'
+    - delay:
+        seconds: 3600
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.reef_temp_daytime_state
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.reef_temp_nightime_state
+    - service: automation.trigger
+      entity_id: automation.set_reef_thermostat_max_nighttime_selector
+    - service: homeassistant.turn_off
+      entity_id: switch.kessil_light_level_12
+    - delay:
+        seconds: 480
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_4
+
+octotank_morning_on:
+  alias: "Octo Light Morning On"
+  sequence:
+    - delay:
+        seconds: 3600
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_4
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_3
+    - service: automation.trigger
+      entity_id: automation.set_amazon_thermostat_max_daytime_selector
+
+octotank_evening_off:
+  alias: "Octo Light Evening Off"
+  sequence:
+    - delay:
+        seconds: 3600
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_4
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_3
+    - service: automation.trigger
+      entity_id: automation.set_amazon_thermostat_max_night_selector
+
+#Vacuum Room
+roomba_turn_on:  
+  alias: "Turn On Roomba"
+  sequence:
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 55925028
+        command: 'Medium'
+
+#Freshwater Waves
+freshwater_waves_on_script:  
+  alias: "Turn On Freshwater Waves"
+  sequence:
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_1
+    - delay:
+        seconds: 6300
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_1
+    - delay:
+        seconds: 14400
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_1
+    - delay:
+        seconds: 6300
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_1
+
+#Reef Waves
+reef_waves_lowtide_fade_script:  
+  alias: "Low Tide Reef Waves Fade"
+  sequence:
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 360
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 980
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2100
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2905
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3465
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3885
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 4095
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 4200
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 4095
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3885
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3465
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2905
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2100
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 980
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 360
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 230
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+
+# Lovelace Theme Notification Text Clear
+clear_notification_text:
+  sequence:
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.notification_text
+        value: "No Message"
+
+# Alarm Clock
+alarm_clock_loop:
+  alias: Alarm Clock Loop
+  sequence:
+  - service: homeassistant.turn_on
+    data:
+      entity_id: group.all_lights
+
+#Alarm 2
+bedroom_wake_up:
+  sequence:
+    - service_template: >
+        {% if is_state('sensor.dark_sky_icon' , 'rain') %} script.early_wakeup
+        {% else %} script.on_time_wakeup {% endif %}
+
+early_wakeup:
+  sequence:
+    - service: script.notify
+      data:
+        message: "I am triggering the alarm fifteen minutes early because of bad weather"
+    - service: homeassistant.turn_on
+      entity_id: group.all_lights
+    - service_template: >
+        {% if is_state('input_boolean.bedroom_alarm_clock_repeat' , 'on') %} homeassistant.turn_on
+        {% else %} homeassistant.turn_off {% endif %}
+      entity_id: input_boolean.bedroom_alarm_clock_status
+    - condition: state
+      entity_id: input_boolean.dark
+      state: 'on'
+    - service: homeassistant.turn_on
+      entity_id: scene.bedroom_wake_up
+
+on_time_wakeup:
+  sequence:
+    - delay: 00:15:00
+    - service: homeassistant.turn_on
+      entity_id: group.all_lights
+    - service_template: >
+        {% if is_state('input_boolean.bedroom_alarm_clock_repeat' , 'on') %} homeassistant.turn_on
+        {% else %} homeassistant.turn_off {% endif %}
+      entity_id: input_boolean.bedroom_alarm_clock_status
+    - condition: state
+      entity_id: input_boolean.dark
+      state: 'on'
+    - service: homeassistant.turn_on
+      entity_id: scene.bedroom_wake_up
+
+usps_sms_notification:
+  sequence:
+    - service: ifttt.trigger
+      data_template: {"event":"usps_mail_alert_1", "value1":"{{ sensor.usps_mail }}", "value2":"{{ sensor.usps_packages }}"}
+    - service: ifttt.trigger
+      data_template: {"event":"usps_mail_alert_2", "value1":"{{ sensor.usps_mail }}", "value2":"{{ sensor.usps_packages }}"}
+    - service: automation.turn_off
+      entity_id: automation.usps_mail_alert
+

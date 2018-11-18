@@ -1,0 +1,57 @@
+fishtank_blacklight_switch_boolean:
+  initial: on 
+fishtank_wavemaker_switch_boolean:
+  initial: on  
+fishtank_skimmer_switch_boolean:
+  initial: on  
+fishtank_heater_switch_boolean:
+  initial: on 
+reeftank_morning_begin_boolean:
+  initial: on
+reeftank_evening_begin_boolean:
+  initial: on
+reeftank_light_switch_boolean:
+  initial: on
+watch_roku_switch_boolean:
+  initial: on
+turn_on_roomba_switch_boolean:
+  initial: on 
+  icon: mdi:robot-vacuum
+# Switches for setting day reef night temp
+reef_temp_daytime_state:
+  name: Set Reef State to Daytime
+  initial: off
+  icon: mdi:weather-sunny
+reef_temp_nightime_state:
+  name: Set Reef State to Nightime
+  initial: on
+  icon: mdi:weather-night
+alarm_clock:
+  name: Alarm On/Off
+  icon: mdi:alarm
+alarm_clock_loop:
+  name: Alarm Clock Loop
+  icon: mdi:alarm
+alarm_clock_work_day:
+  name: Work Alarm On/Off
+  icon: mdi:alarm
+alarm_clock_off_day:
+  name: Off Day Alarm On/Off
+  icon: mdi:alarm
+start_alarm_clock_work_day:
+  name: Start Alarm Clock Work Day
+  initial: off
+  icon: mdi:alarm
+start_alarm_clock_off_day:
+  name: Start Alarm Clock Off Day
+  initial: off
+  icon: mdi:alarm
+work_day:
+  name: Work Day
+  icon: mdi:briefcase
+bedroom_alarm_clock_status:
+  name: Activate Alarm
+  icon: mdi:alarm-check
+bedroom_alarm_clock_repeat:
+  name: Repeat?
+  icon: mdi:autorenew

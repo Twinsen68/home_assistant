@@ -1,0 +1,541 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: !secret config_name
+ # auth_providers:
+ #  - type: homeassistant
+   # Uncomment next line if you want to enable legacy API password support
+ #  - type: legacy_api_password
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret config_lat
+  longitude: !secret config_long
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: !secret config_elev
+  # metric for Metric, imperial for Imperial
+  unit_system: imperial
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: !secret config_tz
+  # Customization file
+  customize: !include customize.yaml
+  customize_glob: !include customize_glob.yaml
+
+# Show links to resources in log and frontend
+# introduction:
+
+# Enables the frontend
+frontend: 
+  themes: !include configuration_themes.yaml
+  extra_html_url:
+    - /local/custom_ui/custom-weather-card.html
+    - /local/custom_ui/state-card-floorplan.html
+    - /local/custom_ui/state-card-tiles.html
+    - /local/custom_ui/state-card-text.html
+  extra_html_url_es5:
+    - /local/custom_ui/custom-weather-card.html
+    - /local/custom_ui/state-card-floorplan.html
+    - /local/custom_ui/state-card-tiles_es5.html
+    - /local/custom_ui/state-card-text.html
+
+# Enables configuration UI
+config:
+
+http:
+  # Secrets are defined in the file secrets.yaml
+  api_password: !secret http_password
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  base_url: !secret config_base_url
+  ssl_key: !secret config_ssl_key
+  ssl_certificate: !secret config_ssl_cert
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+# updater:
+
+custom_updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+#InfluxDB
+influxdb:
+  host: !secret config_influxdb_host
+  port: !secret config_influxdb_port
+#  username: !secret influxdb_username
+#  password: !secret influxdb_password
+  database: home_assistant
+  max_retries: 10
+  include:
+    domains:
+      - switch
+      - automation
+      - script
+      - device_tracker
+      - light
+      - persistent_notification
+    entities:
+      - binary_sensor.octoprint_status_printing
+      - binary_sensor.octoprint_status_printing_error
+      - sensor.octoprint_current_state 
+      - sensor.octoprint_hotend
+      - sensor.octoprint_hotend_target
+      - sensor.octoprint_bed
+      - sensor.octoprint_bed_target
+      - sensor.usps_mail
+      - sensor.usps_packages
+      - sensor.nextcal_message
+      - sensor.new_nextcal_location
+      - sensor.nextcal_start_time
+      - sensor.nextcal_end_time
+      - sensor.speedtest_download
+      - sensor.speedtest_upload
+      - sensor.speedtest_ping 
+      - sensor.myipopendnscom
+      - sensor.ha_installed_version
+      - sensor.ha_uptime
+      - sensor.db_file_system_size
+      - sensor.mariadb_database_size
+      - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+      - sensor.mqtt_topic_home_sysinfo_template_serverload
+      - sensor.mqtt_topic_home_sysinfo_template_serverspeed
+      - sensor.mqtt_topic_home_sysinfo_template_servertemp
+#1162      - sensor.server_temperature
+      - sensor.battery_gabes_mate
+      - sensor.ambient_temp_graph
+      - sensor.dark_sky_minutely_summary
+      - sensor.btc_exchange_rate
+      - sensor.coinbase_bch_wallet
+      - sensor.coinbase_eth_wallet
+      - sensor.coinbase_ltc_wallet
+      - sensor.coinbase_my_vault
+      - sensor.coinbase_my_wallet
+      - sensor.coinbase_usd_wallet
+      - sensor.eth_exchange_rate
+      - sensor.ltc_exchange_rate
+      - sensor.template_calendar_birthday_date
+      - sensor.template_calendar_birthday 
+      - sensor.empirestatelights 
+      - sensor.mqtt_topic_octo_water_level_template_level
+      - sensor.mqtt_topic_octo_sysinfo_template_serverload
+      - sensor.mqtt_topic_octo_sysinfo_template_serverspeed
+      - sensor.mqtt_topic_octo_sysinfo_template_servertemp
+      - sensor.amazonnexthightide
+      - sensor.amazonnextlowtide
+      - sensor.amazonsunrisetides
+      - sensor.amazonsunsettides
+      - sensor.mqtt_topic_octo_sysinfo_template_watertemp
+      - sensor.monthly_amazon_temp
+      - sensor.monthly_amazon_ph
+      - sensor.reefsysinfo_template_name
+      - sensor.reefsysinfo_template_ip
+      - sensor.reefsysinfo_template_version
+      - sensor.reefsysinfo_template_uptime
+#1497      - sensor.reefsysinfo_template_cpu_temperature
+#1088      - sensor.onlyreefcontrolcpuload
+      - sensor.onlyreefcontrolcpumemory
+      - sensor.onlyreefcontrolpitemp
+      - sensor.mqtt_topic_reef_water_level_template_level
+      - sensor.reefsunrisetides
+      - sensor.reefsunsettides
+      - sensor.reefcontrolpilightbrightness
+      - sensor.reefcontrolpilightcolor
+      - sensor.reefcontrolpipump1status
+      - sensor.reefcontrolpipump1statusreverse
+      - sensor.reefcontrolpipump2power
+      - sensor.noaa_daily_max_reef_temp
+      - sensor.reef_high_avg_daily_temp
+      - sensor.reef_avg_daily_temp
+      - sensor.reef_low_avg_daily_temp
+      - sensor.noaa_daily_min_reef_temp
+      - input_boolean.reef_temp_daytime_state
+      - input_boolean.reef_temp_nightime_state
+      - sensor.bali_reef_tides
+      - sensor.dark_sky_daily_high_temperature
+      - sensor.dark_sky_daily_low_temperature
+      - sensor.dark_sky_temperature
+
+panel_iframe:
+  influxdb:
+    title: InfluxDB
+    icon: mdi:chart-areaspline
+    url: !secret panel_iframe_url
+
+  octoprint:
+    title: 3D Printer
+    icon: mdi:printer-3d
+    url: https://octopi.local
+
+mqtt:
+  broker: localhost
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+
+#jsonrest:
+
+# Discover some devices automatically
+#discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# What to put in error logs - comment this out for debugging
+logger:
+  default: error
+  logs:
+    homeassistant.components: info
+    homeassistant.components.sensor.rest: warning
+    homeassistant.components.camera.generic: critical
+    homeassistant.helpers.template: critical
+    homeassistant.core: error
+
+# View all events in a logbook
+logbook:
+  include:
+    domains:
+      - switch
+      - automation
+      - script
+      - device_tracker
+      - light
+      - persistent_notification
+    entities:
+      - binary_sensor.octoprint_status_printing
+      - binary_sensor.octoprint_status_printing_error
+      - sensor.octoprint_current_state 
+      - sensor.octoprint_hotend
+      - sensor.octoprint_hotend_target
+      - sensor.octoprint_bed
+      - sensor.octoprint_bed_target
+      - sensor.usps_mail
+      - sensor.usps_packages
+      - sensor.nextcal_message
+      - sensor.new_nextcal_location
+      - sensor.nextcal_start_time
+      - sensor.nextcal_end_time
+      - sensor.speedtest_download
+      - sensor.speedtest_upload
+      - sensor.speedtest_ping 
+      - sensor.myipopendnscom
+      - sensor.ha_installed_version
+      - sensor.ha_uptime
+      - sensor.db_file_system_size
+      - sensor.mariadb_database_size
+      - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+      - sensor.mqtt_topic_home_sysinfo_template_serverload
+      - sensor.mqtt_topic_home_sysinfo_template_serverspeed
+      - sensor.mqtt_topic_home_sysinfo_template_servertemp
+#1162      - sensor.server_temperature
+      - sensor.battery_gabes_mate
+      - sensor.ambient_temp_graph
+      - sensor.dark_sky_minutely_summary
+      - sensor.btc_exchange_rate
+      - sensor.coinbase_bch_wallet
+      - sensor.coinbase_eth_wallet
+      - sensor.coinbase_ltc_wallet
+      - sensor.coinbase_my_vault
+      - sensor.coinbase_my_wallet
+      - sensor.coinbase_usd_wallet
+      - sensor.eth_exchange_rate
+      - sensor.ltc_exchange_rate
+      - sensor.template_calendar_birthday_date
+      - sensor.template_calendar_birthday 
+      - sensor.empirestatelights 
+      - sensor.mqtt_topic_octo_sysinfo_template_serverload
+      - sensor.mqtt_topic_octo_sysinfo_template_serverspeed
+      - sensor.mqtt_topic_octo_sysinfo_template_servertemp
+      - sensor.mqtt_topic_octo_water_level_template_level
+      - sensor.amazonnexthightide
+      - sensor.amazonnextlowtide
+      - sensor.amazonsunrisetides
+      - sensor.amazonsunsettides
+      - sensor.mqtt_topic_octo_sysinfo_template_watertemp
+      - sensor.monthly_amazon_temp
+      - sensor.monthly_amazon_ph
+      - sensor.reefsysinfo_template_name
+      - sensor.reefsysinfo_template_ip
+      - sensor.reefsysinfo_template_version
+      - sensor.reefsysinfo_template_uptime
+#1497      - sensor.reefsysinfo_template_cpu_temperature
+#1088      - sensor.onlyreefcontrolcpuload
+      - sensor.onlyreefcontrolcpumemory
+      - sensor.onlyreefcontrolpitemp
+      - sensor.mqtt_topic_reef_water_level_template_level
+      - sensor.reefsunrisetides
+      - sensor.reefsunsettides
+      - sensor.reefcontrolpilightbrightness
+      - sensor.reefcontrolpilightcolor
+      - sensor.reefcontrolpipump1status
+      - sensor.reefcontrolpipump1statusreverse
+      - sensor.reefcontrolpipump2power
+      - sensor.noaa_daily_max_reef_temp
+      - sensor.reef_high_avg_daily_temp
+      - sensor.reef_avg_daily_temp
+      - sensor.reef_low_avg_daily_temp
+      - sensor.noaa_daily_min_reef_temp
+      - input_boolean.reef_temp_daytime_state
+      - input_boolean.reef_temp_nightime_state
+      - sensor.bali_reef_tides 
+      - sensor.dark_sky_daily_high_temperature
+      - sensor.dark_sky_daily_low_temperature
+      - sensor.dark_sky_temperature
+
+recorder:
+  purge_keep_days: 3
+  db_url: !secret config_recorder_url
+  include:
+    domains:
+      - switch
+      - automation
+      - script
+      - device_tracker
+      - light
+      - persistent_notification
+    entities:
+      - binary_sensor.octoprint_status_printing
+      - binary_sensor.octoprint_status_printing_error
+      - sensor.octoprint_current_state 
+      - sensor.octoprint_hotend
+      - sensor.octoprint_hotend_target
+      - sensor.octoprint_bed
+      - sensor.octoprint_bed_target
+      - sensor.usps_mail
+      - sensor.usps_packages
+      - sensor.nextcal_message
+      - sensor.new_nextcal_location
+      - sensor.nextcal_start_time
+      - sensor.nextcal_end_time
+      - sensor.speedtest_download
+      - sensor.speedtest_upload
+      - sensor.speedtest_ping 
+      - sensor.myipopendnscom
+      - sensor.ha_installed_version
+      - sensor.ha_uptime
+      - sensor.db_file_system_size
+      - sensor.mariadb_database_size
+      - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+      - sensor.mqtt_topic_home_sysinfo_template_serverload
+      - sensor.mqtt_topic_home_sysinfo_template_serverspeed
+      - sensor.mqtt_topic_home_sysinfo_template_servertemp
+#1162      - sensor.server_temperature
+      - sensor.battery_gabes_mate
+      - sensor.ambient_temp_graph
+      - sensor.dark_sky_minutely_summary
+      - sensor.btc_exchange_rate
+      - sensor.coinbase_bch_wallet
+      - sensor.coinbase_eth_wallet
+      - sensor.coinbase_ltc_wallet
+      - sensor.coinbase_my_vault
+      - sensor.coinbase_my_wallet
+      - sensor.coinbase_usd_wallet
+      - sensor.eth_exchange_rate
+      - sensor.ltc_exchange_rate
+      - sensor.template_calendar_birthday_date
+      - sensor.template_calendar_birthday 
+      - sensor.empirestatelights 
+      - sensor.mqtt_topic_octo_sysinfo_template_serverload
+      - sensor.mqtt_topic_octo_sysinfo_template_serverspeed
+      - sensor.mqtt_topic_octo_sysinfo_template_servertemp
+      - sensor.mqtt_topic_octo_water_level_template_level
+      - sensor.amazonnexthightide
+      - sensor.amazonnextlowtide
+      - sensor.amazonsunrisetides
+      - sensor.amazonsunsettides
+      - sensor.mqtt_topic_octo_sysinfo_template_watertemp
+      - sensor.monthly_amazon_temp
+      - sensor.monthly_amazon_ph
+      - sensor.reefsysinfo_template_name
+      - sensor.reefsysinfo_template_ip
+      - sensor.reefsysinfo_template_version
+      - sensor.reefsysinfo_template_uptime
+#1497      - sensor.reefsysinfo_template_cpu_temperature
+#1088      - sensor.onlyreefcontrolcpuload
+      - sensor.onlyreefcontrolcpumemory
+      - sensor.onlyreefcontrolpitemp
+      - sensor.mqtt_topic_reef_water_level_template_level
+      - sensor.reefsunrisetides
+      - sensor.reefsunsettides
+      - sensor.reefcontrolpilightbrightness
+      - sensor.reefcontrolpilightcolor
+      - sensor.reefcontrolpipump1status
+      - sensor.reefcontrolpipump1statusreverse
+      - sensor.reefcontrolpipump2power
+      - sensor.noaa_daily_max_reef_temp
+      - sensor.reef_high_avg_daily_temp
+      - sensor.reef_avg_daily_temp
+      - sensor.reef_low_avg_daily_temp
+      - sensor.noaa_daily_min_reef_temp
+      - input_boolean.reef_temp_daytime_state
+      - input_boolean.reef_temp_nightime_state
+      - sensor.bali_reef_tides
+      - sensor.dark_sky_daily_high_temperature
+      - sensor.dark_sky_daily_low_temperature
+      - sensor.dark_sky_temperature
+
+#Dummy sensors for state cards
+binary_sensor:
+#  - platform: mqtt
+#    state_topic: dummy/floorplan/sensor
+#    name: Floorplan
+
+  - platform: octoprint
+    name: OctoPrint Status
+    monitored_conditions:
+      - Printing
+      - Printing Error
+
+#Panels
+panel_custom:
+  - name: floorplan
+    sidebar_title: Floorplan
+    sidebar_icon: mdi:home
+    url_path: floorplan
+    config: !include floorplan.yaml
+
+weather: 
+  - platform: darksky
+    api_key: !secret darksky_api_key
+
+# Media Player through BT Speaker
+media_player:
+  - platform: floorplan_speaker
+    name: my_lovelace_player
+#  - platform: tts_bluetooth_speaker
+#    address: FC:65:DE:0F:A2:EE  # Required - for example, 00:2F:AD:12:0D:42
+#    volume: 0.35                   # Optional - default is 0.5
+#    pre_silence_duration: 1       # Optional - No. of seconds silence before the TTS (default is 0)
+#    post_silence_duration: 0.5    # Optional - No. of seconds silence after the TTS (default is 0)
+#    cache_dir: /tmp/tts           # Optional - make sure it matches the same setting in TTS config
+
+# Pandora through Pianobar
+media_player 2:
+  - platform: pandora
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+# Text to speech
+tts:
+  - platform: google
+
+# Cloud
+cloud:
+
+#Alexa
+alexa:
+
+#IFTTT
+ifttt:
+  key: !secret ifttt_key
+
+#USPS
+#usps:
+#  username: !secret usps_username
+#  password: !secret usps_password
+#  driver: phantomjs 
+
+#Tuya Smart Switches
+tuya:
+  username: !secret tuya_username
+  password: !secret tuya_password
+  country_code: 1
+
+#OctoPrint 3D Printer
+octoprint:
+  host: octopi.local
+  api_key: !secret octoprint_apikey
+  bed: true
+  number_of_tools: 2
+
+# Google Calendar
+google:
+  client_id: !secret google_client_id
+  client_secret: !secret google_client_secret
+
+#Foursquare
+foursquare:
+  access_token: !secret foursquare_access_token
+  push_secret: !secret foursquare_pushsecret
+
+coinbase:
+  api_key: !secret coinbase_api_key
+  api_secret: !secret coinbase_api_secret
+  exchange_rate_currencies:
+    - BTC
+    - ETH
+    - LTC
+
+cloud 2:
+  alexa:
+    filter:
+      include_entities:
+        - light.kitchen
+        - light.bedroom
+        - light.living_room
+        - group.all_lights
+      include_domains:
+        - switch
+      #exclude_entities:
+      #  - switch.outside
+    entity_config:
+      light.kitchen:
+        name: Kitchen Light
+        description: The light in the kitchen
+      light.bedroom:
+        name: Bedroom Light
+        description: The light in the bedroom
+      light.living_room:
+        name: Table Light
+        description: The light over the table
+      group.all_lights:
+        name: All the Lights
+        description: All the lights
+
+#notify:
+#  - name: octo_cam_bot_notifier
+#    platform: twitter
+#    consumer_key: !secret twitter_consumer_key
+#    consumer_secret: !secret twitter_consumer_secret
+#    access_token: !secret twitter_access_token
+#    access_token_secret: !secret twitter_access_token_secret
+
+# lovelace theme notification
+input_text:
+  notification_text:
+    name: Notification Text
+    pattern: '[a-fA-F0-9]*'
+    initial: No Message
+
+#feedreader:
+#  urls:
+#    - https://twitrss.me/twitter_user_to_rss/?user=octo_cam_bot
+#    - https://twitrss.me/twitter_user_to_rss/?user=sfgabe
+#  scan_interval:
+#    minutes: 20
+#  max_entries: 1
+
+input_select: !include input_select.yaml
+scene: !include scenes.yaml
+zone: !include zone.yaml
+input_datetime: !include input_datetime.yaml
+input_boolean: !include input_boolean.yaml
+input_number: !include input_number.yaml
+#input_select: !include input_select.yaml
+history_graph: !include history_graph.yaml
+climate: !include climate.yaml
+rest_command: !include rest_command.yaml
+device_tracker: !include device_tracker.yaml
+switch: !include switches.yaml
+camera: !include cameras.yaml
+sensor: !include sensors.yaml
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+shell_command: !include shell_commands.yaml
+intent_script: !include intent_script.yaml

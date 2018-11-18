@@ -1,0 +1,2390 @@
+resources:
+  - url: /local/custom_ui/dark-sky-weather-card.js?v=4
+    type: module
+  - url: /local/custom_ui/monster-card.js?v=1
+    type: module
+  - url: /local/custom_ui/card-modder.js?v=1
+    type: module
+  - url: /local/custom_ui/color-glance-card.js?v=1
+    type: module
+  - url: /local/custom_ui/column-card.js?v=1
+    type: module
+  - url: /local/custom_ui/fold-entity-row.js?v=2.5
+    type: module
+  - url: /local/custom_ui/useful-markdown-card.js?v=1
+    type: module
+  - url: /local/custom_ui/button-card.js?v=1
+    type: module
+  - url: /local/custom_ui/light-card.js?v=1
+    type: module
+  - url: /local/custom_ui/dual-gauge-card.js?v=1
+    type: module
+  - url: /local/custom_ui/slider-entity-row.js?v=1
+    type: module
+  - url: /local/custom_ui/graph-card.js?v=0.1
+    type: module
+  - url: https://unpkg.com/moment@2.22.2/moment.js
+    type: js
+  - url: /local/custom_ui/calendar-card.js?v=1.0.1
+    type: module
+  - url: /local/custom_ui/state-element.js?v=0.1
+    type: module
+  - url: /local/custom_ui/text-element.js?v=0.1
+    type: module
+  - url: /local/custom_ui/tracker-card.js?v=0.1
+    type: module
+  - url: /local/custom_ui/state-attribute-element.js?v=0.1
+    type: module
+  - url: /local/custom_ui/canvas-gauge-card.js?v=0.1
+    type: module
+#  - url: /local/custom_ui/lovelace-player.js?v=0.1
+#    type: js
+#  - url: /local/custom_ui/lovelace-player-config.js?v=0.2
+#    type: js
+  - url: /local/custom_ui/list-card.js?v=0.2
+    type: module
+#  - url: /local/custom_ui/entity-markdown.js?v=2
+#    type: module
+
+background: center / cover no-repeat url("/local/images/rollins.jpg") fixed
+name: Apartment 10R
+views:
+- name: People
+  title: People
+  icon: mdi:account-box
+  cards:
+  - type: custom:card-modder
+    card:
+      type: custom:useful-markdown-card
+      content: >
+          # Hello!
+
+          It is now [[ sensor.date.state ]] at [[ sensor.time.state ]].
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+  - type: custom:card-modder
+    card:
+      type: glance
+#      title: Past 7 Days
+#      column_width: 50%
+      entities:
+        - entity: sensor.stats_home
+          name: Home
+        - entity: sensor.stats_work
+          name: Work
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+  - type: gauge
+    entity: sensor.battery_gabes_mate
+    max: 100
+    title: Phone Battery
+    unit: "%"
+
+  - type: custom:card-modder
+    card:
+      type: map
+      aspect_ratio: 100%
+      default_zoom: 15
+      entities:
+        - device_tracker.gabes_mate
+#      - zone.home
+#      - zone.work
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+  - type: picture-elements
+    image: /local/images/sunrise_les.jpg
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+    elements:
+      - type: icon
+        entity: input_datetime.bedroom_alarm_clock_time
+        title: Alarm
+        icon: mdi:alarm
+        style:
+          top: 20%
+          left: 14%
+          color: rgba(255, 255, 255, 1)
+      - type: state-label
+        entity: input_datetime.bedroom_alarm_clock_time
+        style:
+          top: 20%
+          left: 40%
+          font-size: 34px
+          font-weight: bold
+          color: rgba(255, 255, 255, 1)
+      - type: state-icon
+        tap_action: toggle
+        hold_action: more-info
+        entity: input_boolean.bedroom_alarm_clock_status
+        style:
+          top: 34%
+          left: 14%
+      - type: state-icon
+        tap_action: toggle
+        hold_action: more-info
+        entity: input_boolean.bedroom_alarm_clock_repeat
+        style:
+          top: 34%
+          left: 24%
+
+  - type: custom:card-modder
+    card:
+      type: weather-forecast
+      entity: weather.dark_sky
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+  - type: custom:card-modder
+    card:
+      type: "custom:calendar-card"
+      entities:
+        - calendar.gabethisisgabescom
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+  - type: custom:card-modder
+    card:
+      type: "custom:calendar-card"
+      name: "Birthdays"
+      showProgressBar: false
+      numberOfDays: 10
+      entities:
+        - calendar.contacts
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+- name: Apartment 10R
+  title: Apartment 10R
+  icon: mdi:domain
+  cards:
+  - type: vertical-stack            
+    cards:
+      - type: custom:card-modder
+        card:
+          type: custom:useful-markdown-card
+          content: >
+              # Hello!
+
+              It is now [[ sensor.date.state ]] at [[ sensor.time.state ]].
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)
+      - type: custom:card-modder
+        card:
+          type: picture-glance
+          title: Home Cam
+          camera_image: camera.housecam
+          entities: 
+            - switch.motion_detect
+            - light.living_room
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)
+      - type: conditional
+        conditions:
+          - entity: sensor.usps_mail
+            state_not: "0"
+        card:
+            type: picture-elements
+            image: /local/mail_images/todays_mails.gif
+            elements:
+              - type: icon
+                entity: sensor.usps_mail
+                title: Mail
+                icon: mdi:email-check
+                style:
+                  top: 50%
+                  left: 84%
+                  color: rgba(31, 152, 6, 1)
+              - type: state-label
+                entity: sensor.usps_mail
+                style:
+                  top: 50%
+                  left: 92%
+                  font-size: 24px
+                  font-weight: bold
+                  color: rgba(31, 152, 6, 1)
+              - type: icon
+                entity: sensor.usps_packages
+                title: Package
+                icon: mdi:package
+                style:
+                  top: 69%
+                  left: 84%
+                  color: rgba(31, 152, 6, 1)
+              - type: state-label
+                entity: sensor.usps_packages
+                style:
+                  top: 69%
+                  left: 92%
+                  font-size: 24px
+                  font-weight: bold
+                  color: rgba(31, 152, 6, 1)
+
+  - type: vertical-stack            
+    cards:
+      - type: entities
+        entities:
+          - entity: group.all_lights
+            name: All Lights
+            type: custom:slider-entity-row
+            show_value: true
+
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: light.kitchen
+            size: 33%
+            icon: mdi:lightbulb-on
+            color: auto
+            name: Kitchen
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: light.living_room
+            size: 33%
+            icon: mdi:ceiling-light
+            color: auto
+            name: Living room
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: light.office
+            size: 33%
+            icon: mdi:desk-lamp
+            color: auto
+            name: Office
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: light.kitchen
+            size: 30%
+            icon: mdi:toggle-switch
+            color: auto
+          - type: "custom:button-card"
+            entity: light.living_room
+            size: 30%
+            icon: mdi:toggle-switch
+            color: auto
+          - type: "custom:button-card"
+            entity: light.office
+            size: 30%
+            icon: mdi:toggle-switch
+            color: auto
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: light.bedroom_2
+            size: 30%
+            icon: mdi:bed-empty
+            color: auto
+            name: Bed 
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: light.window
+            size: 30%
+            icon: mdi:desk-lamp
+            color: auto
+            name: Bedroom 
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: light.stairs
+            icon: mdi:desk-lamp
+            size: 30%
+            color: auto
+            name: Desk
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+#          - type: "custom:button-card"
+#            entity: light.kitchen_2
+#            size: 30%
+#            icon: mdi:sofa
+#            color: auto
+#            name: Living room
+          - type: "custom:button-card"
+            entity: light.table_lamp
+            size: 30%
+            icon: mdi:ceiling-light
+            color: auto
+            name: Table
+            action: more_info
+            style:
+              - font-size: 12px
+              - font-weight: bold
+#          - type: "custom:button-card"
+#            entity: light.bedroom
+#            size: 30%
+#            icon: mdi:sofa
+#            color: auto
+#            name: Living room
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: light.bedroom_2
+            size: 30%
+            icon: mdi:toggle-switch
+            color: auto
+          - type: "custom:button-card"
+            entity: light.window
+            size: 30%
+            icon: mdi:toggle-switch
+            color: auto
+          - type: "custom:button-card"
+            entity: light.stairs
+            icon: mdi:toggle-switch
+            size: 30%
+            color: auto
+#          - type: "custom:button-card"
+#            entity: light.kitchen_2
+#            size: 30%
+#            icon: mdi:toggle-switch
+#            color: auto
+          - type: "custom:button-card"
+            entity: light.table_lamp
+            size: 30%
+            icon: mdi:toggle-switch
+            color: auto
+#          - type: "custom:button-card"
+#            entity: light.bedroom
+#            size: 30%
+#            icon: mdi:toggle-switch
+#            color: auto
+      - type: glance
+        column_width: 33%
+        show_name: false
+        entities:
+          - entity: device_tracker.macbook
+          - entity: device_tracker.phone
+          - entity: script.roomba_turn_on
+            icon: mdi:robot-vacuum
+#  - type: custom:card-modder
+#    card:
+#      type: entities
+#      entities:
+#        - sensor.empirestatelights
+#    style:
+#      "background": "[[ sensor.empire_state_lights_pic_url.state ]]"
+  - type: vertical-stack            
+    cards:
+      - type: custom:card-modder
+        card:
+          type: picture-glance
+          camera_image: camera.empirestatelights
+          entities: 
+            - sensor.empirestatelights
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)
+      - type: custom:card-modder
+        card:
+          type: custom:useful-markdown-card
+          content: >
+            [[ sensor.empirestatelights.state ]]
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+#  - type: custom:entity-markdown
+#    entity: sensor.empire_state_lights_pic_url
+#    card:
+#      type: picture-elements
+#      image: [[ sensor.empire_state_lights_pic_url ]]
+#      title: Empire State Building
+#      elements:
+#        - type: state-icon
+#          entity: sensor.empirestatelights
+#          style:
+#            top: 40%
+#            left: 10%
+      - type: conditional
+        conditions:
+          - entity: light.kitchen
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/kitchen_on.jpg
+          elements:
+            - type: icon
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              title: Ambient Temperature
+              icon: mdi:thermometer
+              style:
+                top: 33%
+                left: 12%
+                size: 50%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              icon: mdi:thermometer
+              style:
+                top: 33%
+                left: 36%
+                font-size: 35px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: light.kitchen
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 90%
+                left: 12%
+      - type: conditional
+        conditions:
+          - entity: light.kitchen
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/images/kitchen_off.jpg
+          elements:
+            - type: icon
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              title: Ambient Temperature
+              icon: mdi:thermometer
+              style:
+                top: 33%
+                left: 12%
+                size: 50%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              icon: mdi:thermometer
+              style:
+                top: 33%
+                left: 36%
+                font-size: 35px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: light.kitchen
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 90%
+                left: 12%
+
+## 3D PRINTER
+- name: 3D Printer
+  title: 3D Printer
+  icon: mdi:printer-3d
+  cards:
+  - type: vertical-stack
+    cards:
+      - type: picture-glance
+        title: Monoprice Mini Select Printer
+        camera_image: camera.octopi3dprinter
+        entities: 
+          - entity: switch.2437254184f3eb695327
+            icon: mdi:power
+          - entity: automation.turn_off_3d_printer_on_idle
+            icon: mdi:timer-sand
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: switch.2437254184f3eb695327
+            state: "on"
+        card:
+          type: gauge
+          entity: sensor.octoprint_job_percentage
+          max: 100
+          title: Percent Done
+          unit: "%"
+          severity:
+              red: 0
+              green: 66
+              amber: 33
+      - type: picture-elements
+        image: /local/images/mpms_printer.jpg
+        elements:
+          - type: icon
+            entity: sensor.octoprint_time_elapsed_format
+            title: Elapsed
+            icon: mdi:history
+            style:
+              top: 17%
+              left: 83%
+              color: rgba(184, 206, 85, 0.85)
+          - type: icon
+            entity: sensor.octoprint_time_remaining_format
+            title: Remaining
+            icon: mdi:update
+            style:
+              top: 17%
+              left: 17%
+              color: rgba(184, 206, 85, 0.85)
+          - type: state-label
+            entity: sensor.octoprint_time_elapsed_format
+            title: Elapsed
+            icon: mdi:history
+            default_color: rgba(184, 206, 85, 0.85)
+            color-off: rgba(184, 206, 85, 0.85)
+            style:
+              top: 27%
+              left: 83%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(184, 206, 85, 0.85)
+          - type: state-label
+            entity: sensor.octoprint_time_remaining_format
+            title: Remaining
+            icon: mdi:update
+            default_color: rgba(184, 206, 85, 0.85)
+            color-off: rgba(184, 206, 85, 0.85)
+            style:
+              top: 27%
+              left: 17%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(184, 206, 85, 0.85)
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: switch.2437254184f3eb695327
+            state: "on"
+        card:
+          type: custom:dual-gauge-card
+          title: Extruder
+          min: 0
+          max: 500
+          outer:
+            entity: sensor.octoprint_actual_tool0_temp
+            label: "Actual"
+            unit_of_measurement: "°F"
+          inner:
+            entity: sensor.octoprint_target_tool0_temp
+            label: "Target"
+            unit_of_measurement: "°F"
+          colors:
+            - color: "var(--label-badge-red)"
+              value: 500
+            - color: "var(--label-badge-red)"
+              value: 400
+            - color: "var(--label-badge-orange)"
+              value: 300
+            - color: "var(--label-badge-yellow)"
+              value: 200
+            - color: "var(--label-badge-blue)"
+              value: 100
+            - color: "var(--paper-blue-400)"
+              value: 0
+      - type: conditional
+        conditions:
+          - entity: switch.2437254184f3eb695327
+            state: "on"
+        card:
+          type: custom:dual-gauge-card
+          title: Bed
+          min: 0
+          max: 200
+          outer:
+            entity: sensor.octoprint_actual_bed_temp
+            label: "Actual"
+            unit_of_measurement: "°F"
+          inner:
+            entity: sensor.octoprint_target_bed_temp
+            label: "Target"
+            unit_of_measurement: "°F"
+          colors:
+            - color: "var(--label-badge-red)"
+              value: 200
+            - color: "var(--label-badge-orange)"
+              value: 150
+            - color: "var(--label-badge-yellow)"
+              value: 100
+            - color: "var(--label-badge-blue)"
+              value: 50
+            - color: "var(--paper-blue-400)"
+              value: 0
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: light.office
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/images/desk_off.jpg
+          elements:
+            - type: icon
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              title: Ambient Temperature
+              icon: mdi:thermometer
+              style:
+                top: 13%
+                left: 67%
+                size: 40%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              icon: mdi:thermometer
+              style:
+                top: 13%
+                left: 81%
+                font-size: 30px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: light.office
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 13%
+                left: 12%
+      - type: conditional
+        conditions:
+          - entity: light.office
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/desk_on.jpg
+          elements:
+            - type: icon
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              title: Ambient Temperature
+              icon: mdi:thermometer
+              style:
+                top: 13%
+                left: 67%
+                size: 40%
+                color: rgba(1, 1, 1, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+              icon: mdi:thermometer
+              style:
+                top: 13%
+                left: 81%
+                font-size: 30px
+                font-weight: bold
+                color: rgba(1, 1, 1, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: light.office
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 13%
+                left: 12%
+## REEF TANK 
+- name: Reef Tank
+  title: Reef Tank
+  icon: mdi:ferry
+  cards:
+  - type: vertical-stack
+    cards:
+      - type: picture-entity
+        entity: camera.reefcam
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb94b_1
+            size: 25%
+            icon: mdi:chart-bubble
+            color: rgba(61, 171, 255, 0.85)
+            name: Skimmer
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb94b_2
+            size: 25%
+            icon: mdi:waves
+            color: rgba(61, 171, 255, 0.85)
+            name: Waves
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb94b_3
+            size: 25%
+            icon: mdi:thermometer
+            color: rgba(255, 94, 61, 0.85)
+            name: Heater
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb94b_4
+            size: 25%
+            icon: mdi:lightbulb-on
+            color: rgba(255, 226, 61, 0.85)
+            name: Light
+            style:
+              - font-size: 12px
+              - font-weight: bold
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb94b_7
+            size: 25%
+            icon: mdi:raspberrypi
+            color: rgba(61, 255, 145, 0.85)
+            name: Server
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.2437254184f3eb695276
+            size: 25%
+            icon: mdi:water-pump
+            color: rgba(61, 171, 255, 0.85)
+            name: Sump
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.reef_pump_1
+            size: 25%
+            icon: mdi:pipe
+            color: rgba(61, 171, 255, 0.85)
+            name: Top Off
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.reef_pump_2
+            size: 25%
+            icon: mdi:eyedropper
+            color: rgba(61, 171, 255, 0.85)
+            name: Doser
+            style:
+              - font-size: 12px
+              - font-weight: bold
+      - type: entities
+        title: Reef Weather
+        entities:
+        - sensor.reefweather_condition
+        - sensor.reefweather_current
+        - sensor.reefweather_humidity
+        - sensor.reefweather_pressure
+        - sensor.reefweather_temperature
+        - sensor.reefweather_temperature_max
+        - sensor.reefweather_temperature_min
+        - sensor.reefweather_wind_speed
+  - type: vertical-stack
+    cards:
+      - type: picture-elements
+        image: /local/images/amazon-sun.jpg
+        elements:
+          - type: icon
+            entity: sensor.reefsunsettides
+            title: Sunset
+            icon: mdi:weather-sunset-down
+            style:
+              top: 30%
+              left: 90%
+              color: rgba(252, 186, 146, 1)
+          - type: icon
+            entity: sensor.reefsunrisetides
+            title: Sunrise
+            icon: mdi:weather-sunset-up
+            style:
+              top: 30%
+              left: 8%
+              color: rgba(250, 242, 127, 1)
+          - type: state-label
+            entity: sensor.reefsunsettides
+            style:
+              top: 14%
+              left: 90%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(252, 186, 146, 1)
+          - type: state-label
+            entity: sensor.reefsunrisetides
+            style:
+              top: 14%
+              left: 8%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(250, 242, 127, 1)
+          - type: state-label
+            entity: sensor.bali_reef_tides
+            style:
+              top: 88%
+              left: 50%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+
+      - type: history-graph
+        hours_to_show: 48
+        entities: 
+        - entity: sensor.onlyreefcontrolpitemp
+          name: Aquarium
+        - entity: sensor.noaa_daily_max_reef_temp
+          name: High
+        - entity: sensor.reef_high_avg_daily_temp
+          name: Mid High
+        - entity: sensor.reef_avg_daily_temp
+          name: Average
+        - entity: sensor.reef_low_avg_daily_temp
+          name: Mid Low
+        - entity: sensor.noaa_daily_min_reef_temp
+          name: Low
+
+#      - type: sensor
+#        entity: sensor.onlyreefcontrolpitemp
+#        name: Current Water Temperature
+#        height: 50
+#        line_color: rgba(0, 168, 25, 0.85)
+#        hours_to_show: 4
+#        unit: "°F"
+#        accuracy: 15
+#        icon: mdi:thermometer
+      - type: thermostat
+        entity: climate.reef_tank_therm
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: sensor.noaa_daily_min_reef_temp
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:snowflake
+            default_color: rgba(53, 183, 243, 0.85)
+            color-off: rgba(53, 183, 243, 0.85)
+            style:
+              - background-color: rgba(53, 183, 243, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.reef_low_avg_daily_temp
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-cloudy
+            default_color: rgba(53, 243, 208, 0.85)
+            color-off: rgba(53, 243, 208, 0.85)
+            style:
+              - background-color: rgba(53, 243, 208, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.reef_avg_daily_temp
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-partlycloudy
+            default_color: rgba(65, 243, 53, 0.85)
+            color-off: rgba(65, 243, 53, 0.85)
+            style:
+              - background-color: rgba(65, 243, 53, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.reef_high_avg_daily_temp
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-sunset
+            default_color: rgba(243, 237, 53, 0.85)
+            color-off: rgba(243, 237, 53, 0.85)
+            style:
+              - background-color: rgba(243, 237, 53, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.noaa_daily_max_reef_temp
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-sunny
+            default_color: rgba(243, 138, 53, 0.85)
+            color-off: rgba(243, 138, 53, 0.85)
+            style:
+              - background-color: rgba(243, 138, 53, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb94b_4
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/images/reef_off.jpg
+          elements:
+            - type: image
+              entity: switch.kessil_light_level_1
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil1-on.png 
+              state_image:
+                "on": /local/images/light_slider/kessil1-on.png
+                "off": /local/images/light_slider/kessil1-off.png
+              style:
+                top: 4.3%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_2
+              title: Kessil 2
+              tap_action: toggle
+              hold_action: more-info
+              icon: mdi:alpha-b-box
+              image: /local/images/light_slider/kessil2-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil2-on.png
+                "off": /local/images/light_slider/kessil2-off.png
+              style:
+                top: 12.6%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_3
+              title: Kessil 3
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil3-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil3-on.png
+                "off": /local/images/light_slider/kessil3-off.png
+              style:
+                top: 20.9%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_4
+              title: Kessil 4
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil4-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil4-on.png
+                "off": /local/images/light_slider/kessil4-off.png
+              style:
+                top: 29.2%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_5
+              title: Kessil 5
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil5-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil5-on.png
+                "off": /local/images/light_slider/kessil5-off.png
+              style:
+                top: 37.5%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_6
+              title: Kessil 6
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil6-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil6-on.png
+                "off": /local/images/light_slider/kessil6-off.png
+              style:
+                top: 45.8%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_7
+              title: Kessil 7
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil7-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil7-on.png
+                "off": /local/images/light_slider/kessil7-off.png
+              style:
+                top: 54.1%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_8
+              title: Kessil 8
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil8-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil8-on.png
+                "off": /local/images/light_slider/kessil8-off.png
+              style:
+                top: 62.4%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_9
+              title: Kessil 9
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil9-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil9-on.png
+                "off": /local/images/light_slider/kessil9-off.png
+              style:
+                top: 70.7%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_10
+              title: Kessil 10
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil10-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil10-on.png
+                "off": /local/images/light_slider/kessil10-off.png
+              style:
+                top: 78.9%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_11
+              title: Kessil 11
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil11-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil11-on.png
+                "off": /local/images/light_slider/kessil11-off.png
+              style:
+                top: 87.1%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_12
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil12-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil12-on.png
+                "off": /local/images/light_slider/kessil12-off.png
+              style:
+                top: 95.1%
+                left: 7%
+                width: 13.5%
+            - type: state-icon
+              entity: switch.06200940dc4f22cbb94b_4
+              title: Light
+              tap_action: toggle
+              hold_action: more-info
+              icon: mdi:lightbulb-on
+              style:
+                top: 5%
+                left: 90%
+#            - type: state-label
+#              entity: sensor.reefcontrolpilightname
+#              style:
+#                top: 5%
+#                left: 84%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpilightbrightness
+              style:
+                top: 12%
+                left: 90%
+                align: right
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpilightcolor
+              style:
+                top: 17%
+                left: 90%
+                align: right
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.reefcontrolpipump2power
+              title: Doser
+              icon: mdi:eyedropper
+              style:
+                top: 45%
+                left: 72%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump2name
+              title: Doser
+              style:
+                top: 45%
+                left: 85%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump2power
+              style:
+                top: 51%
+                left: 72%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_2
+              icon: mdi:fast-forward
+              style:
+                top: 51%
+                left: 85%
+            - type: icon
+              entity: sensor.reefcontrolpipump1status
+              title: Pump 1
+              icon: mdi:pipe
+              style:
+                top: 45%
+                left: 32%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump1name
+              title: Pump 1
+              style:
+                top: 45%
+                left: 45%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump1status
+              style:
+                top: 51%
+                left: 32%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_1
+              icon: mdi:fast-forward
+              style:
+                top: 51%
+                left: 50%
+            - type: state-icon
+              tap_action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_1_reverse
+              icon: mdi:rewind
+              style:
+                top: 51%
+                left: 42%
+            - type: icon
+              entity: sensor.onlyreefcontrolpitemp
+              title: Water Temperature
+              icon: mdi:thermometer
+              style:
+                top: 94%
+                left: 70%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.reefcontrolpifloat
+              title: Water Level
+              icon: mdi:waves
+              style:
+                top: 94%
+                left: 34%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.onlyreefcontrolpitemp
+              icon: mdi:thermometer
+              style:
+                top: 94%
+                left: 84%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpifloat
+              icon: mdi:waves
+              style:
+                top: 94%
+                left: 44%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb94b_4
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/reef_on.jpg
+          elements:
+            - type: image
+              entity: switch.kessil_light_level_1
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil1-on.png 
+              state_image:
+                "on": /local/images/light_slider/kessil1-on.png
+                "off": /local/images/light_slider/kessil1-off.png
+              style:
+                top: 4.3%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_2
+              title: Kessil 2
+              tap_action: toggle
+              hold_action: more-info
+              icon: mdi:alpha-b-box
+              image: /local/images/light_slider/kessil2-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil2-on.png
+                "off": /local/images/light_slider/kessil2-off.png
+              style:
+                top: 12.6%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_3
+              title: Kessil 3
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil3-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil3-on.png
+                "off": /local/images/light_slider/kessil3-off.png
+              style:
+                top: 20.9%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_4
+              title: Kessil 4
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil4-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil4-on.png
+                "off": /local/images/light_slider/kessil4-off.png
+              style:
+                top: 29.2%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_5
+              title: Kessil 5
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil5-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil5-on.png
+                "off": /local/images/light_slider/kessil5-off.png
+              style:
+                top: 37.5%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_6
+              title: Kessil 6
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil6-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil6-on.png
+                "off": /local/images/light_slider/kessil6-off.png
+              style:
+                top: 45.8%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_7
+              title: Kessil 7
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil7-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil7-on.png
+                "off": /local/images/light_slider/kessil7-off.png
+              style:
+                top: 54.1%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_8
+              title: Kessil 8
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil8-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil8-on.png
+                "off": /local/images/light_slider/kessil8-off.png
+              style:
+                top: 62.4%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_9
+              title: Kessil 9
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil9-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil9-on.png
+                "off": /local/images/light_slider/kessil9-off.png
+              style:
+                top: 70.7%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_10
+              title: Kessil 10
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil10-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil10-on.png
+                "off": /local/images/light_slider/kessil10-off.png
+              style:
+                top: 78.9%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_11
+              title: Kessil 11
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil11-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil11-on.png
+                "off": /local/images/light_slider/kessil11-off.png
+              style:
+                top: 87.1%
+                left: 7%
+                width: 13.5%
+            - type: image
+              entity: switch.kessil_light_level_12
+              tap_action: toggle
+              hold_action: more-info
+              image: /local/images/light_slider/kessil12-off.png
+              state_image:
+                "on": /local/images/light_slider/kessil12-on.png
+                "off": /local/images/light_slider/kessil12-off.png
+              style:
+                top: 95.1%
+                left: 7%
+                width: 13.5%
+            - type: state-label
+              entity: sensor.reefcontrolpilightcolor
+              style:
+                top: 17%
+                left: 90%
+                align: right
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.reefcontrolpipump2power
+              title: Doser
+              icon: mdi:eyedropper
+              style:
+                top: 45%
+                left: 72%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump2name
+              title: Doser
+              style:
+                top: 45%
+                left: 85%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump2power
+              style:
+                top: 51%
+                left: 72%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_2
+              icon: mdi:fast-forward
+              style:
+                top: 51%
+                left: 85%
+            - type: icon
+              entity: sensor.reefcontrolpipump1status
+              title: Pump 1
+              icon: mdi:pipe
+              style:
+                top: 45%
+                left: 32%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump1name
+              title: Pump 1
+              style:
+                top: 45%
+                left: 45%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpipump1status
+              style:
+                top: 51%
+                left: 32%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_1
+              icon: mdi:fast-forward
+              style:
+                top: 51%
+                left: 50%
+            - type: state-icon
+              tap_action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_1_reverse
+              icon: mdi:rewind
+              style:
+                top: 51%
+                left: 42%
+            - type: icon
+              entity: sensor.onlyreefcontrolpitemp
+              title: Water Temperature
+              icon: mdi:thermometer
+              style:
+                top: 94%
+                left: 70%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.reefcontrolpifloat
+              title: Water Level
+              icon: mdi:waves
+              style:
+                top: 94%
+                left: 34%
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.onlyreefcontrolpitemp
+              icon: mdi:thermometer
+              style:
+                top: 94%
+                left: 84%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefcontrolpifloat
+              icon: mdi:waves
+              style:
+                top: 94%
+                left: 44%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+#  - type: vertical-stack
+#    cards:
+#      - type: conditional
+#        conditions:
+#          - entity: input_boolean.reef_temp_nightime_state
+#            state: "on"
+#        card:
+#          type: picture-elements
+#          image: /local/images/bali-night.png
+#          elements:
+#            - type: state-icon
+#              tap_action: toggle
+#              entity: input_boolean.reef_temp_nightime_state
+#              default_color: rgba(162, 224, 251, 1)
+#              color-off: rgba(162, 224, 251, .6)
+#              color-on: rgba(162, 224, 251, 1)
+#              style:
+#                top: 85%
+#                left: 60%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(162, 224, 251, 1)
+#            - type: state-icon
+#              tap_action: toggle
+#              entity: input_boolean.reef_temp_daytime_state
+#              color-off: rgba(162, 224, 251, .6)
+#              color-on: rgba(162, 224, 251, 1)
+#              style:
+#                top: 85%
+#                left: 40%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(162, 224, 251, 0.6)
+#      - type: conditional
+#        conditions:
+#          - entity: input_boolean.reef_temp_daytime_state
+#            state: "on"
+#        card:
+#          type: picture-elements
+#          image: /local/images/bali-day.png
+#          elements:
+#            - type: state-icon
+#              tap_action: toggle
+#              entity: input_boolean.reef_temp_nightime_state
+#              color-off: rgba(162, 224, 251, .6)
+#              color-on: rgba(162, 224, 251, 1)
+#              style:
+#                top: 50%
+#                left: 70%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(5, 91, 127, 0.85)
+#            - type: state-icon
+#              tap_action: toggle
+#              entity: input_boolean.reef_temp_daytime_state
+#              color-off: rgba(162, 224, 251, .6)
+#              color-on: rgba(162, 224, 251, 1)
+#              style:
+#                top: 50%
+#                left: 30%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(5, 91, 127, 1)
+#  - type: entities
+#    title: Reef Equipment
+#    entities:
+#    - sensor.reefcontrolpipump1name
+#    - sensor.reefcontrolpipump1status
+#    - sensor.reefcontrolpipump1forward
+#    - sensor.reefcontrolpipump1statusreverse
+#    - sensor.reefcontrolpipump2name
+#    - sensor.reefcontrolpipump2power
+
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb94b_7
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/reef_server_on.jpg
+          elements:
+            - type: icon
+              entity: sensor.reefsysinfo_template_cpu_temperature
+              title: Server Temperature
+              icon: mdi:thermometer
+              style:
+                top: 13%
+                left: 58%
+                size: 40%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefsysinfo_template_cpu_temperature
+              icon: mdi:thermometer
+              style:
+                top: 13%
+                left: 76%
+                font-size: 30px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: switch.06200940dc4f22cbb94b_7
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 23%
+                left: 25%
+            - type: icon
+              entity: sensor.reefsysinfo_template_name
+              title: Server Name
+              icon: mdi:raspberrypi
+              style:
+                top: 28%
+                left: 67%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefsysinfo_template_name
+              icon: mdi:raspberrypi
+              style:
+                top: 28%
+                left: 81%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.reefsysinfo_template_ip
+              style:
+                top: 42%
+                left: 80%
+                font-size: 13px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.reefsysinfo_template_version
+              prefix: "Version: "
+              style:
+                top: 77%
+                left: 24%
+                font-size: 13px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.reefsysinfo_template_uptime
+              prefix: "Restart: "
+              style:
+                top: 87%
+                left: 25%
+                font-size: 13px
+                color: rgba(255, 255, 255, 1)
+      - type: entities
+        entities:
+          - type: custom:fold-entity-row
+            head: 
+              type: section
+              label: Automation
+            items:
+              - switch.reeftank_light_switch
+              - input_boolean.reef_temp_daytime_state
+              - input_boolean.reef_temp_nightime_state
+              - automation.start_fade_down_of_reef_lights_at_sunset
+              - automation.start_fade_up_of_reef_lights_at_sunrise
+              - automation.reef_sump_pump_low_off
+#          - automation.reef_sump_pump_low_off_doublecheck
+              - automation.reef_sump_pump_on_every_hour
+#          - automation.regulate_reef_heater_to_off_daytime_temp
+#          - automation.regulate_reef_heater_to_off_nightime_temp
+              - automation.regulate_reef_heater_to_off_on_low_misread
+#          - automation.regulate_reef_heater_to_on_daytime_temp
+#          - automation.regulate_reef_heater_to_on_nightime_temp
+              - automation.turn_off_wavemaker_at_low_tide
+              - automation.turn_on_wavemaker_at_high_tide
+              - automation.set_reef_thermostat_max_daytime_selector
+              - automation.set_reef_thermostat_max_nighttime_selector
+
+#  - type: entities
+#    title: Server
+#    entities:
+#    - sensor.reefsysinfo_template_ip
+#    - sensor.reefsysinfo_template_name
+#    - sensor.reefsysinfo_template_uptime
+#    - sensor.reefsysinfo_template_version
+#    - sensor.reefsysinfo_template_cpu_temperature
+#    - switch.06200940dc4f22cbb94b_7
+#  - type: gauge
+#    entity: sensor.onlyreefcontrolcpuload
+#    max: 1
+#    title: Server Load
+#  - type: gauge
+#    entity: sensor.onlyreefcontrolcpumemory
+#    max: 32
+#    unit_of_measurement: m
+#    title: CPU Memory
+
+## AMAZON TANK
+- name: Amazon Tank
+  title: Amazon Tank
+  icon: mdi:fish
+  cards:
+  - type: vertical-stack
+    cards:
+      - type: picture-entity
+        entity: camera.octocam
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb432_3
+            size: 25%
+            icon: mdi:chart-bubble
+            color: rgba(61, 171, 255, 0.85)
+            name: CO2
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb432_1
+            size: 25%
+            icon: mdi:waves
+            color: rgba(61, 171, 255, 0.85)
+            name: Waves
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb432_2
+            size: 25%
+            icon: mdi:thermometer
+            color: rgba(255, 94, 61, 0.85)
+            name: Heater
+            style:
+              - font-size: 12px
+              - font-weight: bold
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb432_4
+            size: 25%
+            icon: mdi:lightbulb-on
+            color: rgba(255, 226, 61, 0.85)
+            name: Light
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: switch.06200940dc4f22cbb432_7
+            size: 25%
+            icon: mdi:raspberrypi
+            color: rgba(61, 255, 145, 0.85)
+            name: Server
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: "custom:button-card"
+            color_type: blank-card
+      - type: picture-elements
+        image: /local/images/amazon-tide.jpg
+        elements:
+          - type: icon
+            entity: sensor.amazonnextlowtide
+            title: Sunset
+            icon: mdi:format-vertical-align-bottom
+            style:
+              top: 70%
+              left: 70%
+              color: rgba(249, 235, 164, 1)
+          - type: icon
+            entity: sensor.amazonnexthightide
+            title: Sunrise
+            icon: mdi:format-vertical-align-top
+            style:
+              top: 70%
+              left: 24%
+              color: rgba(7, 126, 176, 1)
+          - type: state-label
+            entity: sensor.amazonnextlowtide
+            style:
+              top: 54%
+              left: 70%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(249, 235, 164, 1)
+          - type: state-label
+            entity: sensor.amazonnexthightide
+            style:
+              top: 54%
+              left: 24%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(7, 126, 176, 1)
+  - type: vertical-stack
+    cards:
+      - type: picture-elements
+        image: /local/images/amazon-sun.jpg
+        elements:
+          - type: icon
+            entity: sensor.amazonsunsettides
+            title: Sunset
+            icon: mdi:weather-sunset-down
+            style:
+              top: 30%
+              left: 90%
+              color: rgba(252, 186, 146, 1)
+          - type: icon
+            entity: sensor.amazonsunrisetides
+            title: Sunrise
+            icon: mdi:weather-sunset-up
+            style:
+              top: 30%
+              left: 8%
+              color: rgba(250, 242, 127, 1)
+          - type: state-label
+            entity: sensor.amazonsunsettides
+            style:
+              top: 14%
+              left: 90%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(252, 186, 146, 1)
+          - type: state-label
+            entity: sensor.amazonsunrisetides
+            style:
+              top: 14%
+              left: 8%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(250, 242, 127, 1)
+      - type: history-graph
+        entities: 
+        - entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+          name: Actual
+        - entity: sensor.monthly_amazon_temp
+          name: Monthly
+      - type: thermostat
+        entity: climate.octo_tank_therm
+
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb432_4
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/images/amazon_off.jpg
+          elements:
+            - type: state-label
+              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+              icon: mdi:thermometer
+              style:
+                top: 90%
+                left: 84%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_octo_water_level_template_level
+              icon: mdi:waves
+              style:
+                top: 90%
+                left: 54%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.monthly_amazon_ph
+              icon: mdi:test-tube
+              style:
+                top: 90%
+                left: 14%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+              title: Water Temperature
+              icon: mdi:thermometer
+              style:
+                top: 90%
+                left: 72%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_octo_water_level_template_level
+              title: Water Level
+              icon: mdi:waves
+              style:
+                top: 90%
+                left: 44%
+                color: rgba(255, 255, 255, 1)
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb432_4
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/amazon_on.jpg
+          elements:
+            - type: state-label
+              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+              icon: mdi:thermometer
+              style:
+                top: 90%
+                left: 84%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_octo_water_level_template_level
+              icon: mdi:waves
+              style:
+                top: 90%
+                left: 54%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.monthly_amazon_ph
+              icon: mdi:test-tube
+              style:
+                top: 90%
+                left: 14%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+              title: Water Temperature
+              icon: mdi:thermometer
+              style:
+                top: 90%
+                left: 72%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_octo_water_level_template_level
+              title: Water Level
+              icon: mdi:waves
+              style:
+                top: 90%
+                left: 44%
+                color: rgba(255, 255, 255, 1)
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb432_7
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/octocam_on.jpg
+          elements:
+            - type: icon
+              entity: sensor.mqtt_topic_octo_sysinfo_template_servertemp
+              title: Server Temperature
+              icon: mdi:thermometer
+              style:
+                top: 18%
+                left: 15%
+                size: 40%
+                align: right
+                color: rgba(27, 39, 1, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_octo_sysinfo_template_servertemp
+              icon: mdi:thermometer
+              style:
+                top: 18%
+                left: 40%
+                font-size: 30px
+                font-weight: bold
+                align: right
+                color: rgba(27, 39, 1, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: switch.06200940dc4f22cbb432_7
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 18%
+                left: 86%
+            - type: icon
+              entity: sensor.mqtt_topic_octo_sysinfo_template_serverload
+              title: Server Name
+              icon: mdi:raspberrypi
+              style:
+                top: 33%
+                left: 15%
+                align: right
+                color: rgba(27, 39, 1, 1)
+            - type: custom:text-element
+              text: OctoCam Server
+              style:
+                top: 33%
+                left: 40%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(27, 39, 1, 1)
+            - type: custom:state-element
+              entity: sensor.mqtt_topic_octo_sysinfo_template_serverspeed
+              prefix: "Speed: "
+              style:
+                top: 57%
+                left: 24%
+                font-size: 13px
+                color: rgba(27, 39, 1, 1)
+            - type: custom:state-element
+              entity: sensor.mqtt_topic_octo_sysinfo_template_serverload
+              prefix: "Load: "
+              style:
+                top: 67%
+                left: 20%
+                font-size: 13px
+                color: rgba(27, 39, 1, 1)
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb432_7
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/images/octocam_off.jpg
+          elements:
+            - type: state-icon
+              tap_action: toggle
+              entity: switch.06200940dc4f22cbb432_7
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 18%
+                left: 86%
+            - type: icon
+              entity: sensor.mqtt_topic_octo_sysinfo_template_serverload
+              title: Server Name
+              icon: mdi:raspberrypi
+              style:
+                top: 33%
+                left: 15%
+                align: right
+                color: rgba(27, 39, 1, 1)
+            - type: custom:text-element
+              text: OctoCam Server
+              style:
+                top: 33%
+                left: 40%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(27, 39, 1, 1)
+      - type: entities
+        entities:
+          - type: custom:fold-entity-row
+            head: 
+              type: section
+              label: Automation
+            items:
+              - script.freshwater_waves_on_script
+              - automation.freshwater_lights_and_o2_off_at_sunset
+              - automation.freshwater_lights_and_o2_on_at_sunrise
+              - automation.turn_on_amazon_waves_again_at_low_tide
+              - automation.turn_on_amazon_waves_at_high_tide
+              - automation.set_amazon_thermostat_max_daytime_selector
+              - automation.set_amazon_thermostat_max_night_selector
+      - type: entities
+        title: Amazon Weather
+        entities:
+        - sensor.amazonweather_condition
+        - sensor.amazonweather_current
+        - sensor.amazonweather_humidity
+        - sensor.amazonweather_pressure
+        - sensor.amazonweather_temperature
+        - sensor.amazonweather_temperature_max
+        - sensor.amazonweather_temperature_min
+        - sensor.amazonweather_wind_speed
+
+## TRAVEL
+- name: Travel
+  title: Travel
+  icon: mdi:bus-clock
+  cards:
+  - type: weather-forecast
+    entity: weather.dark_sky
+  - type: glance
+    title: Bus Times
+    column_width: 33%
+    entities:
+      - entity: sensor.m15_local_uptown_allen__grand
+        name: M15
+      - entity: sensor.m15sbs_uptown_allen__grand
+        name: "M15-SBS"
+      - entity: sensor.m14a_crosstown_at_clinton_street
+        name: M14A
+  - type: glance
+    title: Subway Times
+    column_width: 33%
+    entities:
+      - entity: sensor.northbound_f_delancey_st
+        name: Delancey (N)
+      - entity: sensor.northbound_m_essex_st
+        name: Essex (N)
+      - entity: sensor.northbound_b_grand_st
+        name: Grand (N)
+      - entity: sensor.northbound_d_grand_st
+        name: Grand (N)
+      - entity: sensor.southbound_f_east_broadway
+        name: Broadway (S)
+      - entity: sensor.northbound_j_essex_st
+        name: Essex (N)
+      - entity: sensor.northbound_z_essex_st
+        name: Essex (N)
+#  - type: entities
+#    title: Travel Time
+#    entities:
+#    - sensor.home_to_work
+#    - sensor.work_to_home
+#    - sensor.home_to_next_appt
+  - type: entities
+    title: Next Event
+    entities:
+    - sensor.nextcal_message
+    - sensor.new_nextcal_location
+    - sensor.nextcal_start_time
+    - sensor.nextcal_end_time
+#    - sensor.home_to_next_appt
+#    - sensor.nextcal_calc_leave_time
+  - type: picture-entity
+    entity: camera.next_appointment
+  - type: picture-entity
+    entity: camera.street_view
+
+## WEATHER
+- name: Weather
+  title: Weather Card
+  icon: mdi:weather-sunny
+  cards:
+  - type: custom:card-modder
+    card:
+      type: weather-forecast
+      entity: weather.dark_sky
+    style:                 
+      border-radius: 20px
+      border: solid 1px rgba(100,100,100,0.3)
+      box-shadow: 3px 3px rgba(0,0,0,0.4)
+  - type: iframe
+    url: https://embed.windy.com/embed2.html
+  - type: picture-entity
+    entity: camera.weather_radar
+  - type: history-graph
+    entities: 
+    - entity: sensor.dark_sky_daily_high_temperature
+      name: High
+    - entity: sensor.dark_sky_temperature
+      name: Actual
+    - entity: sensor.dark_sky_daily_low_temperature
+      name: Low
+  - type: entities
+    title: Precipitation
+    entities:
+    - sensor.dark_sky_daily_max_precip_intensity
+    - sensor.dark_sky_dew_point
+    - sensor.dark_sky_nearest_storm_distance
+    - sensor.dark_sky_precip
+    - sensor.dark_sky_precip_accumulation
+    - sensor.dark_sky_precip_intensity
+    - sensor.dark_sky_precip_probability
+    - sensor.dark_sky_visibility
+    - sensor.dark_sky_wind_bearing
+    - sensor.dark_sky_wind_speed
+  - type: entities
+    title: Atmosphere
+    entities:
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_ozone
+    - sensor.dark_sky_pressure
+    - sensor.dark_sky_uv_index
+  - type: entities
+    title: Weather Details
+    entities:
+    - sensor.dark_sky_humidity
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_wind_speed
+    - sensor.dark_sky_daily_max_precip_intensity
+- name: Money
+  title: Money
+  icon: mdi:cash-multiple
+  cards:
+  - type: entities
+    title: Crypto
+    entities:
+    - sensor.btc_exchange_rate
+    - sensor.coinbase_bch_wallet
+    - sensor.coinbase_eth_wallet
+    - sensor.coinbase_ltc_wallet
+    - sensor.coinbase_my_vault
+    - sensor.coinbase_my_wallet
+    - sensor.coinbase_usd_wallet
+    - sensor.eth_exchange_rate
+    - sensor.ltc_exchange_rate
+  - type: history-graph
+    entities: 
+    - sensor.btc_exchange_rate
+- name: System
+  title: System
+  icon: mdi:server-network
+  cards:
+  - type: media-control
+    entity: media_player.roku_2ld558098368
+  - type: entities
+    title: Devices
+    entities:
+    - device_tracker.macbook
+    - device_tracker.phone
+    - switch.motion_detect
+    - script.roomba_turn_on
+  - type: entities
+    title: Speedtest
+    entities:
+    - sensor.speedtest_download
+    - sensor.speedtest_upload
+    - sensor.speedtest_ping
+  - type: history-graph
+    entities: 
+    - sensor.speedtest_download
+    - sensor.speedtest_upload
+
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: switch.2437254184f3eb695715
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/verizon.jpg
+          elements:
+            - type: icon
+              entity: sensor.server_temperature
+              title: Server Temperature
+              icon: mdi:thermometer
+              style:
+                top: 17%
+                left: 22%
+                size: 40%
+                align: right
+                color: rgba(33, 33, 33, 1)
+            - type: state-label
+              entity: sensor.server_temperature
+              icon: mdi:thermometer
+              style:
+                top: 24%
+                left: 23%
+                font-size: 26px
+                font-weight: bold
+                align: right
+                color: rgba(33, 33, 33, 1)
+            - type: icon
+              entity: sensor.ip_address
+              title: Server Name
+              icon: mdi:raspberrypi
+              style:
+                top: 43%
+                left: 13%
+                align: right
+                color: rgba(33, 33, 33, 1)
+            - type: custom:text-element
+              text: Home Assistant Server
+              style:
+                top: 43%
+                left: 46%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(33, 33, 33, 1)
+            - type: state-label
+              entity: sensor.ip_address
+              style:
+                top: 50%
+                left: 24%
+                font-size: 13px
+                color: rgba(33, 33, 33, 1)
+            - type: custom:state-element
+              entity: sensor.ha_installed_version
+              prefix: "Version: "
+              style:
+                top: 55%
+                left: 24%
+                font-size: 13px
+                color: rgba(33, 33, 33, 1)
+            - type: custom:state-element
+              entity: sensor.ha_uptime
+              prefix: "Uptime: "
+              style:
+                top: 65%
+                left: 36%
+                font-size: 13px
+                color: rgba(33, 33, 33, 1)
+            - type: state-icon
+              tap_action: toggle
+              entity: switch.2437254184f3eb695715
+              icon: mdi:toggle-switch
+              size: 50%
+              color: auto
+              style:
+                top: 15%
+                left: 63%
+            - type: custom:state-element
+              entity: sensor.mariadb_database_size
+              prefix: "DB Size: "
+              style:
+                top: 80%
+                left: 22%
+                font-size: 13px
+                color: rgba(33, 33, 33, 1)
+            - type: custom:state-element
+              entity: sensor.db_file_system_size
+              prefix: "FS Size: "
+              style:
+                top: 85%
+                left: 22%
+                font-size: 13px
+                color: rgba(33, 33, 33, 1)
+            - type: custom:state-element
+              entity: sensor.rpi_power_status
+              prefix: "Throttle: "
+              style:
+                top: 75%
+                left: 20%
+                font-size: 13px
+                color: rgba(33, 33, 33, 1)
+
+  - type: entities
+    title: HomeCam Server Info
+    entities:
+    - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
+    - sensor.mqtt_topic_home_sysinfo_template_serverload
+    - sensor.mqtt_topic_home_sysinfo_template_serverspeed
+  - type: sensor
+    entity: sensor.speedtest_download
+    name: Fios Speed
+    icon: mdi:download-network
+    unit: Mbit/s
+    height: 75
+    line_color: "#3498db"
+  - type: sensor
+    entity: sensor.speedtest_upload
+    name: Fios Speed
+    icon: mdi:upload-network
+    unit: Mbit/s
+    height: 75
+    line_color: "#3455db"
+  - type: custom:tracker-card
+    title: HA Components
+    trackers:
+      - sensor.custom_card_tracker
+      - sensor.custom_component_tracker
+  - type: custom:list-card
+    entity: sensor.engineering_feed
+    title: Engineering Feed (Test)
+    columns:
+#      - title: ''
+#        type: image
+#        add_link: link
+ #       field: image
+      - title: Title
+        field: title
+        style:
+          - white-space: nowrap
+      - title: Description
+        field: description

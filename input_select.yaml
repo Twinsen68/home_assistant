@@ -1,0 +1,32 @@
+#- radio_station:
+#    name: 'Select Radio Station:'
+#    options:
+#      - WKFU 1111
+#      - WK Some Station
+#    initial: WKFU 1111
+#    icon: mdi:radio 
+#
+#- hass_template:
+#    name: Choose Template
+#    options:
+#     - default
+#     - midnight
+#     - dark_theme
+#    - PmxDefault
+#     - PmxMonolight
+#    initial: default
+#    icon: mdi:theme-light-dark
+
+harmony:
+  name: Harmony
+  options:
+    - Speaker
+    - Fishtank Evening
+    - Lights Up
+    - Watch Roku
+    - Watch a Movie
+    - Morning News
+    - TV Lights
+    - Fishtank Morning
+    - Vacuum
+  icon: mdi:monitor
