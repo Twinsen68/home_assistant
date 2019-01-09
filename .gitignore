@@ -14,13 +14,20 @@
 .google.token
 compiled
 bash
+build
 images
+certs
 deps
 cookie
 gtfs
-www
+remotes
+ssh
+TwitterGeoPics
+sfgabe_tweets
+octocam_tweets
 panels
 ui-lovelace.yaml.sb*
+.well_known
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
 ip_bans.yaml
@@ -32,6 +39,8 @@ intent_script.yaml
 floorplan.yaml
 google_calendars.yaml
 google_calendars_all.txt
+tweets_octocam.txt
+tweets_sfgabe.txt
 cameras.yaml
 rest_command.yaml
 appdaemon.yaml
@@ -39,6 +48,8 @@ shell_commands.yaml
 configuration.cnf
 essexcrossing.py
 usps.py
+emulated_hue_ids.json
+passwordfile
 *log
 *.DS_Store
 .uuid

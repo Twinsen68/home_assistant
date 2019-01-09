@@ -1,6 +1,8 @@
 # Weather prediction
 - platform: darksky
-  api_key: 47302abad0a80b7a95092b3071e94f62
+  api_key: !secret darksky_api_key
+  latitude: 40.716579
+  longitude: -73.986748
   forecast:
     - 1
     - 2
@@ -38,8 +40,6 @@
     - minutely_summary
     - hourly_summary
     - daily_summary
-    - temperature_max
-    - temperature_min
     - precip_intensity_max
     - uv_index
 
@@ -395,6 +395,48 @@
           error
         {% endif %}
 
+
+- platform: darksky
+  api_key: !secret darksky_api_key
+  name: Reef Weather
+  latitude: -8.499113
+  longitude: 115.696371
+  update_interval:
+    hours: 2
+  monitored_conditions:
+    - summary
+    - icon
+    - precip_type
+    - precip_intensity
+    - temperature
+    - wind_speed
+    - wind_bearing
+    - cloud_cover
+    - humidity
+    - daily_summary
+    - uv_index
+
+- platform: darksky
+  api_key: !secret darksky_api_key
+  mode: daily
+  name: Amazon Weather
+  latitude: -12.653650
+  longitude: -52.946115
+  update_interval:
+    hours: 2
+  monitored_conditions:
+    - summary
+    - icon
+    - precip_type
+    - precip_intensity
+    - temperature
+    - wind_speed
+    - wind_bearing
+    - cloud_cover
+    - humidity
+    - daily_summary
+    - uv_index
+
 # Time Date
 - platform: time_date
   display_options:
@@ -505,34 +547,34 @@
       unit_of_measurement: 'time'
 
 # Track the sun in the Amazon
-- platform: yweather
-  woeid: 455833
-  name: AmazonWeather
-  monitored_conditions:
-    - weather
-    - weather_current
-    - temp_min
-    - temp_max
-    - wind_speed
-    - pressure
-    - visibility
-    - humidity
-    - temperature
+#- platform: yweather
+#  woeid: 455833
+#  name: AmazonWeather
+#  monitored_conditions:
+#    - weather
+#    - weather_current
+#    - temp_min
+#    - temp_max
+#    - wind_speed
+#    - pressure
+#    - visibility
+#    - humidity
+#    - temperature
 
 # Track the sun in Bali
-- platform: yweather
-  woeid: 2291072
-  name: ReefWeather
-  monitored_conditions:
-    - weather
-    - weather_current
-    - temp_min
-    - temp_max
-    - wind_speed
-    - pressure
-    - visibility
-    - humidity
-    - temperature
+#- platform: yweather
+#  woeid: 2291072
+#  name: ReefWeather
+#  monitored_conditions:
+#    - weather
+#    - weather_current
+#    - temp_min
+#    - temp_max
+#    - wind_speed
+#    - pressure
+#    - visibility
+#    - humidity
+#    - temperature
 
 - platform: template
   sensors:
@@ -616,23 +658,137 @@
   scan_interval: 7200
   value_template: '{{ (value.split("°C")[0]) }}'
 
-- platform: mqtt
-  name: 'Monthly Amazon Temp Raw'
-  state_topic: '/amazon-data/temp'
-  entity_id: sensor.monthly_amazon_temp_raw
-  value_template: "{{ value }}"
+#- platform: file
+#  name: 'Monthly Amazon Temp Raw'
+#  entity_id: sensor.monthly_amazon_temp_raw
+#  file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
 
-- platform: mqtt
+- platform: command_line
+  command: "cat /home/homeassistant/.homeassistant/scripts/BrancoRiver_CaracaraiWaterTemperature_ltv.txt"
+  name: 'Monthly Amazon Temp MinMax Raw This Month'
+  value_template: >
+        {%- set date = as_timestamp(now()) -%}
+        {%- set month = ( date | timestamp_custom("%B")) -%}
+        {{ (value.split(month)[1].split("\n")[0] ) }}
+
+- platform: template
+  sensors:
+    monthly_amazon_temp_max:
+      friendly_name: "Monthly Amazon Temp Max"
+      value_template: '{{ states.sensor.monthly_amazon_temp_minmax_raw_this_month.state.split(";")[1].split(";")[0] }}'
+      unit_of_measurement: '°C'
+    monthly_amazon_temp_highmed:
+      friendly_name: "Monthly Amazon Temp HighMed"
+      value_template: '{{ states.sensor.monthly_amazon_temp_minmax_raw_this_month.state.split(";")[2].split(";")[0] }}'
+      unit_of_measurement: '°C'
+    monthly_amazon_temp_med:
+      friendly_name: "Monthly Amazon Temp Median"
+      value_template: '{{ states.sensor.monthly_amazon_temp_minmax_raw_this_month.state.split(";")[3].split(";")[0] }}'
+      unit_of_measurement: '°C'
+    monthly_amazon_temp_lowmed:
+      friendly_name: "Monthly Amazon Temp LowMed"
+      value_template: '{{ states.sensor.monthly_amazon_temp_minmax_raw_this_month.state.split(";")[4].split(";")[0] }}'
+      unit_of_measurement: '°C'
+    monthly_amazon_temp_min:
+      friendly_name: "Monthly Amazon Temp Min"
+      value_template: '{{ states.sensor.monthly_amazon_temp_minmax_raw_this_month.state.split(";")[5] }}'
+      unit_of_measurement: '°C'
+#    octocam_tweet_img:
+#      friendly_name: "Latest OctoCam Tweet Image"
+#      value_template: >
+#        {% set octo_tweets = states.sensor.octocambot_feed.attributes | first %}
+#        {% set img = octo_tweets.split("pic.twitter.com/")[1] %}
+#        {% set prefix = "http://pic.twitter.com/" %}
+#        {{ [prefix, img] | join("") }}
+#    octocam_tweet_text:
+#      friendly_name: "Latest OctoCam Tweet Text"
+#      value_template: >
+#        {% set octo_tweets = states.sensor.octocambot_feed.attributes | first %}
+#        {% set twit = octo_tweets.split("pic.twitter.com")[0] %}
+#        {% set prefix = "@Octo_Cam_Bot: " %}
+#        {{ [prefix, twit] | join("") }}
+#    sfgabe_tweet_text:
+#      friendly_name: "Latest SFGabe Tweet Text"
+#      value_template: >
+#        {% set sfgabe_tweets = states.sensor.sfgabe_feed.attributes|first %}
+#        {% set twit = sfgabe_tweets.split("pic.twitter.com")[0] %}
+#        {% set prefix = "@sfgabe: " %}
+#        {{ [prefix, twit] | join("") }}
+
+- platform: command_line
+  name: "Latest Octo Tweet Text"
+  command: "cat /home/homeassistant/.homeassistant/www/images/tweets_octocam.txt"
+  value_template: >
+    {% set tweet_text = (value.split("TWEET")[1].split("DATE")[0] ) %}
+    {% set prefix = "@Octo_Cam_Bot" %}
+    {{ [prefix, tweet_text] | join("") }}
+
+- platform: command_line
+  name: "Latest Octo Tweet Date"
+  command: "cat /home/homeassistant/.homeassistant/www/images/tweets_octocam.txt"
+  value_template: >
+    {% set tweet_date = (value.split("DATE")[1].split("+")[0] ) %}
+    {% set prefix = "Posted" %}
+    {{ [prefix, tweet_date] | join("") }}
+
+- platform: command_line
+  name: "Latest Octo Image Link"
+  command: "cat /home/homeassistant/.homeassistant/www/images/tweets_octocam.txt"
+  value_template: >
+    {% set media_link = (value.split("pbs.twimg.com")[1].split("'")[0] ) %}
+    {% set prefix = "http://pbs.twimg.com" %}
+    {{ [prefix, media_link] | join("") }}
+
+- platform: command_line
+  name: "Latest SFGabe Tweet Text"
+  command: "cat /home/homeassistant/.homeassistant/www/images/tweets_sfgabe.txt"
+  value_template: >
+    {% set tweet_text = (value.split("TWEET")[1].split("DATE")[0] ) %}
+    {% set prefix = "@sfgabe" %}
+    {{ [prefix, tweet_text] | join("") }}
+
+- platform: command_line
+  name: "Latest SFGabe Tweet Date"
+  command: "cat /home/homeassistant/.homeassistant/www/images/tweets_sfgabe.txt"
+  value_template: >
+    {% set tweet_date = (value.split("DATE")[1].split("+")[0] ) %}
+    {% set prefix = "Posted" %}
+    {{ [prefix, tweet_date] | join("") }}
+
+- platform: command_line
+  name: "Latest SFGabe Image Link"
+  command: "cat /home/homeassistant/.homeassistant/www/images/tweets_sfgabe.txt"
+  value_template: >
+    {% set media_link = (value.split("pbs.twimg.com")[1].split("'")[0] ) %}
+    {% set prefix = "http://pbs.twimg.com" %}
+    {{ [prefix, media_link] | join("") }}
+
+#- platform: random
+#  name: Amazon Random Day Temp Number
+#  entity_id: sensor.amazon_random_day_temp
+#    minimum: "{{ states('sensor.monthly_amazon_temp_med') }}"
+#    maximum: "{{ states('sensor.monthly_amazon_temp_max') }}"
+#  unit_of_measurement: '°C'
+#value: '{{ (range[(states.sensor.monthly_amazon_temp_med.state),(states.sensor.monthly_amazon_temp_max.state)] | random )}}'
+
+#- platform: random
+#  name: Amazon Random Night Temp Number
+#  entity_id: sensor.amazon_random_day_temp
+#  minimum: {{ states('sensor.monthly_amazon_temp_min') }}"
+#  maximum: {{ states('sensor.monthly_amazon_temp_med') }}"
+#  unit_of_measurement: '°C'
+
+- platform: file
   name: 'Monthly Amazon Temp'
-  state_topic: '/amazon-data/temp'
   entity_id: sensor.monthly_amazon_temp
+  file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
   unit_of_measurement: '°C'
   value_template: '{{ (value.split(",")[1].split(",")[0]) | round(1) }}'
 
-- platform: mqtt
+- platform: file
   name: 'Monthly Amazon pH'
-  state_topic: '/amazon-data/temp'
   entity_id: sensor.monthly_amazon_ph
+  file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
   unit_of_measurement: 'pH'
   value_template: '{{ (value.split(",")[2]) | round(1) }}'
 
@@ -644,25 +800,24 @@
   force_update: true
   scan_interval: 3600
 
-- platform: mqtt
+- platform: file
   name: 'NOAA Daily Reef Temp Raw'
-  state_topic: '/noaa-reef/temp'
-  value_template: "{{ value }}"
   entity_id: sensor.noaa_daily_reef_temp_raw
+  file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
 
-- platform: mqtt
+- platform: file
   name: 'NOAA Daily Min Reef Temp'
-  entity_id: sensor.noaa_daily_min_reef_temp
-  state_topic: '/noaa-reef/temp'
+  entity_id: sensor.noaa_daily_reef_temp_raw
+  file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
-  value_template: '{{ (value.split(" ")[0]) | round(1) }}'
+  value_template: '{{ (value.split(" ")[3]) | round(1) }}'
 
-- platform: mqtt
+- platform: file
   name: 'NOAA Daily Max Reef Temp'
   entity_id: sensor.noaa_daily_max_reef_temp
-  state_topic: '/noaa-reef/temp'
+  file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
-  value_template: '{{ (value.split(" ")[1].split(" ")[0]) | round(1) }}'
+  value_template: '{{ (value.split(" ")[4].split(" ")[0]) | round(1) }}'
 
 - platform: min_max
   name: reef_avg_daily_temp
@@ -796,97 +951,133 @@
       friendly_name: 'Date'
 
 #Bustime Sensors
-- platform: gtfs_realtime
-  name: Next Bus
-  trip_update_url: !secret gtfs_bus_trip_update_url
-  vehicle_position_url: !secret gtfs_bus_trip_position_url
-  offset: 7
-  departures:
-  - name: M14A Crosstown at Clinton Street
-    route: M14A
-    stopid: 401150
-  - name: 'M15SBS Uptown Allen & Grand'
-    route: "M15-SBS"
-    stopid: 405320
-  - name: M15 Local Uptown Allen & Grand
-    route: M15
-    stopid: 405320
+#- platform: gtfs_realtime
+#  name: Next Bus
+#  trip_update_url: !secret gtfs_bus_trip_update_url
+#  vehicle_position_url: !secret gtfs_bus_trip_position_url
+#  offset: 7
+#  departures:
+#  - name: M14A Crosstown at Clinton Street
+#    route: M14A
+#    stopid: 401150
+#  - name: 'M15SBS Uptown Allen & Grand'
+#    route: "M15-SBS"
+#    stopid: 405320
+#  - name: M15 Local Uptown Allen & Grand
+#    route: M15
+#    stopid: 405320
 
-- platform: gtfs_realtime
-  name: Essex Subway B D F M
-  trip_update_url: !secret gtfs_subway1_trip_update_url
-  offset: 10
-  departures:
-  - name: Northbound F Delancey St
-    stopid: F15N
-    route: F
-  - name: Northbound M Essex St
-    stopid: M18N
-    route: M
-  - name: Northbound B Grand St
-    stopid: D22N
-    route: B
-  - name: Northbound D Grand St
-    stopid: D22N
-    route: D
-  - name: Southbound F East Broadway
-    stopid: F16S
-    route: F
+#- platform: gtfs_realtime
+#  name: Essex Subway B D F M
+#  trip_update_url: !secret gtfs_subway1_trip_update_url
+#  offset: 10
+#  departures:
+#  - name: Northbound F Delancey St
+#    stopid: F15N
+#    route: F
+#  - name: Northbound M Essex St
+#    stopid: M18N
+#    route: M
+#  - name: Northbound B Grand St
+#    stopid: D22N
+#    route: B
+#  - name: Northbound D Grand St
+#    stopid: D22N
+#    route: D
+#  - name: Southbound F East Broadway
+#    stopid: F16S
+#    route: F
 
-- platform: gtfs_realtime
-  name: Essex Subway J Z
-  trip_update_url: !secret gtfs_subway2_trip_update_url
-  offset: 10
-  departures:
-  - name: Northbound J Essex St
-    stopid: M18N
-    route: J
-  - name: Northbound Z Essex St
-    stopid: M18N
-    route: Z
+#- platform: gtfs_realtime
+#  name: Essex Subway J Z
+#  trip_update_url: !secret gtfs_subway2_trip_update_url
+#  offset: 10
+#  departures:
+#  - name: Northbound J Essex St
+#    stopid: M18N
+#    route: J
+#  - name: Northbound Z Essex St
+#    stopid: M18N
+#    route: Z
 
-- platform: google_travel_time
-  name: Home to Work
-  api_key: !secret google_travel_time_api_key
-  origin: !secret google_travel_time_origin
-  destination: !secret google_travel_time_destination
-  options:
-    mode: transit
+#- platform: google_travel_time
+#  name: Home to Work
+#  api_key: !secret google_travel_time_api_key
+#  origin: !secret google_travel_time_origin
+#  destination: !secret google_travel_time_destination
+#  options:
+#    mode: transit
 
-- platform: google_travel_time
-  name: Work to Home
-  api_key: !secret google_travel_time_api_key
-  destination: !secret google_travel_time_origin
-  origin: !secret google_travel_time_destination
-  options:
-    mode: transit
+#- platform: google_travel_time
+#  name: Work to Home
+#  api_key: !secret google_travel_time_api_key
+#  destination: !secret google_travel_time_origin
+#  origin: !secret google_travel_time_destination
+#  options:
+#    mode: transit
 
-- platform: google_travel_time
-  name: Home to Next Appt
-  api_key: !secret google_travel_time_api_key
-  origin: !secret google_travel_time_origin
-  destination: sensor.new_nextcal_location
-  options: 
+#- platform: google_travel_time
+#  name: Home to Next Appt
+#  api_key: !secret google_travel_time_api_key
+#  origin: !secret google_travel_time_origin
+#  destination: sensor.new_nextcal_location
+#  options: 
 #    arrival_time: "{{ states('sensor.nextcal_start_time') }}"
-    mode: transit
+#    mode: transit
 
-- platform: template
-  sensors:
-    battery_gabes_mate:
-      friendly_name: "Battery Status"
-      value_template: '{{ states.device_tracker.gabes_mate.attributes.battery|default(0)|int() }}'
-      entity_id: sensor.battery_gabes_mate
-      unit_of_measurement: "%"
-      icon_template: >
-        {% set battery_level = states.device_tracker.hassio_gabesmatephone.attributes.battery|default(0)|int %}
-        {% set battery_round = (battery_level / 10) |int * 10 %}
-        {% if battery_round >= 100 %}
-          mdi:battery
-        {% elif battery_round > 0 %}
-          mdi:battery-{{ battery_round }}
-        {% else %}
-          mdi:battery-alert
-        {% endif %}
+#- platform: template
+#  scan_interval: 240
+#  sensors:
+#    battery_gabes_mate:
+#      friendly_name: "Battery Status"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.battery | default(0) |int() }}'
+#      entity_id: sensor.battery_gabes_mate
+#      unit_of_measurement: "%"
+#      icon_template: >
+#        {% set battery_level = states.device_tracker.gabes_mate.attributes.battery|default(0)|int %}
+#        {% set battery_round = (battery_level / 10) |int * 10 %}
+#        {% if battery_round >= 100 %}
+#          mdi:battery
+#        {% elif battery_round > 0 %}
+#          mdi:battery-{{ battery_round }}
+#        {% else %}
+#          mdi:battery-alert
+#        {% endif %}
+#    altitude_gabes_mate:
+#      friendly_name: "Altitude"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.altitude | round(1) }}'
+#      entity_id: sensor.gps_altitude_gabes_mate
+#      unit_of_measurement: "m"
+#    activity_gabes_mate:
+#      friendly_name: "Activity"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.activity }}'
+#      entity_id: sensor.activity_gabes_mate
+#    direction_gabes_mate:
+#      friendly_name: "Direction"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.direction }}'
+#      entity_id: sensor.direction_gabes_mate
+#    speed_gabes_mate:
+#      friendly_name: "Speed"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.speed | round(1) }}'
+#      entity_id: sensor.speed_gabes_mate
+#      unit_of_measurement: "mph"
+#    accuracy_gabes_mate:
+#      friendly_name: "Accuracy"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.gps_accuracy | round(1) }}'
+#      entity_id: sensor.gps_accuracy_gabes_mate
+#      unit_of_measurement: "m"
+#    provider_gabes_mate:
+#      friendly_name: "Provider"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.provider }}'
+#      entity_id: sensor.net_provider_gabes_mate
+#    source_type_gabes_mate:
+#      friendly_name: "Source Type"
+#      value_template: '{{ states.device_tracker.gabes_mate.attributes.source_type }}'
+#      entity_id: sensor.source_type_gabes_mate
+#    last_seen_gabes_mate:
+#      friendly_name: "Last Seen"
+#      value_template: '{{ relative_time (states.device_tracker.gabes_mate.last_updated) + " ago"}}'
+#      entity_id: sensor.last_seen_gabes_mate
 
 #System Monitor
 - platform: version
@@ -933,18 +1124,27 @@
 - platform: dnsip
   name: "IP Address"
 
-- platform: feedparser
-  name: Engineering Feed
-  feed_url: 'https://www.sciencedaily.com/rss/matter_energy/engineering.xml'
-  date_format: '%a, %b %d %I:%M %p'
-  inclusions:
-    - title
-    - link
-    - description
-    - image
-    - pubDate
-  exclusions:
-    - language
+#- platform: feedparser
+#  name: sfgabe Feed
+#  feed_url: 'https://twitrss.me/twitter_user_to_rss/?user=sfgabe'
+#  date_format: '%a, %d %b %I:%M %p'
+#  inclusions:
+#    - title
+#    - link
+#    - description
+#    - image
+#    - pubDate
+
+#- platform: feedparser
+#  name: OctoCamBot Feed
+#  feed_url: 'https://twitrss.me/twitter_user_to_rss/?user=octo_cam_bot'
+#  date_format: '%a, %d %b %I:%M %p'
+#  inclusions:
+#    - title
+#    - link
+#    - description
+#    - image
+#    - pubDate
 
 - platform: history_stats
   name: stats_work
@@ -1325,3 +1525,110 @@
     alarm_time_work_day:
       friendly_name: Alarm Time Work Day
       value_template: '{{ "%0.02d:%0.02d" | format(states("input_number.alarm_hour") | int, states("input_number.alarm_minutes") | int) }}'
+
+#Greeting card
+- platform: template
+  sensors:
+    time_of_day:
+      value_template: >
+        {% set current_hour = strptime(states('sensor.time'), "%H:%M").hour %}
+        {% if current_hour < 12 %}
+          Good Morning, Gabe
+        {% elif 12 <= current_hour < 18 %}
+          Good Afternoon, Gabe
+        {% elif 18 <= current_hour < 23 %}
+          Good Evening, Gabe
+        {% else %}
+          Good Night, Gabe
+        {% endif %}
+
+- platform: template
+  sensors:
+    greeter_card_info:
+      value_template: >
+        Next Event:{{ as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) | timestamp_custom('%Y/%m/%d at %H:%M') }} 
+        {{ states.calendar.gabethisisgabescom.attributes.message }}
+
+- platform: template
+  sensors:
+    outside_alerts:
+      value_template: >
+        Current Location: {{ states('device_tracker.gabes_mate') }}
+        ({{ (as_timestamp (now()) -as_timestamp (states.device_tracker.gabes_mate.last_changed)) }})
+
+#- platform: command_line
+#  name: "Outside: Alerts"
+#  icon: alert-outline
+#  command: "/home/homeassistant/.homeassistant/scripts/check-weather.sh"
+#  scan_interval: 180 
+
+#- platform: scrape
+#  resource: "https://www.accuweather.com/en/us/new-york-ny/10007/minute-weather-forecast/349727"
+#  select: "div.mc-summary > p"
+#  name: "Outside: Alerts"
+#  icon: alert-outline
+#  entity_id: sensor.outside_alerts
+#  scan_interval: 180
+
+- platform: template
+  sensors:
+    outside_temp:
+      friendly_name: "Outside Temperature"
+      unit_of_measurement: '°F'
+      value_template: "{{ states.sensor.dark_sky_temperature.state }}"
+      icon_template: >
+        {% if is_state("sensor.dark_sky_icon", "clear-day") -%}
+           mdi:weather-sunny
+        {% elif is_state("sensor.dark_sky_icon", "clear-night") -%}
+           mdi:weather-night
+        {% elif is_state("sensor.dark_sky_icon", "rain") -%}
+           mdi:weather-rainy
+        {% elif is_state("sensor.dark_sky_icon", "snow") -%}
+           mdi:weather-snowy
+        {% elif is_state("sensor.dark_sky_icon", "sleet") -%}
+           mdi:weather-snowy-rainy
+        {% elif is_state("sensor.dark_sky_icon", "wind") -%}
+           mdi:weather-windy-variant
+        {% elif is_state("sensor.dark_sky_icon", "fog") -%}
+           mdi:weather-fog
+        {% elif is_state("sensor.dark_sky_icon", "cloudy") -%}
+           mdi:weather-cloudy
+        {% elif is_state("sensor.dark_sky_icon", "partly-cloudy-day") -%}
+           mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon", "partly-cloudy-night") -%}
+           mdi:weather-partlycloudy
+        {% elif is_state("sensor.dark_sky_icon", "hail") -%}
+           mdi:weather-hail
+        {% elif is_state("sensor.dark_sky_icon", "thunderstorm") -%}
+           mdi:weather-lightning
+        {% else %}
+           mdi:help-circle
+        {% endif %}
+      entity_picture_template: >
+        {% if is_state("sensor.dark_sky_icon", "clear-day") -%}
+           /local/images/icons/weather_icons/animated/day.svg
+        {% elif is_state("sensor.dark_sky_icon", "clear-night") -%}
+           /local/images/icons/weather_icons/animated/night.svg
+        {% elif is_state("sensor.dark_sky_icon", "rain") -%}
+           /local/images/icons/weather_icons/animated/rainy-1.svg
+        {% elif is_state("sensor.dark_sky_icon", "snow") -%}
+           /local/images/icons/weather_icons/animated/snowy-6.svg
+        {% elif is_state("sensor.dark_sky_icon", "sleet") -%}
+           /local/images/icons/weather_icons/animated/rainy-7.svg
+        {% elif is_state("sensor.dark_sky_icon", "wind") -%}
+           /local/images/icons/weather_icons/animated/cloudy.svg
+        {% elif is_state("sensor.dark_sky_icon", "fog") -%}
+           /local/images/icons/weather_icons/animated/cloudy.svg
+        {% elif is_state("sensor.dark_sky_icon", "cloudy") -%}
+           /local/images/icons/weather_icons/animated/cloudy.svg
+        {% elif is_state("sensor.dark_sky_icon", "partly-cloudy-day") -%}
+           /local/images/icons/weather_icons/animated/cloudy-day-3.svg
+        {% elif is_state("sensor.dark_sky_icon", "partly-cloudy-night") -%}
+           /local/images/icons/weather_icons/animated/cloudy-night-3.svg
+        {% elif is_state("sensor.dark_sky_icon", "hail") -%}
+           /local/images/icons/weather_icons/animated/rainy-7.svg
+        {% elif is_state("sensor.dark_sky_icon", "thunderstorm") -%}
+           /local/images/icons/weather_icons/animated/thunder.svg
+        {% else %}
+           /local/images/icons/weather_icons/animated/weather.svg
+        {% endif %}

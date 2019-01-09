@@ -7,147 +7,49 @@ homeassistant:
   time_zone: !secret config_tz
   customize: !include customize.yaml
   customize_glob: !include customize_glob.yaml
+  whitelist_external_dirs:
+      - /home/homeassistant/.homeassistant/scripts
+      - /home/homeassistant/.homeassistant/www/images/
 
 # Enables the frontend
 frontend: 
-  themes: !include configuration_themes.yaml
-  extra_html_url:
-    - /local/custom_ui/custom-weather-card.html
-    - /local/custom_ui/state-card-floorplan.html
-    - /local/custom_ui/state-card-tiles.html
-    - /local/custom_ui/state-card-text.html
-  extra_html_url_es5:
-    - /local/custom_ui/custom-weather-card.html
-    - /local/custom_ui/state-card-floorplan.html
-    - /local/custom_ui/state-card-tiles_es5.html
-    - /local/custom_ui/state-card-text.html
+  javascript_version: latest
+#  themes: !include configuration_themes.yaml
+#  extra_html_url:
+#    - /local/custom_ui/custom-weather-card.html
+#    - /local/custom_ui/state-card-floorplan.html
+#    - /local/custom_ui/state-card-tiles.html
+#    - /local/custom_ui/state-card-text.html
+#  extra_html_url_es5:
+#    - /local/custom_ui/custom-weather-card.html
+#    - /local/custom_ui/state-card-floorplan.html
+#    - /local/custom_ui/state-card-tiles_es5.html
+#    - /local/custom_ui/state-card-text.html
 
 # Enables configuration UI
 config:
 
 http:
   # Secrets are defined in the file secrets.yaml
-  api_password: !secret http_password
+#  api_password: !secret http_password
   base_url: !secret config_base_url
   ssl_key: !secret config_ssl_key
   ssl_certificate: !secret config_ssl_cert
 
-
-custom_updater:
-
-#InfluxDB
-influxdb:
-  host: !secret config_influxdb_host
-  port: !secret config_influxdb_port
-  database: home_assistant
-  max_retries: 10
-  include:
-    domains:
-      - switch
-      - automation
-      - script
-      - device_tracker
-      - light
-      - persistent_notification
-    entities:
-      - binary_sensor.octoprint_status_printing
-      - binary_sensor.octoprint_status_printing_error
-      - sensor.octoprint_current_state 
-      - sensor.octoprint_hotend
-      - sensor.octoprint_hotend_target
-      - sensor.octoprint_bed
-      - sensor.octoprint_bed_target
-      - sensor.usps_mail
-      - sensor.usps_packages
-      - sensor.nextcal_message
-      - sensor.new_nextcal_location
-      - sensor.nextcal_start_time
-      - sensor.nextcal_end_time
-      - sensor.speedtest_download
-      - sensor.speedtest_upload
-      - sensor.speedtest_ping 
-      - sensor.myipopendnscom
-      - sensor.ha_installed_version
-      - sensor.ha_uptime
-      - sensor.db_file_system_size
-      - sensor.mariadb_database_size
-      - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
-      - sensor.mqtt_topic_home_sysinfo_template_serverload
-      - sensor.mqtt_topic_home_sysinfo_template_serverspeed
-      - sensor.mqtt_topic_home_sysinfo_template_servertemp
-      - sensor.battery_gabes_mate
-      - sensor.ambient_temp_graph
-      - sensor.dark_sky_minutely_summary
-      - sensor.btc_exchange_rate
-      - sensor.coinbase_bch_wallet
-      - sensor.coinbase_eth_wallet
-      - sensor.coinbase_ltc_wallet
-      - sensor.coinbase_my_vault
-      - sensor.coinbase_my_wallet
-      - sensor.coinbase_usd_wallet
-      - sensor.eth_exchange_rate
-      - sensor.ltc_exchange_rate
-      - sensor.template_calendar_birthday_date
-      - sensor.template_calendar_birthday 
-      - sensor.empirestatelights 
-      - sensor.mqtt_topic_octo_water_level_template_level
-      - sensor.mqtt_topic_octo_sysinfo_template_serverload
-      - sensor.mqtt_topic_octo_sysinfo_template_serverspeed
-      - sensor.mqtt_topic_octo_sysinfo_template_servertemp
-      - sensor.amazonnexthightide
-      - sensor.amazonnextlowtide
-      - sensor.amazonsunrisetides
-      - sensor.amazonsunsettides
-      - sensor.mqtt_topic_octo_sysinfo_template_watertemp
-      - sensor.monthly_amazon_temp
-      - sensor.monthly_amazon_ph
-      - sensor.reefsysinfo_template_name
-      - sensor.reefsysinfo_template_ip
-      - sensor.reefsysinfo_template_version
-      - sensor.reefsysinfo_template_uptime
-      - sensor.onlyreefcontrolcpumemory
-      - sensor.onlyreefcontrolpitemp
-      - sensor.mqtt_topic_reef_water_level_template_level
-      - sensor.reefsunrisetides
-      - sensor.reefsunsettides
-      - sensor.reefcontrolpilightbrightness
-      - sensor.reefcontrolpilightcolor
-      - sensor.reefcontrolpipump1status
-      - sensor.reefcontrolpipump1statusreverse
-      - sensor.reefcontrolpipump2power
-      - sensor.noaa_daily_max_reef_temp
-      - sensor.reef_high_avg_daily_temp
-      - sensor.reef_avg_daily_temp
-      - sensor.reef_low_avg_daily_temp
-      - sensor.noaa_daily_min_reef_temp
-      - input_boolean.reef_temp_daytime_state
-      - input_boolean.reef_temp_nightime_state
-      - sensor.bali_reef_tides
-      - sensor.dark_sky_daily_high_temperature
-      - sensor.dark_sky_daily_low_temperature
-      - sensor.dark_sky_temperature
-
-panel_iframe:
-  influxdb:
-    title: InfluxDB
-    icon: mdi:chart-areaspline
-    url: !secret panel_iframe_url
-
-  octoprint:
-    title: 3D Printer
-    icon: mdi:printer-3d
-    url: https://octopi.local
+lovelace:
+  mode: yaml
 
 mqtt:
   broker: localhost
   port: 1883
   username: !secret mqtt_username
   password: !secret mqtt_password
+#  discovery: true
 
-#jsonrest:
+updater:
 
 # Discover some devices automatically
-#discovery:
+discovery:
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -192,6 +94,10 @@ logbook:
       - sensor.speedtest_download
       - sensor.speedtest_upload
       - sensor.speedtest_ping 
+      - sensor.asuswrt_download_speed
+      - sensor.asuswrt_upload_speed
+      - sensor.asuswrt_download
+      - sensor.asuswrt_upload
       - sensor.myipopendnscom
       - sensor.ha_installed_version
       - sensor.ha_uptime
@@ -225,7 +131,12 @@ logbook:
       - sensor.amazonsunrisetides
       - sensor.amazonsunsettides
       - sensor.mqtt_topic_octo_sysinfo_template_watertemp
-      - sensor.monthly_amazon_temp
+      - sensor.monthly_amazon_temp_min
+      - sensor.monthly_amazon_temp_lowmed
+      - sensor.monthly_amazon_temp_med
+      - sensor.monthly_amazon_temp_highmed
+      - sensor.monthly_amazon_temp_max
+#      - sensor.monthly_amazon_temp
       - sensor.monthly_amazon_ph
       - sensor.reefsysinfo_template_name
       - sensor.reefsysinfo_template_ip
@@ -281,6 +192,10 @@ recorder:
       - sensor.speedtest_download
       - sensor.speedtest_upload
       - sensor.speedtest_ping 
+      - sensor.asuswrt_download_speed
+      - sensor.asuswrt_upload_speed
+      - sensor.asuswrt_download
+      - sensor.asuswrt_upload
       - sensor.myipopendnscom
       - sensor.ha_installed_version
       - sensor.ha_uptime
@@ -314,7 +229,12 @@ recorder:
       - sensor.amazonsunrisetides
       - sensor.amazonsunsettides
       - sensor.mqtt_topic_octo_sysinfo_template_watertemp
-      - sensor.monthly_amazon_temp
+      - sensor.monthly_amazon_temp_min
+      - sensor.monthly_amazon_temp_lowmed
+      - sensor.monthly_amazon_temp_med
+      - sensor.monthly_amazon_temp_highmed
+      - sensor.monthly_amazon_temp_max
+#      - sensor.monthly_amazon_temp
       - sensor.monthly_amazon_ph
       - sensor.reefsysinfo_template_name
       - sensor.reefsysinfo_template_ip
@@ -342,24 +262,18 @@ recorder:
       - sensor.dark_sky_daily_low_temperature
       - sensor.dark_sky_temperature
 
-binary_sensor:
-  - platform: octoprint
-    name: OctoPrint Status
-    monitored_conditions:
-      - Printing
-      - Printing Error
-
 #Panels
-panel_custom:
-  - name: floorplan
-    sidebar_title: Floorplan
-    sidebar_icon: mdi:home
-    url_path: floorplan
-    config: !include floorplan.yaml
+#panel_custom:
+#  - name: floorplan
+#    sidebar_title: Floorplan
+#    sidebar_icon: mdi:home
+#    url_path: floorplan
+#    config: !include floorplan.yaml
 
 weather: 
   - platform: darksky
     api_key: !secret darksky_api_key
+    mode: daily
 
 # Pandora through Pianobar
 media_player 2:
@@ -416,39 +330,18 @@ coinbase:
     - ETH
     - LTC
 
-cloud 2:
-  alexa:
-    filter:
-      include_entities:
-        - light.kitchen
-        - light.bedroom
-        - light.living_room
-        - group.all_lights
-      include_domains:
-        - switch
-      #exclude_entities:
-      #  - switch.outside
-    entity_config:
-      light.kitchen:
-        name: Kitchen Light
-        description: The light in the kitchen
-      light.bedroom:
-        name: Bedroom Light
-        description: The light in the bedroom
-      light.living_room:
-        name: Table Light
-        description: The light over the table
-      group.all_lights:
-        name: All the Lights
-        description: All the lights
+notify:
+  - name: octo_cam_bot_notifier
+    platform: twitter
+    consumer_key: !secret twitter_consumer_key
+    consumer_secret: !secret twitter_consumer_secret
+    access_token: !secret twitter_access_token
+    access_token_secret: !secret twitter_access_token_secret
 
-#notify:
-#  - name: octo_cam_bot_notifier
-#    platform: twitter
-#    consumer_key: !secret twitter_consumer_key
-#    consumer_secret: !secret twitter_consumer_secret
-#    access_token: !secret twitter_access_token
-#    access_token_secret: !secret twitter_access_token_secret
+notify 2:
+  - platform: command_line
+    name: gabes_alexa
+    command: /home/homeassistant/.homeassistant/scripts/alexa_wrapper.sh -d "Gabe's Alexa"
 
 # lovelace theme notification
 input_text:
@@ -456,6 +349,69 @@ input_text:
     name: Notification Text
     pattern: '[a-fA-F0-9]*'
     initial: No Message
+
+hue:
+  bridges:
+    - host: !secret hue_bridge_ip
+      allow_unreachable: true
+      allow_hue_groups: true
+
+# alexa integration
+emulated_hue:
+  host_ip: 192.168.50.111
+  exposed_domains:
+  - switch
+  - scene
+  - script
+  entities:
+    switch.06200940dc4f22cbb94b_4:
+      name: "Reef Light"
+    switch.harmony_watch_roku:
+      name: "Tee Vee" 
+    switch.kessil_light_level_11:
+      name: "Reef Blue Lights" 
+    switch.kessil_light_level_5:
+      name: "Reef Bright Lights"
+    switch.2437254184f3eb695327:
+      name: "Printer"
+    switch.octofishfeeder:
+      name: "Fish Feeder"
+    switch.2437254184f3eb695715:
+      name: "Home Assistant"
+    switch.06200940dc4f22cbb94b_7:
+      name: "Reef Pie"
+    switch.reef_pump_1:
+      name: "Reef Top Up" 
+    switch.reef_pump_1_reverse:
+      name: "Reef Reverse Pump" 
+    switch.reef_pump_2:
+      name: "Reef Doser" 
+    switch.2437254184f3eb695276:
+      name: "Reef Sump" 
+    light.table:
+      name: "Table Light" 
+
+asuswrt:
+  host: !secret asuswrt_host
+  username: !secret asuswrt_username
+#  password: !secret asuswrt_password
+  protocol: ssh
+  port: 22
+  ssh_key: !secret asuswrt_ssh_key
+
+downloader:
+  download_dir: www/images/
+
+ffmpeg:
+  ffmpeg_bin: /usr/bin/ffmpeg
+
+# This crashes the pi
+#image_processing:
+#  - platform: tensorflow
+#    source:
+#      - entity_id: camera.housecam
+#    model:
+#      graph: /home/homeassistant/.homeassistant/tensorflow/frozen_inference_graph.pb
 
 #feedreader:
 #  urls:

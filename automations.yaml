@@ -5,37 +5,25 @@
     hours: 1
     minutes: 1
     seconds: 0 
+  condition:
+    condition: time
+    weekday:
+      - wed
   action:
-    - service: shell_command.backup_makewritable
     - service: shell_command.backup_configuration
-    - service: shell_command.backup_groups
-    - service: shell_command.backup_customize
-    - service: shell_command.backup_scripts
-    - service: shell_command.backup_known_devices
-    - service: shell_command.backup_notification
-    - service: shell_command.backup_device_tracker
-    - service: shell_command.backup_appdaemon
-    - service: shell_command.backup_secrets
-    - service: shell_command.backup_camera
-    - service: shell_command.backup_intent
-    - service: shell_command.backup_automations
-    - service: shell_command.backup_sensors
-    - service: shell_command.backup_switches
 
 - alias: Activate Motion Detect on Leaving Home Zone
   id: gabe_out_of_home_zone_motion_on
   trigger:
-    platform: zone
-    entity_id: device_tracker.gabes_mate
-    zone: zone.home
-    event: leave
-    # Optional
-    #  from: 'home'
-    # If given, will trigger when state has been the to state for X time.
-    # for:
-    #  hours: 0
-    #  minutes: 15
-    #  seconds: 0
+    platform: state
+    entity_id: device_tracker.huawei_mate_992528f2b1a5
+#    zone: zone.home
+    from: 'home'
+    to: 'not_home'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
   action:
     - service: homeassistant.turn_on
       data:
@@ -44,49 +32,80 @@
 - alias: Turn Off Lights on Leaving Home Zone
   id: gabe_out_of_home_zone_lights_off
   trigger:
-    platform: zone
-    entity_id: device_tracker.gabes_mate
-    zone: zone.home
-    event: leave
+    platform: state
+    entity_id: device_tracker.huawei_mate_992528f2b1a5
+#    zone: zone.home
+#    event: leave
+    from: 'home'
+    to: 'not_home'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
   action:
     - service: homeassistant.turn_off
       data:
         entity_id: group.all_lights
+    - service: switch.turn_off
+      entity_id: switch.entry_light
 
 - alias: Turn On Lights on Enter Home Zone
   id: gabe_arrive_in_home_zone_lights_on
   trigger:
-    platform: zone
-    entity_id: device_tracker.gabes_mate
-    zone: zone.home
-    event: enter
+    - platform: zone
+      entity_id: device_tracker.gabes_mate
+      zone: zone.home
+      event: enter
+    - platform: zone
+      entity_id: device_tracker.huawei_mate_992528f2b1a5
+      zone: zone.home
+      event: enter
   action:
     - service: homeassistant.turn_on
       data:
         entity_id: group.all_lights
+    - service: switch.turn_on
+      entity_id: switch.entry_light
 
 - alias: Deactivate Motion Detect on Enter Home Zone
   id: gabe_arrive_in_home_zone_motion_off
   trigger:
-    platform: zone
-    entity_id: device_tracker.gabes_mate
-    zone: zone.home
-    event: enter
+    - platform: zone
+      entity_id: device_tracker.gabes_mate
+      zone: zone.home
+      event: enter
+    - platform: zone
+      entity_id: device_tracker.huawei_mate_992528f2b1a5
+      zone: zone.home
+      event: enter
   action:
     - service: homeassistant.turn_off
       data:
         entity_id: switch.motion_detect
 
-- alias: Home Assistant Start
+- alias: Welcome on Enter Home Zone
+  id: gabe_arrive_in_home_zone_welcome
   trigger:
-    platform: homeassistant
-    event: start 
+    - platform: zone
+      entity_id: device_tracker.huawei_mate_992528f2b1a5
+      zone: zone.home
+      event: enter
   action:
-    - delay: '00:00:10'
-    - service: tts.google_say
+    - delay: '00:00:05'
+    - service: notify.gabes_alexa
       data:
-        entity_id: media_player.tts_bluetooth_speaker
-        message: 'Home Assistant has started'
+        message: "Hello_Gayb,_Welcome_home!"
+
+#- alias: Home Assistant Start
+#  trigger:
+#    platform: homeassistant
+#    event: start 
+#  action:
+#    - delay: '00:00:10'
+#    - service: tts.google_say
+#      data:
+#        entity_id: media_player.tts_bluetooth_speaker
+#        message: 'Home Assistant has started'
 
 - alias: Set Harmony activity
   hide_entity: True
@@ -207,6 +226,14 @@
   - service: script.turn_on
     entity_id: script.freshwater_feeder_script
 
+- alias: Activate Feeder Script MidDay
+  trigger:
+    platform: time
+    at: '12:15:00'
+  action:
+  - service: script.turn_on
+    entity_id: script.freshwater_feeder_script
+
 - alias: Activate Feeder Script Afternoon
   trigger:
     platform: time
@@ -220,7 +247,7 @@
 - alias: Set Amazon Thermostat Max Daytime Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.monthly_amazon_temp.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
+    value_template: "{{ states.sensor.monthly_amazon_temp_lowmed.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: switch.06200940dc4f22cbb432_4
@@ -229,13 +256,13 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.octo_tank_therm
-       temperature: '{{ states.sensor.monthly_amazon_temp.state | float + 0.5 }}'
+       temperature: '{{ states.sensor.monthly_amazon_temp_lowmed.state | float }}'
 
  # This automation script runs when a value is received via Reef sensor: monthly_amazon_temp
 - alias: Set Amazon Thermostat Max Night Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.monthly_amazon_temp.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
+    value_template: "{{ states.sensor.monthly_amazon_temp_min.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: switch.06200940dc4f22cbb432_4
@@ -244,13 +271,13 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.octo_tank_therm
-       temperature: '{{ states.sensor.monthly_amazon_temp.state | float - 0.5 }}'
+       temperature: '{{ states.sensor.monthly_amazon_temp_min.state | float }}'
 
  # This automation script runs when a value is received via Reef sensor: reef_low_avg_daily_temp
 - alias: Set Reef Thermostat Max Daytime Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.reef_low_avg_daily_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
+    value_template: "{{ states.sensor.reef_high_avg_daily_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: input_boolean.reef_temp_daytime_state
@@ -259,7 +286,7 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.reef_tank_therm
-       temperature: '{{ states.sensor.reef_low_avg_daily_temp.state | float }}'
+       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float - 2 }}'
 
  # This automation script runs when a value is received via Reef sensor: noaa_daily_min_reef_temp
 - alias: Set Reef Thermostat Max Nighttime Selector
@@ -274,7 +301,7 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.reef_tank_therm
-       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float }}'
+       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float - 2.0 }}'
 
 - alias: Regulate Reef Heater To Off on Low Misread
   trigger:
@@ -284,18 +311,59 @@
     service: switch.turn_off
     entity_id: switch.06200940dc4f22cbb94b_3
 
-#Turn on sump pump ever 20 min
-- alias: Reef Sump Pump On Every Hour
+- alias: Nightly Top Off On
   trigger:
     - platform: time
-      minutes: '/20'
+      at: '22:00:00'
+  action:
+    service: switch.turn_on
+    entity_id: switch.reef_pump_1_scheduled
+
+- alias: Nightly Top Off Off
+  trigger:
+    - platform: time
+      at: '1:00:00'
+  action:
+    service: switch.turn_off
+    entity_id: switch.reef_pump_1_scheduled
+
+#Turn on sump pump every 20 min
+#- alias: Reef Sump Pump On Every Hour
+#  trigger:
+#    - platform: time
+#      minutes: '/20'
+#  condition:
+#    condition: state
+#    entity_id: sensor.reefcontrolpifloat
+#    state: 'OK'
+#  action:
+#    service: switch.turn_on
+#    entity_id: switch.2437254184f3eb695276
+
+#Update Reef temps once a day
+  alias: 'download_noaa_temps'
+  trigger:
+    platform: time
+    at: '01:15:00'
+  action:
+    - service: downloader.download_file
+      data_template:
+        url: "https://coralreefwatch.noaa.gov/vs/data/great_nicobar.txt"
+        filename: "east_java_bali.txt"
+        overwrite: true
+
+#Turn on sump pump every 3 min
+- alias: Reef Sump Pulse
+  trigger:
+    - platform: time
+      minutes: '/4'
   condition:
     condition: state
     entity_id: sensor.reefcontrolpifloat
     state: 'OK'
   action:
-    service: switch.turn_on
-    entity_id: switch.2437254184f3eb695276
+    service: script.turn_on
+    entity_id: script.reeftank_sump_pulse
 
 #Turn sump pump off on low
 - alias: Reef Sump Pump Low Off
@@ -304,6 +372,18 @@
     entity_id: sensor.reefcontrolpifloat
     from: 'OK'
     to: 'Low'
+  action:
+    service: switch.turn_off
+    entity_id: switch.2437254184f3eb695276
+
+#Turn sump pump off on low timer
+- alias: Reef Sump Pump Low Off Timer
+  trigger:
+    platform: state
+    entity_id: sensor.reefcontrolpifloat
+    to: 'Low'
+    for:
+      minutes: 5
   action:
     service: switch.turn_off
     entity_id: switch.2437254184f3eb695276
@@ -342,7 +422,7 @@
 - alias: usps_mail_alert
   trigger:
     platform: zone
-    entity_id: device_tracker.gabes_mate
+    entity_id: device_tracker.huawei_mate_992528f2b1a5
     zone: zone.home
     event: enter
   condition:
@@ -414,6 +494,22 @@
     data:
       message: "Charger reported {{ states.sensor.rpi_power_status.state }}"
       title: "RPI Power Issue"
+
+- alias: Check for Tweets OctoCam
+  id: twitter_check_octocam
+  trigger:
+    - platform: time
+      minutes: '/30'
+  action:
+    - service: shell_command.tweet_retrieve_octocam
+
+- alias: Check for Tweets SFGabe
+  id: twitter_check_sfgabe
+  trigger:
+    - platform: time
+      minutes: '/60'
+  action:
+    - service: shell_command.tweet_retrieve_sfgabe
 
 ##Alarm Clock
 - id: start_alarm_clock_radio_off_day
@@ -545,10 +641,12 @@
     value_template: "{{ states('sensor.time') == (((state_attr('input_datetime.bedroom_alarm_clock_time' , 'timestamp')) - (15 * 60))|timestamp_custom('%H:%M', false)) }}"
   condition:
     - condition: state
-      entity_id: device_tracker.gabes_mate
+      entity_id: device_tracker.huawei_mate_992528f2b1a5
       state: 'home'
     - condition: state
       entity_id: input_boolean.bedroom_alarm_clock_status
       state: 'on'
   action:
-    service: script.bedroom_wake_up
+    - service: script.turn_on
+      data:
+        entity_id: script.bedroom_wake_up

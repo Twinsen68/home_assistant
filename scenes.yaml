@@ -1,4 +1,6 @@
 name: Bedroom wake up
 entities:
-  group.all_lights:
+  light.bedroom_desk:
+    state: on
+  light.bedside_table:
     state: on

@@ -2,16 +2,7 @@
 backup:
   alias: Backup HA Configuration Files
   sequence:
-    - service: shell_command.backup_makewritable
     - service: shell_command.backup_configuration
-    - service: shell_command.backup_groups
-    - service: shell_command.backup_customize
-    - service: shell_command.backup_scripts
-    - service: shell_command.backup_known_devices
-    - service: shell_command.backup_notification
-    - service: shell_command.backup_device_tracker
-    - service: shell_command.backup_appdaemon
-    - service: shell_command.backup_secrets
 
 #Manual Reefcam Restart Button
 reefcam_restart:
@@ -93,7 +84,7 @@ reeftank_morning_fade_kessil:
         device: 43857787
         command: 'FastForward'
     - delay:
-        seconds: 3600
+        seconds: 1800
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_6
     - service: remote.send_command
@@ -102,11 +93,11 @@ reeftank_morning_fade_kessil:
         device: 43857787
         command: 'FastForward'
     - delay:
-        seconds: 3600
+        seconds: 1800
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_7
     - delay:
-        seconds: 3600
+        seconds: 7200
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_8
     - delay:
@@ -168,6 +159,17 @@ reeftank_evening_fade_kessil:
     - service: switch.turn_off
       entity_id: switch.06200940dc4f22cbb94b_4
 
+reeftank_sump_pulse:  
+  alias: "Reef Tank Sump Pulse"
+  sequence:
+    - service: homeassistant.turn_on
+      entity_id: switch.2437254184f3eb695276
+    - delay:
+        seconds: 90
+    - service: homeassistant.turn_off
+      entity_id: switch.2437254184f3eb695276
+
+
 octotank_morning_on:
   alias: "Octo Light Morning On"
   sequence:
@@ -208,10 +210,20 @@ freshwater_feeder_script:
   sequence:
     - service: switch.turn_on
       entity_id: switch.octofishfeeder
+    - service: downloader.download_file
+      data_template:
+        url: "http://octocam.local:8765/picture/1/current/?_username=admin&_signature=a96455e6bfe50190508c4b21bc26d8f2ef93221d"
+        filename: "latest_octocam.jpg"
+        overwrite: true
     - delay:
-        seconds: 120
+        seconds: 30
     - service: switch.turn_off
       entity_id: switch.octofishfeeder
+    - service: notify.octo_cam_bot_notifier
+      data:
+        message: "I, OctoCamBot, just fed the fish! \U0001F420 \U0001F95E \U0001F389 \U0001F32E \U0001F420 \U0001F9C1 \U0001F355 EmojiStats: \U0001F321 {{ states.sensor.mqtt_topic_octo_sysinfo_template_watertemp.state }}F \U0001F964  {{ states.sensor.mqtt_topic_octo_water_level_template_level.state }} \U0001F305 {{ states.sensor.amazonsunrisetides.state }} \U0001F307 {{ states.sensor.amazonsunsettides.state }}"
+        data:
+          media: /home/homeassistant/.homeassistant/www/images/latest_octocam.jpg
 
 #Freshwater Waves
 freshwater_waves_on_script:  
@@ -340,8 +352,9 @@ early_wakeup:
     - condition: state
       entity_id: input_boolean.dark
       state: 'on'
-    - service: homeassistant.turn_on
-      entity_id: scene.bedroom_wake_up
+    - service: script.turn_on
+      data:
+        entity_id: sunrise_lights
 
 on_time_wakeup:
   sequence:
@@ -355,8 +368,55 @@ on_time_wakeup:
     - condition: state
       entity_id: input_boolean.dark
       state: 'on'
+    - service: script.turn_on
+      data:
+        entity_id: sunrise_lights
+
+#Sunrise lights
+sunrise_lights:
+  sequence:
+    # light 1 dark red to medium warm orange
     - service: homeassistant.turn_on
-      entity_id: scene.bedroom_wake_up
+      data:
+        entity_id: light.bedside_table
+        rgb_color: [98,19,0]
+        brightness: 1
+    - delay:
+        seconds: 1.00
+    - service: homeassistant.turn_on
+      data:
+        entity_id: light.bedside_table
+        rgb_color: [249,123,0]
+        brightness: 103
+        transition: 15
+    - delay:
+        seconds: 15.00
+    # light 2 dark warm orange to medium warm orange
+    - service: homeassistant.turn_on
+      data:
+        entity_id: light.bedroom_desk
+        rgb_color: [249,123,0]
+        brightness: 1
+    - delay:
+        seconds: 1.00
+    - service: homeassistant.turn_on
+      data:
+        entity_id: light.bedroom_desk
+        rgb_color: [249,123,0]
+        brightness: 103
+        transition: 15
+    - delay:
+        seconds: 15.00
+    # group medium warm orange to full bright
+    - service: homeassistant.turn_on
+      data:
+        entity_id: light.bedroom
+        rgb_color: [255,178,67]
+        brightness: 255
+        transition: 30
+    # turn on hall light
+    - service: switch.turn_on
+      entity_id: switch.entry_light
 
 usps_sms_notification:
   sequence:

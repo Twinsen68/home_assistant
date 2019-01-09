@@ -1,5 +1,5 @@
 resources:
-  - url: /local/custom_ui/dark-sky-weather-card.js?v=4
+  - url: /local/custom_ui/dark-sky-weather-card.js?v=5
     type: module
   - url: /local/custom_ui/monster-card.js?v=1
     type: module
@@ -41,127 +41,371 @@ resources:
 #    type: js
 #  - url: /local/custom_ui/lovelace-player-config.js?v=0.2
 #    type: js
-  - url: /local/custom_ui/list-card.js?v=0.2
+  - url: /local/custom_ui/list-card.js?v=0.3
+    type: module
+  - url: /local/custom_ui/vertical-stack-in-card.js
     type: module
 
 background: center / cover no-repeat url("/local/images/rollins.jpg") fixed
 name: Apartment 10R
 views:
+- name: Welcome
+  title: Welcome
+  icon: mdi:home
+  panel: true
+  cards:
+  - type: vertical-stack            
+    cards:
+    - type: picture-elements
+      image: /local/images/kleftiko.jpg
+      elements:
+        - type: state-label
+          entity: sensor.time
+          style:
+            top: 8%
+            left: 10%
+            color: rgb(249, 251, 255)
+            text-shadow: 2px 2px DarkSlateGrey
+            font-family: Trebuchet MS
+            font-weight: bold
+            font-size: 34px
+            pointer-events: none
+            text-rendering: optimizeLegibility
+            -moz-osx-font-smoothing: grayscale
+            font-smoothing: antialiased
+            -webkit-font-smoothing: antialiased
+        - type: state-label
+          entity: input_datetime.bedroom_alarm_clock_time
+          style:
+            top: 14%
+            left: 10%
+            font-size: 18px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: state-icon
+          tap_action:
+                action: toggle
+          hold_action: more-info
+          entity: input_boolean.bedroom_alarm_clock_status
+          color: auto
+          style:
+            top: 14%
+            left: 15%
+        - type: state-icon
+          entity: sensor.outside_temp
+          style:
+            top: 38%
+            left: 50%
+            pointer-events: none
+            max-width: 144px
+            max-height: 144px
+            color: rgb(249, 251, 255)
+        - type: state-label
+          entity: sensor.outside_temp
+          style:
+            top: 8%
+            left: 90%
+            font-weight: bold
+            color: rgb(249, 251, 255)
+            font-size: 34px
+            font-family: Trebuchet MS
+            text-shadow: 2px 2px DarkSlateGrey
+            text-rendering: optimizeLegibility
+            -moz-osx-font-smoothing: grayscale
+            font-smoothing: antialiased
+            -webkit-font-smoothing: antialiased
+        - type: state-label
+          entity: sensor.time_of_day
+          style:
+            top: 30%
+            left: 50%
+            color: rgb(249, 251, 255)
+            font-size: 62px
+            pointer-events: none
+            text-shadow: 2px 2px DarkSlateGrey
+            font-family: Snell Roundhand
+            font-style: oblique
+            font-weight: 400
+            text-rendering: optimizeLegibility
+            -moz-osx-font-smoothing: grayscale
+            font-smoothing: antialiased
+            -webkit-font-smoothing: antialiased
+        - type: state-label
+          entity: sensor.dark_sky_minutely_summary
+#          entity: sensor.outside_alerts
+          style:
+            top: 42%
+            left: 50%
+            color: rgb(249, 251, 255)
+            font-family: Trebuchet MS
+            font-style: oblique
+            text-shadow: 2px 2px DarkSlateGrey
+            font-size: 24px
+            pointer-events: none
+            font-weight: 400
+            text-rendering: optimizeLegibility
+            -moz-osx-font-smoothing: grayscale
+            font-smoothing: antialiased
+            -webkit-font-smoothing: antialiased
+        - type: state-label
+          entity: sensor.greeter_card_info
+          style:
+            top: 62%
+            left: 0%
+            color: rgb(255, 255, 255)
+            transform: none
+            font-family: Trebuchet MS
+            text-shadow: 2px 2px black
+            font-size: 24px
+            pointer-events: none
+            font-weight: bold
+            border-left-style: solid
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+            border-color: rgb(34, 154, 210)
+            background-color: rgb(54, 65, 78)
+            opacity: 0.8
+
+#  - type: picture-elements
+#    image: /local/images/direction.jpg
+#    style:                 
+#      border-radius: 20px
+#      border: solid 1px rgba(100,100,100,0.3)
+#      box-shadow: 3px 3px rgba(0,0,0,0.4)
+#    elements:
+#      - type: state-label
+#        entity: sensor.activity_gabes_mate
+#        style:
+#          top: 20%
+#          left: 14%
+#          font-size: 34px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: custom:state-element
+#       tap_action:
+#                action: toggle
+#        hold_action: more-info
+#        prefix: "Last seen "
+#        entity: sensor.last_seen_gabes_mate
+#        style:
+#          top: 30%
+#          left: 34%
+#          font-size: 18px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: state-label
+#       tap_action:
+#                action: toggle
+#        hold_action: more-info
+#        entity: sensor.altitude_gabes_mate
+#        style:
+#          top: 44%
+#          left: 14%
+#          font-size: 18px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: state-label
+#       tap_action:
+#                action: toggle
+#        hold_action: more-info
+#        entity: sensor.speed_gabes_mate
+#        style:
+#          top: 54%
+#          left: 14%
+#          font-size: 18px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: state-label
+#       tap_action:
+#                action: toggle
+#        hold_action: more-info
+#        entity: sensor.direction_gabes_mate
+#        style:
+#          top: 64%
+#         left: 14%
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: custom:state-element
+#       tap_action:
+#                action: toggle
+#        hold_action: more-info
+#        prefix: "+/-"
+#        entity: sensor.accuracy_gabes_mate
+#        style:
+#          top: 80%
+#          left: 20%
+#          font-size: 18px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: custom:state-element
+#       tap_action:
+#                action: toggle
+#       hold_action: more-info
+#        entity: sensor.source_type_gabes_mate
+#        prefix: "Via: "
+#        style:
+#          top: 80%
+#          left: 80%
+#          font-size: 16px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+#      - type: custom:state-element
+#        tap_action:
+#          action: toggle
+#        hold_action: more-info
+#        entity: sensor.provider_gabes_mate
+#        prefix: "on "
+#       style:
+#         left: 60%
+#          font-size: 18px
+#          font-weight: bold
+#          color: rgba(255, 255, 255, 1)
+
+#  - type: gauge
+#    entity: sensor.battery_gabes_mate
+#    max: 100
+#    title: Phone Battery
+#    unit: "%"
+
 - name: People
   title: People
   icon: mdi:account-box
   cards:
-  - type: custom:card-modder
-    card:
-      type: custom:useful-markdown-card
-      content: >
-          # Hello!
+  - type: vertical-stack            
+    cards:
+    - type: custom:card-modder
+      card:
+        type: weather-forecast
+        entity: weather.dark_sky
+      style:                 
+        border-radius: 20px
+        border: solid 1px rgba(100,100,100,0.3)
+        box-shadow: 3px 3px rgba(0,0,0,0.4)
+# waiting for bugfix at https://community.home-assistant.io/t/custom-dark-sky-animated-weather-card/59816/396
+#    - type: custom:dark-sky-weather-card
+#      id: dark_sky_animated_card
+#      entity_sun: sun.sun
+#      entity_daily_summary: sensor.dark_sky_daily_summary
+#      entity_current_conditions: sensor.dark_sky_icon
+#      entity_humidity: sensor.dark_sky_humidity
+#      entity_pressure: sensor.dark_sky_pressure
+#      entity_temperature: sensor.dark_sky_temperature
+#      entity_visibility: sensor.dark_sky_visibility
+#      entity_wind_bearing: sensor.dark_sky_wind_bearing
+#      entity_wind_speed: sensor.dark_sky_wind_speed
+#      entity_forecast_high_temp_1: sensor.dark_sky_daytime_high_temperature_1
+#      entity_forecast_high_temp_2: sensor.dark_sky_daytime_high_temperature_2
+#      entity_forecast_high_temp_3: sensor.dark_sky_daytime_high_temperature_3
+#      entity_forecast_high_temp_4: sensor.dark_sky_daytime_high_temperature_4
+#      entity_forecast_high_temp_5: sensor.dark_sky_daytime_high_temperature_5
+#      entity_forecast_low_temp_1: sensor.dark_sky_overnight_low_temperature_1
+#      entity_forecast_low_temp_2: sensor.dark_sky_overnight_low_temperature_2
+#      entity_forecast_low_temp_3: sensor.dark_sky_overnight_low_temperature_3
+#      entity_forecast_low_temp_4: sensor.dark_sky_overnight_low_temperature_4
+#      entity_forecast_low_temp_5: sensor.dark_sky_overnight_low_temperature_5
+#      entity_forecast_icon_1: sensor.dark_sky_icon_1
+#      entity_forecast_icon_2: sensor.dark_sky_icon_2
+#      entity_forecast_icon_3: sensor.dark_sky_icon_3
+#      entity_forecast_icon_4: sensor.dark_sky_icon_4
+#      entity_forecast_icon_5: sensor.dark_sky_icon_5
+#      entity_summary_1: sensor.dark_sky_summary_1
+#      entity_summary_2: sensor.dark_sky_summary_2
+#      entity_summary_3: sensor.dark_sky_summary_3
+#      entity_summary_4: sensor.dark_sky_summary_4
+#      entity_summary_5: sensor.dark_sky_summary_5
 
-          It is now [[ sensor.date.state ]] at [[ sensor.time.state ]].
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
-  - type: custom:card-modder
-    card:
-      type: glance
-      entities:
-        - entity: sensor.stats_home
-          name: Home
-        - entity: sensor.stats_work
-          name: Work
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
+  - type: vertical-stack            
+    cards:
+    - type: picture-elements
+      image: /local/images/sunrise_les.jpg
+      style:                 
+        border-radius: 20px
+        border: solid 1px rgba(100,100,100,0.3)
+        box-shadow: 3px 3px rgba(0,0,0,0.4)
+      elements:
+        - type: icon
+          entity: input_datetime.bedroom_alarm_clock_time
+          title: Alarm
+          icon: mdi:alarm
+          style:
+            top: 20%
+            left: 14%
+            color: rgba(255, 255, 255, 1)
+        - type: state-label
+          entity: input_datetime.bedroom_alarm_clock_time
+          style:
+            top: 20%
+            left: 40%
+            font-size: 34px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: state-icon
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          entity: input_boolean.bedroom_alarm_clock_status
+          style:
+            top: 34%
+            left: 14%
+        - type: state-icon
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          entity: input_boolean.bedroom_alarm_clock_repeat
+          style:
+            top: 34%
+            left: 24%
+  - type: vertical-stack            
+    cards:
+    - type: custom:card-modder
+      card:
+        type: glance
+        entities:
+          - entity: sensor.stats_home
+            name: Home
+          - entity: sensor.stats_work
+            name: Work
+#      style:                 
+#        border-radius: 20px
+#        border: solid 1px rgba(100,100,100,0.3)
+#        box-shadow: 3px 3px rgba(0,0,0,0.4)
 
-  - type: gauge
-    entity: sensor.battery_gabes_mate
-    max: 100
-    title: Phone Battery
-    unit: "%"
+    - type: custom:card-modder
+      card:
+        type: map
+        aspect_ratio: 100%
+        default_zoom: 15
+        entities:
+          - device_tracker.gabes_mate
+      style:                 
+        border-radius: 20px
+        border: solid 1px rgba(100,100,100,0.3)
+        box-shadow: 3px 3px rgba(0,0,0,0.4)
+  - type: vertical-stack            
+    cards:
+    - type: custom:card-modder
+      card:
+        type: "custom:calendar-card"
+        entities:
+          - calendar.gabethisisgabescom
+      style:                 
+        border-radius: 20px
+        border: solid 1px rgba(100,100,100,0.3)
+        box-shadow: 3px 3px rgba(0,0,0,0.4)
 
-  - type: custom:card-modder
-    card:
-      type: map
-      aspect_ratio: 100%
-      default_zoom: 15
-      entities:
-        - device_tracker.gabes_mate
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
-
-  - type: picture-elements
-    image: /local/images/sunrise_les.jpg
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
-    elements:
-      - type: icon
-        entity: input_datetime.bedroom_alarm_clock_time
-        title: Alarm
-        icon: mdi:alarm
-        style:
-          top: 20%
-          left: 14%
-          color: rgba(255, 255, 255, 1)
-      - type: state-label
-        entity: input_datetime.bedroom_alarm_clock_time
-        style:
-          top: 20%
-          left: 40%
-          font-size: 34px
-          font-weight: bold
-          color: rgba(255, 255, 255, 1)
-      - type: state-icon
-        tap_action: toggle
-        hold_action: more-info
-        entity: input_boolean.bedroom_alarm_clock_status
-        style:
-          top: 34%
-          left: 14%
-      - type: state-icon
-        tap_action: toggle
-        hold_action: more-info
-        entity: input_boolean.bedroom_alarm_clock_repeat
-        style:
-          top: 34%
-          left: 24%
-
-  - type: custom:card-modder
-    card:
-      type: weather-forecast
-      entity: weather.dark_sky
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
-
-  - type: custom:card-modder
-    card:
-      type: "custom:calendar-card"
-      entities:
-        - calendar.gabethisisgabescom
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
-
-  - type: custom:card-modder
-    card:
-      type: "custom:calendar-card"
-      name: "Birthdays"
-      showProgressBar: false
-      numberOfDays: 10
-      entities:
-        - calendar.contacts
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
+    - type: custom:card-modder
+      card:
+        type: "custom:calendar-card"
+        name: "Birthdays"
+        showProgressBar: false
+        numberOfDays: 10
+        entities:
+          - calendar.contacts
+      style:                 
+        border-radius: 20px
+        border: solid 1px rgba(100,100,100,0.3)
+        box-shadow: 3px 3px rgba(0,0,0,0.4)
 
 - name: Apartment 10R
   title: Apartment 10R
@@ -171,27 +415,16 @@ views:
     cards:
       - type: custom:card-modder
         card:
-          type: custom:useful-markdown-card
-          content: >
-              # Hello!
-
-              It is now [[ sensor.date.state ]] at [[ sensor.time.state ]].
-        style:                 
-          border-radius: 20px
-          border: solid 1px rgba(100,100,100,0.3)
-          box-shadow: 3px 3px rgba(0,0,0,0.4)
-      - type: custom:card-modder
-        card:
           type: picture-glance
           title: Home Cam
           camera_image: camera.housecam
           entities: 
             - switch.motion_detect
-            - light.living_room
-        style:                 
-          border-radius: 20px
-          border: solid 1px rgba(100,100,100,0.3)
-          box-shadow: 3px 3px rgba(0,0,0,0.4)
+            - switch.entry_light
+#        style:                 
+#          border-radius: 20px
+#          border: solid 1px rgba(100,100,100,0.3)
+#          box-shadow: 3px 3px rgba(0,0,0,0.4)
       - type: conditional
         conditions:
           - entity: sensor.usps_mail
@@ -294,7 +527,7 @@ views:
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
-            entity: light.bedroom_2
+            entity: light.bedside_table
             size: 30%
             icon: mdi:bed-empty
             color: auto
@@ -304,7 +537,7 @@ views:
               - font-size: 12px
               - font-weight: bold
           - type: "custom:button-card"
-            entity: light.window
+            entity: light.bedroom_desk
             size: 30%
             icon: mdi:desk-lamp
             color: auto
@@ -314,7 +547,7 @@ views:
               - font-size: 12px
               - font-weight: bold
           - type: "custom:button-card"
-            entity: light.stairs
+            entity: light.desk
             icon: mdi:desk-lamp
             size: 30%
             color: auto
@@ -324,7 +557,7 @@ views:
               - font-size: 12px
               - font-weight: bold
           - type: "custom:button-card"
-            entity: light.table_lamp
+            entity: light.table
             size: 30%
             icon: mdi:ceiling-light
             color: auto
@@ -336,22 +569,22 @@ views:
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
-            entity: light.bedroom_2
+            entity: light.bedside_table
             size: 30%
             icon: mdi:toggle-switch
             color: auto
           - type: "custom:button-card"
-            entity: light.window
+            entity: light.bedroom_desk
             size: 30%
             icon: mdi:toggle-switch
             color: auto
           - type: "custom:button-card"
-            entity: light.stairs
+            entity: light.desk
             icon: mdi:toggle-switch
             size: 30%
             color: auto
           - type: "custom:button-card"
-            entity: light.table_lamp
+            entity: light.table
             size: 30%
             icon: mdi:toggle-switch
             color: auto
@@ -360,21 +593,15 @@ views:
         show_name: false
         entities:
           - entity: device_tracker.macbook
-          - entity: device_tracker.phone
+          - entity: device_tracker.gabes_mate
           - entity: script.roomba_turn_on
             icon: mdi:robot-vacuum
   - type: vertical-stack            
     cards:
-      - type: custom:card-modder
-        card:
-          type: picture-glance
-          camera_image: camera.empirestatelights
-          entities: 
-            - sensor.empirestatelights
-        style:                 
-          border-radius: 20px
-          border: solid 1px rgba(100,100,100,0.3)
-          box-shadow: 3px 3px rgba(0,0,0,0.4)
+      - type: picture-entity
+        entity: camera.empirestatelights
+        show_name: false
+        show_state: false
       - type: custom:card-modder
         card:
           type: custom:useful-markdown-card
@@ -412,7 +639,8 @@ views:
                 font-weight: bold
                 color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.kitchen
               icon: mdi:toggle-switch
               size: 50%
@@ -447,7 +675,8 @@ views:
                 font-weight: bold
                 color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.kitchen
               icon: mdi:toggle-switch
               size: 50%
@@ -619,7 +848,8 @@ views:
                 font-weight: bold
                 color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.office
               icon: mdi:toggle-switch
               size: 50%
@@ -654,7 +884,8 @@ views:
                 font-weight: bold
                 color: rgba(1, 1, 1, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.office
               icon: mdi:toggle-switch
               size: 50%
@@ -671,6 +902,8 @@ views:
     cards:
       - type: picture-entity
         entity: camera.reefcam
+        show_name: false
+        show_state: false
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
@@ -750,14 +983,15 @@ views:
       - type: entities
         title: Reef Weather
         entities:
-        - sensor.reefweather_condition
-        - sensor.reefweather_current
-        - sensor.reefweather_humidity
-        - sensor.reefweather_pressure
-        - sensor.reefweather_temperature
-        - sensor.reefweather_temperature_max
-        - sensor.reefweather_temperature_min
-        - sensor.reefweather_wind_speed
+        - sensor.reef_weather_temperature
+        - sensor.reef_weather_humidity
+        - sensor.reef_weather_cloud_coverage
+        - sensor.reef_weather_icon
+        - sensor.reef_weather_precip
+        - sensor.reef_weather_summary
+        - sensor.reef_weather_uv_index
+        - sensor.reef_weather_wind_bearing
+        - sensor.reef_weather_wind_speed
   - type: vertical-stack
     cards:
       - type: picture-elements
@@ -895,7 +1129,8 @@ views:
           elements:
             - type: image
               entity: switch.kessil_light_level_1
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil1-on.png 
               state_image:
@@ -908,7 +1143,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_2
               title: Kessil 2
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               icon: mdi:alpha-b-box
               image: /local/images/light_slider/kessil2-off.png
@@ -922,7 +1158,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_3
               title: Kessil 3
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil3-off.png
               state_image:
@@ -935,7 +1172,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_4
               title: Kessil 4
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil4-off.png
               state_image:
@@ -948,7 +1186,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_5
               title: Kessil 5
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil5-off.png
               state_image:
@@ -961,7 +1200,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_6
               title: Kessil 6
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil6-off.png
               state_image:
@@ -974,7 +1214,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_7
               title: Kessil 7
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil7-off.png
               state_image:
@@ -987,7 +1228,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_8
               title: Kessil 8
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil8-off.png
               state_image:
@@ -1000,7 +1242,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_9
               title: Kessil 9
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil9-off.png
               state_image:
@@ -1013,7 +1256,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_10
               title: Kessil 10
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil10-off.png
               state_image:
@@ -1026,7 +1270,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_11
               title: Kessil 11
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil11-off.png
               state_image:
@@ -1038,7 +1283,8 @@ views:
                 width: 13.5%
             - type: image
               entity: switch.kessil_light_level_12
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil12-off.png
               state_image:
@@ -1051,7 +1297,8 @@ views:
             - type: state-icon
               entity: switch.06200940dc4f22cbb94b_4
               title: Light
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               icon: mdi:lightbulb-on
               style:
@@ -1099,7 +1346,8 @@ views:
                 font-weight: bold
                 color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               entity: switch.reef_pump_2
               icon: mdi:fast-forward
@@ -1121,30 +1369,41 @@ views:
                 top: 45%
                 left: 45%
                 color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.reefcontrolpipump1status
-              style:
-                top: 51%
-                left: 32%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
+#            - type: state-label
+#              entity: sensor.reefcontrolpipump1status
+#              style:
+#                top: 51%
+#                left: 32%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               entity: switch.reef_pump_1
               icon: mdi:fast-forward
               style:
                 top: 51%
-                left: 50%
+                left: 48%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_1_scheduled
+              icon: mdi:clock
+              style:
+                top: 51%
+                left: 40%
+            - type: state-icon
+              tap_action:
+                action: toggle
               hold_action: more-info
               entity: switch.reef_pump_1_reverse
               icon: mdi:rewind
               style:
                 top: 51%
-                left: 42%
+                left: 32%
             - type: icon
               entity: sensor.onlyreefcontrolpitemp
               title: Water Temperature
@@ -1190,7 +1449,8 @@ views:
           elements:
             - type: image
               entity: switch.kessil_light_level_1
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil1-on.png 
               state_image:
@@ -1203,7 +1463,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_2
               title: Kessil 2
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               icon: mdi:alpha-b-box
               image: /local/images/light_slider/kessil2-off.png
@@ -1217,7 +1478,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_3
               title: Kessil 3
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil3-off.png
               state_image:
@@ -1230,7 +1492,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_4
               title: Kessil 4
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil4-off.png
               state_image:
@@ -1243,7 +1506,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_5
               title: Kessil 5
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil5-off.png
               state_image:
@@ -1256,7 +1520,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_6
               title: Kessil 6
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil6-off.png
               state_image:
@@ -1269,7 +1534,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_7
               title: Kessil 7
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil7-off.png
               state_image:
@@ -1282,7 +1548,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_8
               title: Kessil 8
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil8-off.png
               state_image:
@@ -1295,7 +1562,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_9
               title: Kessil 9
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil9-off.png
               state_image:
@@ -1308,7 +1576,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_10
               title: Kessil 10
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil10-off.png
               state_image:
@@ -1321,7 +1590,8 @@ views:
             - type: image
               entity: switch.kessil_light_level_11
               title: Kessil 11
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil11-off.png
               state_image:
@@ -1333,7 +1603,8 @@ views:
                 width: 13.5%
             - type: image
               entity: switch.kessil_light_level_12
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               image: /local/images/light_slider/kessil12-off.png
               state_image:
@@ -1376,7 +1647,8 @@ views:
                 font-weight: bold
                 color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               entity: switch.reef_pump_2
               icon: mdi:fast-forward
@@ -1398,30 +1670,41 @@ views:
                 top: 45%
                 left: 45%
                 color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.reefcontrolpipump1status
-              style:
-                top: 51%
-                left: 32%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
+#            - type: state-label
+#              entity: sensor.reefcontrolpipump1status
+#              style:
+#                top: 51%
+#                left: 32%
+#                font-size: 16px
+#                font-weight: bold
+#                color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               hold_action: more-info
               entity: switch.reef_pump_1
               icon: mdi:fast-forward
               style:
                 top: 51%
-                left: 50%
+                left: 48%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
+              hold_action: more-info
+              entity: switch.reef_pump_1_scheduled
+              icon: mdi:clock
+              style:
+                top: 51%
+                left: 40%
+            - type: state-icon
+              tap_action:
+                action: toggle
               hold_action: more-info
               entity: switch.reef_pump_1_reverse
               icon: mdi:rewind
               style:
                 top: 51%
-                left: 42%
+                left: 32%
             - type: icon
               entity: sensor.onlyreefcontrolpitemp
               title: Water Temperature
@@ -1486,7 +1769,8 @@ views:
                 align: right
                 color: rgba(255, 255, 255, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: switch.06200940dc4f22cbb94b_7
               icon: mdi:toggle-switch
               size: 50%
@@ -1549,7 +1833,8 @@ views:
               - automation.start_fade_down_of_reef_lights_at_sunset
               - automation.start_fade_up_of_reef_lights_at_sunrise
               - automation.reef_sump_pump_low_off
-              - automation.reef_sump_pump_on_every_hour
+              - automation.reef_sump_pump_low_off_timer
+              - automation.reef_sump_pulse
               - automation.regulate_reef_heater_to_off_on_low_misread
               - automation.turn_off_wavemaker_at_low_tide
               - automation.turn_on_wavemaker_at_high_tide
@@ -1565,6 +1850,8 @@ views:
     cards:
       - type: picture-entity
         entity: camera.octocam
+        show_name: false
+        show_state: false
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
@@ -1626,37 +1913,37 @@ views:
 #          - type: "custom:button-card"
 #            color_type: blank-card
       - type: picture-elements
-        image: /local/images/amazon-tide.jpg
+        image: /local/images/amazon-tide.gif
         elements:
           - type: icon
             entity: sensor.amazonnextlowtide
             title: Sunset
             icon: mdi:format-vertical-align-bottom
             style:
-              top: 70%
-              left: 70%
+              top: 40%
+              left: 20%
               color: rgba(249, 235, 164, 1)
           - type: icon
             entity: sensor.amazonnexthightide
             title: Sunrise
             icon: mdi:format-vertical-align-top
             style:
-              top: 70%
-              left: 24%
+              top: 40%
+              left: 80%
               color: rgba(7, 126, 176, 1)
           - type: state-label
             entity: sensor.amazonnextlowtide
             style:
-              top: 54%
-              left: 70%
+              top: 24%
+              left: 20%
               font-size: 16px
               font-weight: bold
               color: rgba(249, 235, 164, 1)
           - type: state-label
             entity: sensor.amazonnexthightide
             style:
-              top: 54%
-              left: 24%
+              top: 24%
+              left: 80%
               font-size: 16px
               font-weight: bold
               color: rgba(7, 126, 176, 1)
@@ -1701,10 +1988,80 @@ views:
         entities: 
         - entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
           name: Actual
-        - entity: sensor.monthly_amazon_temp
-          name: Monthly
+        - entity: sensor.monthly_amazon_temp_min
+          name: Min
+        - entity: sensor.monthly_amazon_temp_lowmed
+          name: MedLow
+        - entity: sensor.monthly_amazon_temp_med
+          name: Med
+        - entity: sensor.monthly_amazon_temp_highmed
+          name: MedHigh
+        - entity: sensor.monthly_amazon_temp_max
+          name: Max
       - type: thermostat
         entity: climate.octo_tank_therm
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            entity: sensor.monthly_amazon_temp_min
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:snowflake
+            default_color: rgba(53, 183, 243, 0.85)
+            color-off: rgba(53, 183, 243, 0.85)
+            style:
+              - background-color: rgba(53, 183, 243, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.monthly_amazon_temp_lowmed
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-cloudy
+            default_color: rgba(53, 243, 208, 0.85)
+            color-off: rgba(53, 243, 208, 0.85)
+            style:
+              - background-color: rgba(53, 243, 208, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.monthly_amazon_temp_med
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-partlycloudy
+            default_color: rgba(65, 243, 53, 0.85)
+            color-off: rgba(65, 243, 53, 0.85)
+            style:
+              - background-color: rgba(65, 243, 53, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.monthly_amazon_temp_highmed
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-sunset
+            default_color: rgba(243, 237, 53, 0.85)
+            color-off: rgba(243, 237, 53, 0.85)
+            style:
+              - background-color: rgba(243, 237, 53, 0.85)
+              - font-size: 10px
+              - font-weight: bold
+          - type: "custom:button-card"
+            entity: sensor.monthly_amazon_temp_max
+            show_state: true
+            action: more_info
+            color_type: card
+            icon: mdi:weather-sunny
+            default_color: rgba(243, 138, 53, 0.85)
+            color-off: rgba(243, 138, 53, 0.85)
+            style:
+              - background-color: rgba(243, 138, 53, 0.85)
+              - font-size: 10px
+              - font-weight: bold
 
   - type: vertical-stack
     cards:
@@ -1839,7 +2196,8 @@ views:
                 align: right
                 color: rgba(27, 39, 1, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: switch.06200940dc4f22cbb432_7
               icon: mdi:toggle-switch
               size: 50%
@@ -1890,7 +2248,8 @@ views:
           image: /local/images/octocam_off.jpg
           elements:
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: switch.06200940dc4f22cbb432_7
               icon: mdi:toggle-switch
               size: 50%
@@ -1933,114 +2292,674 @@ views:
       - type: entities
         title: Amazon Weather
         entities:
-        - sensor.amazonweather_condition
-        - sensor.amazonweather_current
-        - sensor.amazonweather_humidity
-        - sensor.amazonweather_pressure
-        - sensor.amazonweather_temperature
-        - sensor.amazonweather_temperature_max
-        - sensor.amazonweather_temperature_min
-        - sensor.amazonweather_wind_speed
+        - sensor.amazon_weather_daily_summary
+        - sensor.amazon_weather_temperature
+        - sensor.amazon_weather_humidity
+        - sensor.amazon_weather_cloud_coverage
+        - sensor.amazon_weather_icon
+        - sensor.amazon_weather_precip
+        - sensor.amazon_weather_summary
+        - sensor.amazon_weather_uv_index
+        - sensor.amazon_weather_wind_bearing
+        - sensor.amazon_weather_wind_speed
 
 ## TRAVEL
-- name: Travel
-  title: Travel
-  icon: mdi:bus-clock
-  cards:
-  - type: weather-forecast
-    entity: weather.dark_sky
-  - type: glance
-    title: Bus Times
-    column_width: 33%
-    entities:
-      - entity: sensor.m15_local_uptown_allen__grand
-        name: M15
-      - entity: sensor.m15sbs_uptown_allen__grand
-        name: "M15-SBS"
-      - entity: sensor.m14a_crosstown_at_clinton_street
-        name: M14A
-  - type: glance
-    title: Subway Times
-    column_width: 33%
-    entities:
-      - entity: sensor.northbound_f_delancey_st
-        name: Delancey (N)
-      - entity: sensor.northbound_m_essex_st
-        name: Essex (N)
-      - entity: sensor.northbound_b_grand_st
-        name: Grand (N)
-      - entity: sensor.northbound_d_grand_st
-        name: Grand (N)
-      - entity: sensor.southbound_f_east_broadway
-        name: Broadway (S)
-      - entity: sensor.northbound_j_essex_st
-        name: Essex (N)
-      - entity: sensor.northbound_z_essex_st
-        name: Essex (N)
-  - type: entities
-    title: Next Event
-    entities:
-    - sensor.nextcal_message
-    - sensor.new_nextcal_location
-    - sensor.nextcal_start_time
-    - sensor.nextcal_end_time
-  - type: picture-entity
-    entity: camera.next_appointment
-  - type: picture-entity
-    entity: camera.street_view
+#- name: Travel
+#  title: Travel
+#  icon: mdi:bus-clock
+#  cards:
+#  - type: weather-forecast
+#    entity: weather.dark_sky
+#  - type: glance
+#    title: Bus Times
+#    column_width: 33%
+#    entities:
+#      - entity: sensor.m15_local_uptown_allen__grand
+#        name: M15
+#      - entity: sensor.m15sbs_uptown_allen__grand
+#        name: "M15-SBS"
+#      - entity: sensor.m14a_crosstown_at_clinton_street
+#        name: M14A
+#  - type: glance
+#    title: Subway Times
+#    column_width: 33%
+#    entities:
+#      - entity: sensor.northbound_f_delancey_st
+#        name: Delancey (N)
+#      - entity: sensor.northbound_m_essex_st
+#        name: Essex (N)
+#      - entity: sensor.northbound_b_grand_st
+#        name: Grand (N)
+#      - entity: sensor.northbound_d_grand_st
+#        name: Grand (N)
+#      - entity: sensor.southbound_f_east_broadway
+#        name: Broadway (S)
+#      - entity: sensor.northbound_j_essex_st
+#        name: Essex (N)
+#      - entity: sensor.northbound_z_essex_st
+#        name: Essex (N)
+#  - type: entities
+#    title: Next Event
+#    entities:
+#    - sensor.nextcal_message
+#    - sensor.new_nextcal_location
+#    - sensor.nextcal_start_time
+#    - sensor.nextcal_end_time
+#  - type: picture-entity
+#    entity: camera.next_appointment
+#  - type: picture-entity
+#    entity: camera.street_view
 
 ## WEATHER
 - name: Weather
   title: Weather Card
   icon: mdi:weather-sunny
   cards:
-  - type: custom:card-modder
-    card:
-      type: weather-forecast
-      entity: weather.dark_sky
-    style:                 
-      border-radius: 20px
-      border: solid 1px rgba(100,100,100,0.3)
-      box-shadow: 3px 3px rgba(0,0,0,0.4)
-  - type: iframe
-    url: https://embed.windy.com/embed2.html
-  - type: picture-entity
-    entity: camera.weather_radar
-  - type: history-graph
-    entities: 
-    - entity: sensor.dark_sky_daily_high_temperature
-      name: High
-    - entity: sensor.dark_sky_temperature
-      name: Actual
-    - entity: sensor.dark_sky_daily_low_temperature
-      name: Low
-  - type: entities
-    title: Precipitation
-    entities:
-    - sensor.dark_sky_daily_max_precip_intensity
-    - sensor.dark_sky_dew_point
-    - sensor.dark_sky_nearest_storm_distance
-    - sensor.dark_sky_precip
-    - sensor.dark_sky_precip_accumulation
-    - sensor.dark_sky_precip_intensity
-    - sensor.dark_sky_precip_probability
-    - sensor.dark_sky_visibility
-    - sensor.dark_sky_wind_bearing
-    - sensor.dark_sky_wind_speed
-  - type: entities
-    title: Atmosphere
-    entities:
-    - sensor.dark_sky_cloud_coverage
-    - sensor.dark_sky_ozone
-    - sensor.dark_sky_pressure
-    - sensor.dark_sky_uv_index
-  - type: entities
-    title: Weather Details
-    entities:
-    - sensor.dark_sky_humidity
-    - sensor.dark_sky_cloud_coverage
-    - sensor.dark_sky_wind_speed
-    - sensor.dark_sky_daily_max_precip_intensity
+  - type: vertical-stack
+    cards:  
+      - type: custom:card-modder
+        card:
+          type: weather-forecast
+          entity: weather.dark_sky
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)
+      - type: history-graph
+        entities: 
+        - entity: sensor.dark_sky_daily_high_temperature
+          name: High
+        - entity: sensor.dark_sky_temperature
+          name: Actual
+        - entity: sensor.dark_sky_daily_low_temperature
+          name: Low
+
+  - type: vertical-stack
+    cards:
+      - type: picture-entity
+        entity: camera.weather_radar
+        show_name: false
+        show_state: false
+      - type: conditional
+        conditions:
+          - entity: sensor.dark_sky_precip_probability
+            state_not: "0"
+          - entity: sensor.dark_sky_precip_probability
+            state_not: "100"
+        card:
+          type: picture-elements
+          image: /local/images/precip.gif
+          elements:
+            - type: state-label
+              entity: sensor.dark_sky_dew_point
+              prefix: "Dew Point: "
+              style:
+                top: 18%
+                left: 78%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_nearest_storm_distance
+              title: Storm Distance
+              style:
+                top: 33%
+                left: 75%
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-label
+              entity: sensor.dark_sky_nearest_storm_distance
+              style:
+                top: 33%
+                left: 86%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_precip
+              title: Server Name
+              style:
+                top: 47%
+                left: 75%
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-label
+              entity: sensor.dark_sky_precip
+              style:
+                top: 47%
+                left: 86%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(0, 0, 0, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_precip_probability
+              title: Probability
+              style:
+                top: 18%
+                left: 8%
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-label
+              entity: sensor.dark_sky_precip_probability
+              suffix: " chance of rain"
+              style:
+                top: 18%
+                left: 28%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(0, 0, 0, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_visibility
+              title: Visibility
+              style:
+                top: 33%
+                left: 8%
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-label
+              entity: sensor.dark_sky_visibility
+              style:
+                top: 33%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(0, 0, 0, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_wind_speed
+              title: Wind Speed
+              style:
+                top: 47%
+                left: 8%
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-label
+              entity: sensor.dark_sky_wind_speed
+              style:
+                top: 47%
+                left: 22%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(0, 0, 0, 1)
+      - type: conditional
+        conditions:
+          - entity: sensor.dark_sky_precip_probability
+            state: "100"
+        card:
+          type: picture-elements
+          image: /local/images/precip-100.gif
+          elements:
+            - type: state-label
+              entity: sensor.dark_sky_dew_point
+              prefix: "Dew Point: "
+              style:
+                top: 18%
+                left: 78%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_nearest_storm_distance
+              title: Storm Distance
+              style:
+                top: 33%
+                left: 75%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_nearest_storm_distance
+              style:
+                top: 33%
+                left: 86%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_precip
+              title: Server Name
+              style:
+                top: 47%
+                left: 75%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_precip
+              style:
+                top: 47%
+                left: 86%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_precip_probability
+              title: Probability
+              style:
+                top: 18%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_precip_probability
+              suffix: " chance of rain"
+              style:
+                top: 18%
+                left: 28%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_visibility
+              title: Visibility
+              style:
+                top: 33%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_visibility
+              style:
+                top: 33%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_wind_speed
+              title: Wind Speed
+              style:
+                top: 47%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_wind_speed
+              style:
+                top: 47%
+                left: 22%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+      - type: conditional
+        conditions:
+          - entity: sensor.dark_sky_precip_probability
+            state: "0"
+        card:
+          type: picture-elements
+          image: /local/images/precip-0.gif
+          elements:
+            - type: state-label
+              entity: sensor.dark_sky_dew_point
+              prefix: "Dew Point: "
+              style:
+                top: 18%
+                left: 78%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_nearest_storm_distance
+              title: Storm Distance
+              style:
+                top: 33%
+                left: 75%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_nearest_storm_distance
+              style:
+                top: 33%
+                left: 86%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_precip
+              title: Server Name
+              style:
+                top: 47%
+                left: 75%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_precip
+              style:
+                top: 47%
+                left: 86%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_precip_probability
+              title: Probability
+              style:
+                top: 18%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_precip_probability
+              suffix: " chance of rain"
+              style:
+                top: 18%
+                left: 28%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_visibility
+              title: Visibility
+              style:
+                top: 33%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_visibility
+              style:
+                top: 33%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_wind_speed
+              title: Wind Speed
+              style:
+                top: 47%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_wind_speed
+              style:
+                top: 47%
+                left: 22%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+  - type: vertical-stack
+    cards:
+      - type: iframe
+        url: https://embed.windy.com/embed2.html
+      - type: conditional
+        conditions:
+          - entity: sensor.dark_sky_cloud_coverage
+            state_not: "0"
+          - entity: sensor.dark_sky_cloud_coverage
+            state_not: "100"
+        card:
+          type: picture-elements
+          image: /local/images/cloudy.gif
+          elements:
+            - type: state-icon
+              entity: sensor.dark_sky_pressure
+              title: Pressure
+              style:
+                top: 33%
+                left: 64%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_pressure
+              style:
+                top: 33%
+                left: 80%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_ozone
+              title: Ozone
+              style:
+                top: 47%
+                left: 70%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_ozone
+              style:
+                top: 47%
+                left: 82%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_cloud_coverage
+              title: Cloud Coverage
+              style:
+                top: 18%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_cloud_coverage
+              suffix: " cloud coverage"
+              style:
+                top: 18%
+                left: 32%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_uv_index
+              title: UV Index
+              style:
+                top: 33%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_uv_index
+              style:
+                top: 33%
+                left: 22%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_humidity
+              title: Humidity
+              style:
+                top: 47%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_humidity
+              style:
+                top: 47%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+      - type: conditional
+        conditions:
+          - entity: sensor.dark_sky_cloud_coverage
+            state: "0"
+        card:
+          type: picture-elements
+          image: /local/images/cloudy.gif
+          elements:
+            - type: state-icon
+              entity: sensor.dark_sky_pressure
+              title: Pressure
+              style:
+                top: 33%
+                left: 64%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_pressure
+              style:
+                top: 33%
+                left: 80%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_ozone
+              title: Ozone
+              style:
+                top: 47%
+                left: 70%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_ozone
+              style:
+                top: 47%
+                left: 82%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_cloud_coverage
+              title: Cloud Coverage
+              style:
+                top: 18%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_cloud_coverage
+              suffix: " cloud coverage"
+              style:
+                top: 18%
+                left: 32%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_uv_index
+              title: UV Index
+              style:
+                top: 33%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_uv_index
+              style:
+                top: 33%
+                left: 22%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_humidity
+              title: Humidity
+              style:
+                top: 47%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_humidity
+              style:
+                top: 47%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+      - type: conditional
+        conditions:
+          - entity: sensor.dark_sky_cloud_coverage
+            state: "100"
+        card:
+          type: picture-elements
+          image: /local/images/cloudy-100.gif
+          elements:
+            - type: state-icon
+              entity: sensor.dark_sky_pressure
+              title: Pressure
+              style:
+                top: 33%
+                left: 64%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_pressure
+              style:
+                top: 33%
+                left: 80%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_ozone
+              title: Ozone
+              style:
+                top: 47%
+                left: 70%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_ozone
+              style:
+                top: 47%
+                left: 82%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_cloud_coverage
+              title: Cloud Coverage
+              style:
+                top: 18%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_cloud_coverage
+              suffix: " cloud coverage"
+              style:
+                top: 18%
+                left: 32%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_uv_index
+              title: UV Index
+              style:
+                top: 33%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_uv_index
+              style:
+                top: 33%
+                left: 22%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              entity: sensor.dark_sky_humidity
+              title: Humidity
+              style:
+                top: 47%
+                left: 8%
+                align: right
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.dark_sky_humidity
+              style:
+                top: 47%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+
+# MONEY
 - name: Money
   title: Money
   icon: mdi:cash-multiple
@@ -2060,12 +2979,139 @@ views:
   - type: history-graph
     entities: 
     - sensor.btc_exchange_rate
+
+## MEDIA
+- name: Media
+  title: Media
+  icon: mdi:television-classic
+  cards:
+  - type: media-control
+    entity: media_player.roku_2ld558098368
+#  - type: vertical-stack
+#    cards: !include remotes/roku.yaml
+  - type: entities
+    title: Media select
+    entities:
+      - input_select.harmony
+  - type: custom:vertical-stack-in-card
+    cards:
+      - type: picture-elements
+        #title: Remote
+        image: "/local/images/icons/media_icons/LHarmonyBG.jpg"
+        aspect_ratio: 50%
+        elements:
+          - type: image
+            image: "/local/images/icons/media_icons/power-logo.png"
+            entity: input_select.harmony
+            state_image:
+              'PowerOff': "/local/images/icons/media_icons/power-logo_active.png"
+            tap_action: call-service
+            service: remote.send_command
+            service_data:
+              "entity_id": "remote.gabes_harmony_hub"
+              "device": "-1"
+              "command": "PowerOff"
+            style:
+              top: 10em
+              left: 10%
+              width: 54px
+              height: 54px
+              background-color: rgb(255, 255, 255, 0.0)
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 2
+          - type: image
+            image: "/local/images/icons/media_icons/plex-logo.png"
+            entity: sensor.harmony_remote_activity
+            state_image:
+              'Watch Kodi': "/local/images/icons/media_icons/plex-logo_active.png"
+            tap_action: call-service
+            service: script.turn_on_plex
+            style:
+              top: 10em
+              left: 30%
+              width: 54px
+              height: 54px
+              background-color: rgb(255, 255, 255, 0.0)
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 2
+          - type: image
+            image: "/local/images/icons/media_icons/xbox-logo.png"
+            entity: sensor.harmony_remote_activity
+            state_image:
+              'Play XBox One': "/local/images/icons/media_icons/xbox-logo-active.png"
+            tap_action: call-service
+            service: script.turn_on_xbox
+            style:
+              top: 10em
+              left: 50%
+              width: 54px
+              height: 54px
+              background-color: rgb(255, 255, 255, 0.0)
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 2
+          - type: image
+            image: "/local/images/icons/media_icons/vol_-.png"
+            tap_action: call-service
+            service: remote.send_command
+            service_data:
+              "entity_id": "remote.gabes_harmony_hub"
+              "device": "29883813"
+              "command": "VolumeDown"
+            style:
+              top: 12em
+              left: 85%
+              width: 54px
+              height: 54px
+              background-color: rgb(255, 255, 255, 0.0)
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 2
+          - type: image
+            image: "/local/images/icons/media_icons/vol_+.png"
+            tap_action: call-service
+            service: remote.send_command
+            service_data:
+              "entity_id": "remote.gabes_harmony_hub"
+              "device": "29883813"
+              "command": "VolumeUp"
+            style:
+              top: 8em
+              left: 85%
+              width: 54px
+              height: 54px
+              background-color: rgb(255, 255, 255, 0.0)
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 2
+          - type: image
+            image: "/local/images/icons/media_icons/vol_btn_border.png"
+            style:
+              top: 11em
+              left: 85%
+              width: 69px
+              height: 155px
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 1
+          - type: image
+            image: "/local/images/icons/media_icons/horizontal_Rule.png"
+            style:
+              top: 13em
+              left: 40%
+              width: 70%
+              height: 2px
+              filter: invert(0.20)
+              border-radius: 4px
+              z-index: 1
+
+## SYSTEM
 - name: System
   title: System
   icon: mdi:server-network
   cards:
-  - type: media-control
-    entity: media_player.roku_2ld558098368
   - type: entities
     title: Devices
     entities:
@@ -2073,6 +3119,7 @@ views:
     - device_tracker.phone
     - switch.motion_detect
     - script.roomba_turn_on
+    - script.backup
   - type: entities
     title: Speedtest
     entities:
@@ -2083,6 +3130,14 @@ views:
     entities: 
     - sensor.speedtest_download
     - sensor.speedtest_upload
+  - type: history-graph
+    entities: 
+    - sensor.asuswrt_download_speed
+    - sensor.asuswrt_upload_speed
+  - type: history-graph
+    entities: 
+    - sensor.asuswrt_download
+    - sensor.asuswrt_upload
 
   - type: vertical-stack
     cards:
@@ -2156,7 +3211,8 @@ views:
                 font-size: 13px
                 color: rgba(33, 33, 33, 1)
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: switch.2437254184f3eb695715
               icon: mdi:toggle-switch
               size: 50%
@@ -2195,6 +3251,13 @@ views:
     - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
     - sensor.mqtt_topic_home_sysinfo_template_serverload
     - sensor.mqtt_topic_home_sysinfo_template_serverspeed
+  - type: entities
+    title: Asus Router Speed
+    entities:
+    - sensor.asuswrt_download
+    - sensor.asuswrt_download_speed
+    - sensor.asuswrt_upload
+    - sensor.asuswrt_upload_speed
   - type: sensor
     entity: sensor.speedtest_download
     name: Fios Speed
@@ -2214,17 +3277,76 @@ views:
     trackers:
       - sensor.custom_card_tracker
       - sensor.custom_component_tracker
-  - type: custom:list-card
-    entity: sensor.engineering_feed
-    title: Engineering Feed (Test)
-    columns:
-#      - title: ''
-#        type: image
-#        add_link: link
- #       field: image
-      - title: Title
-        field: title
-        style:
-          - white-space: nowrap
-      - title: Description
-        field: description
+
+- name: Twitter
+  title: Twitter
+  icon: mdi:twitter
+  cards:
+  - type: vertical-stack
+    cards:
+#      - type: picture-elements
+#        camera_image: camera.latestoctocam_tweet
+#        style:                 
+#          border-radius: 20px
+#          border: solid 1px rgba(100,100,100,0.3)
+#          box-shadow: 3px 3px rgba(0,0,0,0.4)
+#        elements:
+#          - type: icon
+#            entity: sensor.latest_octo_tweet_text
+#            title: Twitter
+#            icon: mdi:twitter
+#            style:
+#              top: 43%
+#              left: 13%
+#              align: right
+#             color: rgba(255, 255, 255, 1)
+#          - type: state-label
+#            entity: sensor.latest_octo_tweet_text
+#             style:
+#              top: 50%
+#              left: 24%
+#              font-size: 14px
+#              width: 200px
+#              color: rgba(255, 255, 255, 1)
+#          - type: state-label
+#            entity: sensor.latest_octo_tweet_date
+#            style:
+#              top: 70%
+#              left: 24%
+#              font-size: 10px
+#              color: rgba(255, 255, 255, 1)
+      - type: picture-entity
+        entity: camera.latestoctocam_tweet
+        show_name: false
+        show_state: false
+      - type: custom:card-modder
+        card:
+          type: custom:useful-markdown-card
+          content: >
+            [[ sensor.latest_octo_tweet_text.state ]]
+            [[ sensor.latest_octo_tweet_date.state ]]
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)
+  - type: vertical-stack            
+    cards:
+      - type: conditional
+        conditions:
+          - entity: sensor.latest_sfgabe_image_link
+            state_not: "None"
+        card:
+          type: picture-entity
+          entity: camera.latestsfgabe_tweet
+          show_name: false
+          show_state: false
+      - type: custom:card-modder
+        card:
+          type: custom:useful-markdown-card
+          content: >
+            [[ sensor.latest_sfgabe_tweet_text.state ]]
+            [[ sensor.latest_sfgabe_tweet_date.state ]]
+        style:                 
+          border-radius: 20px
+          border: solid 1px rgba(100,100,100,0.3)
+          box-shadow: 3px 3px rgba(0,0,0,0.4)

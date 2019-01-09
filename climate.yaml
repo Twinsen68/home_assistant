@@ -3,7 +3,7 @@
   heater: switch.06200940dc4f22cbb94b_3
   target_sensor: sensor.onlyreefcontrolpitemp
   min_temp: 74
-  max_temp: 88
+  max_temp: 86
   ac_mode: False
   target_temp: 78
   cold_tolerance: 0.2

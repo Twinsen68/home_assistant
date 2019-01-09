@@ -245,6 +245,9 @@ switch.reef_pump_1:
 switch.reef_pump_1_reverse: 
   icon: mdi:rewind
 
+switch.reef_pump_1_scheduled: 
+  icon: mdi:clock
+
 sensor.reefcontrolpipump2power: 
   icon: mdi:eyedropper
 
@@ -278,3 +281,16 @@ switch.kessil_light_level_12:
 
 switch.06200940dc4f22cbb94b_4:
   icon: mdi:lightbulb-on
+switch.entry_light:
+  icon: mdi:lightbulb-on
+switch.motion_detect:
+  icon: mdi:security
+#input_boolean.bedroom_alarm_clock_status:
+#  templates:
+#    icon: >
+#      if (state === 'on') return 'mdi:alarm';
+#      return 'mdi:alarm-off';
+#    icon_color: >
+#      if (state === 'on') return 'rgb(251, 210, 41)';
+#      return 'rgb(54, 95, 140)';
+

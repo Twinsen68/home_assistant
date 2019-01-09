@@ -6,6 +6,14 @@
       command_on: !secret switches_motion_on
       command_off: !secret switches_motion_off
 
+#Switch for Entry Light
+- platform: command_line
+  switches:
+    entry_light:
+      friendly_name: Entry Light
+      command_on: !secret switches_entry_light_on
+      command_off: !secret switches_entry_light_off
+
 #- platform: command_line
 #  switches:
 #    reef_cooler_pump_switch:
@@ -109,6 +117,21 @@
   body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":99}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":99}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
   body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
   is_on_template: '{{ value_json.channels["3"].profile.config.value == 99 }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reefcontrolpi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Reef Pump 1 Scheduled
+  resource: http://reefcontrolpi.local/api/lights/2
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic  
+  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":99,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:38"}}},"3":{"name":"Forward - 99","min":0,"start_min":99,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:38"}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
+  body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
+  is_on_template: '{{ value_json.channels["3"].profile.type == "diurnal" }}'
   headers:
       Connection: keep-alive
       content-type: application/json
@@ -242,8 +265,8 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic  
-  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":60}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":80}}}},"jack":"1"}'
-  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":60}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":98}}}},"jack":"1"}'
+  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":98}}}},"jack":"1"}'
   is_on_template: '{{ value_json.channels["1"].profile.config.value == 80 }}'
   headers:
       Connection: keep-alive
@@ -257,7 +280,7 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic  
-  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":55}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":75}}}},"jack":"1"}'
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":55}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":85}}}},"jack":"1"}'
   body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
   is_on_template: '{{ value_json.channels["1"].profile.config.value == 75 }}'
   headers:
