@@ -13,7 +13,7 @@ resources:
     type: module
   - url: /local/custom_ui/useful-markdown-card.js?v=1
     type: module
-  - url: /local/custom_ui/button-card.js?v=1
+  - url: /local/custom_ui/button-card.js?v=2.2
     type: module
   - url: /local/custom_ui/light-card.js?v=1
     type: module
@@ -44,6 +44,8 @@ resources:
   - url: /local/custom_ui/list-card.js?v=0.3
     type: module
   - url: /local/custom_ui/vertical-stack-in-card.js
+    type: module
+  - url: /local/custom_ui/roku-card.js?v=0
     type: module
 
 background: center / cover no-repeat url("/local/images/rollins.jpg") fixed
@@ -2303,6 +2305,339 @@ views:
         - sensor.amazon_weather_wind_bearing
         - sensor.amazon_weather_wind_speed
 
+- name: Garden
+  title: Garden
+  icon: mdi:flower
+  cards:
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: switch.garden_light
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/images/herb_garden_off.jpg
+          elements:
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_light
+              icon: mdi:weather-sunny
+              size: 50%
+              color: auto
+              style:
+                top: 87%
+                left: 12%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_waterbot
+              icon: mdi:water-pump
+              size: 50%
+              color: auto
+              style:
+                top: 87%
+                left: 22%
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_temperature_template
+              icon: mdi:thermometer
+              style:
+                top: 10%
+                left: 22%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_humidity_template
+              icon: mdi:water-percent
+              style:
+                top: 20%
+                left: 30%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_moisture_level_template_level
+              icon: mdi:cup-water
+              style:
+                top: 30%
+                left: 26%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_temperature_template
+              title: Temperature
+              icon: mdi:thermometer
+              style:
+                top: 10%
+                left: 11%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_humidity_template
+              title: Humidity
+              icon: mdi:water
+              style:
+                top: 20%
+                left: 11%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_humidity_template_time
+              title: Humidity
+              icon: mdi:clock
+              style:
+                top: 20%
+                left: 18%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_moisture_level_template_level
+              title: Humidity
+              icon: mdi:cup-water
+              style:
+                top: 30%
+                left: 11%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_moisture_level_template_time
+              title: Humidity
+              icon: mdi:clock
+              style:
+                top: 30%
+                left: 18%
+                color: rgba(255, 255, 255, 1)
+      - type: conditional
+        conditions:
+          - entity: switch.garden_light
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/herb_garden_on.jpg
+          elements:
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_light
+              icon: mdi:weather-sunny
+              size: 50%
+              color: auto
+              style:
+                top: 87%
+                left: 12%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_waterbot
+              icon: mdi:water-pump
+              size: 50%
+              color: auto
+              style:
+                top: 87%
+                left: 22%
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_temperature_template
+              icon: mdi:thermometer
+              style:
+                top: 10%
+                left: 22%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_humidity_template
+              icon: mdi:water-percent
+              style:
+                top: 20%
+                left: 30%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_moisture_level_template_level
+              icon: mdi:cup-water
+              style:
+                top: 30%
+                left: 26%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_temperature_template
+              title: Temperature
+              icon: mdi:thermometer
+              style:
+                top: 10%
+                left: 11%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_humidity_template
+              title: Humidity
+              icon: mdi:water
+              style:
+                top: 20%
+                left: 11%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_humidity_template_time
+              title: Humidity
+              icon: mdi:clock
+              style:
+                top: 20%
+                left: 18%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_moisture_level_template_level
+              title: Humidity
+              icon: mdi:cup-water
+              style:
+                top: 30%
+                left: 11%
+                color: rgba(255, 255, 255, 1)
+            - type: icon
+              entity: sensor.mqtt_topic_garden_moisture_level_template_time
+              title: Humidity
+              icon: mdi:clock
+              style:
+                top: 30%
+                left: 18%
+                color: rgba(255, 255, 255, 1)
+  - type: vertical-stack
+    cards:
+      - type: picture-elements
+        image: /local/images/parsley-l.png
+        elements:
+          - type: custom:text-element
+            text: Parsley
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/thyme-l.png
+        elements:
+          - type: custom:text-element
+            text: Thyme
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/marjoram-l.png
+        elements:
+          - type: custom:text-element
+            text: Marjoram
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/tarragon-l.png
+        elements:
+          - type: custom:text-element
+            text: Tarragon
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/oregano-l.png
+        elements:
+          - type: custom:text-element
+            text: Oregano
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+  - type: vertical-stack
+    cards:
+      - type: picture-elements
+        image: /local/images/chives-l.png
+        elements:
+          - type: custom:text-element
+            text: Chives
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/mint-l.png
+        elements:
+          - type: custom:text-element
+            text: Mint
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/dill-l.png
+        elements:
+          - type: custom:text-element
+            text: Dill
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+      - type: picture-elements
+        image: /local/images/basil-l.png
+        elements:
+          - type: custom:text-element
+            text: Basil
+            style:
+              top: 43%
+              left: 46%
+              font-size: 16px
+              font-weight: bold
+              align: right
+              color: rgba(255, 255, 255, 1)
+
+      - type: custom:card-modder
+        card:
+          type: custom:useful-markdown-card
+          style:
+              background-image: /local/images/herb_garden_on.jpg;
+              padding: 0
+          content: >
+              [Basil](https://www.almanac.com/plant/basil)
+              [Tarragon](https://www.almanac.com/plant/tarragon)
+              [Chive](https://www.almanac.com/plant/chive)
+              [Marjorum](https://www.almanac.com/plant/marjorum)
+              [Dill](https://www.almanac.com/plant/dill)
+              [Mint](https://www.almanac.com/plant/miny)
+              [Oregano](https://www.almanac.com/plant/oregano)
+              [THyme](https://www.almanac.com/plant/thyme)
+
 ## TRAVEL
 #- name: Travel
 #  title: Travel
@@ -2985,8 +3320,12 @@ views:
   title: Media
   icon: mdi:television-classic
   cards:
-  - type: media-control
+  - type: custom:roku-card
     entity: media_player.roku_2ld558098368
+    title: Roku
+    ip_address: 'http://192.168.50.243'
+#  - type: media-control
+#    entity: media_player.roku_2ld558098368
 #  - type: vertical-stack
 #    cards: !include remotes/roku.yaml
   - type: entities
@@ -3258,6 +3597,7 @@ views:
     - sensor.asuswrt_download_speed
     - sensor.asuswrt_upload
     - sensor.asuswrt_upload_speed
+    - sensor.cert_expiry
   - type: sensor
     entity: sensor.speedtest_download
     name: Fios Speed
@@ -3334,7 +3674,7 @@ views:
       - type: conditional
         conditions:
           - entity: sensor.latest_sfgabe_image_link
-            state_not: "None"
+            state_not: Unknown
         card:
           type: picture-entity
           entity: camera.latestsfgabe_tweet

@@ -91,7 +91,7 @@
       zone: zone.home
       event: enter
   action:
-    - delay: '00:00:05'
+#    - delay: '00:00:05'
     - service: notify.gabes_alexa
       data:
         message: "Hello_Gayb,_Welcome_home!"
@@ -243,7 +243,7 @@
     entity_id: script.freshwater_feeder_script
 
 ## Amazon Temp Regulation
-# This automation script runs when a value is received via Reef sensor: monthly_amazon_temp
+# This automation script runs when a value is received via Amazon sensor: monthly_amazon_temp
 - alias: Set Amazon Thermostat Max Daytime Selector
   trigger:
     platform: template
@@ -258,7 +258,7 @@
        entity_id: climate.octo_tank_therm
        temperature: '{{ states.sensor.monthly_amazon_temp_lowmed.state | float }}'
 
- # This automation script runs when a value is received via Reef sensor: monthly_amazon_temp
+ # This automation script runs when a value is received via Amazon sensor: monthly_amazon_temp
 - alias: Set Amazon Thermostat Max Night Selector
   trigger:
     platform: template
@@ -286,7 +286,8 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.reef_tank_therm
-       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float - 2 }}'
+       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float }}'
+#       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float - 2 }}'
 
  # This automation script runs when a value is received via Reef sensor: noaa_daily_min_reef_temp
 - alias: Set Reef Thermostat Max Nighttime Selector
@@ -301,7 +302,8 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.reef_tank_therm
-       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float - 2.0 }}'
+       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float }}'
+#       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float - 2.0 }}'
 
 - alias: Regulate Reef Heater To Off on Low Misread
   trigger:
@@ -388,6 +390,55 @@
     service: switch.turn_off
     entity_id: switch.2437254184f3eb695276
 
+## Herb Garden
+- alias: Garden Turn On Lights
+  trigger:
+    - platform: time
+      at: '09:00:00'
+  action:
+    service: switch.turn_on
+    entity_id: switch.garden_light
+
+- alias: Garden Turn Off Lights
+  trigger:
+    - platform: time
+      at: '20:00:00'
+  action:
+    service: switch.turn_off
+    entity_id: switch.garden_light
+
+- alias: Garden Turn On Waterbot Evening
+  trigger:
+    - platform: time
+      at: '17:00:00'
+  action:
+    service: switch.turn_on
+    entity_id: switch.garden_waterbot
+
+- alias: Garden Turn Off Waterbot Evening
+  trigger:
+    - platform: time
+      at: '2:00:00'
+  action:
+    service: switch.turn_off
+    entity_id: switch.garden_waterbot
+
+- alias: Garden Turn On Waterbot Morning
+  trigger:
+    - platform: time
+      at: '5:00:00'
+  action:
+    service: switch.turn_on
+    entity_id: switch.garden_waterbot
+
+- alias: Garden Turn Off Waterbot Morning
+  trigger:
+    - platform: time
+      at: '14:00:00'
+  action:
+    service: switch.turn_off
+    entity_id: switch.garden_waterbot
+
 ## Vacuuming
 - alias: Vacuum on Schedule
   trigger:
@@ -465,7 +516,7 @@
 - alias: Turn off 3D Printer on Idle
   trigger:
     platform: state
-    entity_id: sensor.octoprint_actual_tool0_temp
+    entity_id: sensor.octoprint_target_tool1_temp
     to: '32'
   condition:
     condition: state
@@ -475,8 +526,8 @@
     for:
       minutes: 30
   action:
-    - delay:
-        minutes: 30
+#    - delay:
+#        minutes: 15
     - service: switch.turn_off
       entity_id: switch.2437254184f3eb695327
 

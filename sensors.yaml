@@ -502,6 +502,45 @@
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
 - platform: mqtt
+  state_topic: 'moisture-level-garden/reading'
+  name: Garden Moisture Level Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  scan_interval: 120
+  sensors:
+    mqtt_topic_garden_moisture_level_template_level:
+      friendly_name: "Garden Moisture Level"
+      value_template: '{{ states.sensor.garden_moisture_level_raw.state.split("|")[0] }}'
+    mqtt_topic_garden_moisture_level_template_time:
+      friendly_name: "Garden Moisture Last Flip"
+      value_template: >
+        {%- set date = as_timestamp(states.sensor.garden_moisture_level_raw.state.split("at ")[1]) -%}
+        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
+
+- platform: mqtt
+  state_topic: 'dht11-garden/reading'
+  name: Garden Humidity Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  scan_interval: 120
+  sensors:
+    mqtt_topic_garden_humidity_template:
+      friendly_name: "Garden Humidity"
+      value_template: '{{ states.sensor.garden_humidity_raw.state.split("Humidity=")[1].split("%")[0] }}'
+      unit_of_measurement: '%'
+    mqtt_topic_garden_temperature_template:
+      friendly_name: "Garden Temperature"
+      value_template: '{{ states.sensor.garden_humidity_raw.state.split("Temp=")[1].split("*")[0] }}'
+      unit_of_measurement: '°C'      
+    mqtt_topic_garden_humidity_template_time:
+      friendly_name: "Garden Humidity Time"
+      value_template: >
+        {%- set date = as_timestamp(states.sensor.garden_humidity_raw.state.split("at ")[1]) -%}
+        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
+
+- platform: mqtt
   state_topic: 'temp-octo/reading'
   name: OctoCam Info Raw
   value_template: "{{ value }}"
@@ -810,14 +849,22 @@
   entity_id: sensor.noaa_daily_reef_temp_raw
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
-  value_template: '{{ (value.split(" ")[3]) | round(1) }}'
+  value_template: >
+    {% set rawvalue = states.sensor.noaa_daily_reef_temp_raw.state %}
+    {% set adjvalue =  (rawvalue.split(" ")[3]) | round(1) %}
+    {{ (adjvalue - 2) | round(1) }}
+#  value_template: '{{ (value.split(" ")[3]) | round(1) }}'
 
 - platform: file
   name: 'NOAA Daily Max Reef Temp'
   entity_id: sensor.noaa_daily_max_reef_temp
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
-  value_template: '{{ (value.split(" ")[4].split(" ")[0]) | round(1) }}'
+  value_template: >
+    {% set rawvalue = states.sensor.noaa_daily_reef_temp_raw.state %}
+    {% set adjvalue =  (rawvalue.split(" ")[4]) | round(1) %}
+    {{ (adjvalue - 2) | round(1) }}
+#  value_template: '{{ (value.split(" ")[4].split(" ")[0]) | round(1) }}'
 
 - platform: min_max
   name: reef_avg_daily_temp
@@ -1569,6 +1616,42 @@
 #  icon: alert-outline
 #  entity_id: sensor.outside_alerts
 #  scan_interval: 180
+
+- platform: cert_expiry
+  host: thisisgabes.asuscomm.com
+  port: 8008
+
+- platform: pilight
+  name: 'Some Inside Temperature Sensor'
+  variable: 'temperature'
+  payload:
+    protocol: tcm
+  unit_of_measurement: '°C'
+
+- platform: pilight
+  name: 'Some Smoke Detector'
+  variable: 'state'
+  payload:
+    protocol: secudo_smoke_sensor
+
+- platform: pilight
+  name: 'Some Gas Detector'
+  variable: 'state'
+  payload:
+    protocol: mumbi
+
+- platform: pilight
+  name: 'Some Energy Sensor'
+  variable: 'state'
+  payload:
+    protocol: cleverwatts
+
+- platform: pilight
+  name: 'Some Weird Temp Sensor'
+  variable: 'temperature'
+  payload:
+    protocol: tfa
+  unit_of_measurement: '°C'
 
 - platform: template
   sensors:

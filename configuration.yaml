@@ -163,6 +163,13 @@ logbook:
       - sensor.dark_sky_daily_high_temperature
       - sensor.dark_sky_daily_low_temperature
       - sensor.dark_sky_temperature
+      - sensor.mqtt_topic_garden_moisture_level_template_time
+      - sensor.mqtt_topic_garden_moisture_level_template_level
+      - sensor.mqtt_topic_garden_humidity_template
+      - sensor.mqtt_topic_garden_temperature_template
+      - sensor.mqtt_topic_garden_humidity_template_time
+      - switch.garden_light
+      - switch.garden_waterbot
 
 recorder:
   purge_keep_days: 3
@@ -261,6 +268,13 @@ recorder:
       - sensor.dark_sky_daily_high_temperature
       - sensor.dark_sky_daily_low_temperature
       - sensor.dark_sky_temperature
+      - sensor.mqtt_topic_garden_moisture_level_template_time
+      - sensor.mqtt_topic_garden_moisture_level_template_level
+      - sensor.mqtt_topic_garden_humidity_template
+      - sensor.mqtt_topic_garden_temperature_template
+      - sensor.mqtt_topic_garden_humidity_template_time
+      - switch.garden_light
+      - switch.garden_waterbot
 
 #Panels
 #panel_custom:
@@ -298,6 +312,16 @@ alexa:
 #IFTTT
 ifttt:
   key: !secret ifttt_key
+
+#NRF Sensor
+mysensors:
+  gateways:
+    - device: '192.168.50.111'
+
+#Pilight 433mhz receiver
+pilight:
+  host: 192.168.50.111
+  port: 5000
 
 #Tuya Smart Switches
 tuya:

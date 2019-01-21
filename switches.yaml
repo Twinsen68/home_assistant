@@ -265,9 +265,9 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic  
-  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":60}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":98}}}},"jack":"1"}'
+  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":65}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":99}}}},"jack":"1"}'
   body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":98}}}},"jack":"1"}'
-  is_on_template: '{{ value_json.channels["1"].profile.config.value == 80 }}'
+  is_on_template: '{{ value_json.channels["1"].profile.config.value == 99 }}'
   headers:
       Connection: keep-alive
       content-type: application/json
@@ -363,3 +363,19 @@
       friendly_name: Octo Fish Feeder
       command_on: !secret switches_octofishfeeder_on
       command_off: !secret switches_octofishfeeder_off
+
+#Switch for Garden Light
+- platform: command_line
+  switches:
+    garden_light:
+      friendly_name: Garden Light
+      command_on: !secret switches_gardenlight_on
+      command_off: !secret switches_gardenlight_off
+
+#Switch for Garden Waterbot
+- platform: command_line
+  switches:
+    garden_waterbot:
+      friendly_name: Garden Waterer
+      command_on: !secret switches_garden_water_schedule_on
+      command_off: !secret switches_garden_water_schedule_off

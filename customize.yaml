@@ -285,6 +285,21 @@ switch.entry_light:
   icon: mdi:lightbulb-on
 switch.motion_detect:
   icon: mdi:security
+switch.garden_light:
+  icon: mdi:weather-sunny
+switch.garden_waterbot:
+  icon: mdi:water-pump
+sensor.mqtt_topic_garden_humidity_template:
+  icon: mdi:water-percent
+sensor.mqtt_topic_garden_moisture_level_template_level:
+  icon: mdi:cup-water
+sensor.mqtt_topic_garden_moisture_level_template_time:
+  icon: mdi:clock
+sensor.mqtt_topic_garden_humidity_template_time:
+  icon: mdi:clock
+input_boolean.bedroom_alarm_clock_status:
+  icon: mdi:alarm
+
 #input_boolean.bedroom_alarm_clock_status:
 #  templates:
 #    icon: >

@@ -53,15 +53,15 @@ reeftank_morning_fade_kessil:
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_1
     - delay:
-        seconds: 3600
+        seconds: 1800
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_2
     - delay:
-        seconds: 3600
+        seconds: 900
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_3
     - delay:
-        seconds: 3600
+        seconds: 900
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
@@ -75,7 +75,7 @@ reeftank_morning_fade_kessil:
         device: 43857787
         command: 'FastForward'
     - delay:
-        seconds: 3600
+        seconds: 900
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_5
     - service: remote.send_command
@@ -84,7 +84,7 @@ reeftank_morning_fade_kessil:
         device: 43857787
         command: 'FastForward'
     - delay:
-        seconds: 1800
+        seconds: 5200
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_6
     - service: remote.send_command
@@ -93,11 +93,11 @@ reeftank_morning_fade_kessil:
         device: 43857787
         command: 'FastForward'
     - delay:
-        seconds: 1800
+        seconds: 12600
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_7
     - delay:
-        seconds: 7200
+        seconds: 10800
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_8
     - delay:
