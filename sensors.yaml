@@ -455,6 +455,18 @@
   longitude: 112.768845
   scan_interval: 43200
 
+- platform: mqtt
+  state_topic: 'ifttt/reef_data'
+  name: Latest Reef Tests MQTT
+  value_template: "{{ value }}"
+
+- platform: template
+  sensors:
+    ifttt_reef_tests_latest:
+      entity_id: sensor.ifttt_reef_tests_latest
+      friendly_name: "Latest Reef Tests"
+      value_template: '{{ value }}'
+
 - platform: command_line
   name: Server Temperature
   command: "cat /sys/class/thermal/thermal_zone0/temp"
@@ -519,6 +531,36 @@
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
 - platform: mqtt
+  state_topic: 'waterbot-garden/reading'
+  name: Garden Waterbot Raw
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'lightbot-garden/reading'
+  name: Garden Lightbot Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  scan_interval: 120
+  sensors:
+    mqtt_topic_garden_light_state_template:
+      friendly_name: "Garden Light State"
+      value_template: '{{ states.sensor.garden_lightbot_raw.state.split("turned ")[1].split("starting at")[0] }}'
+    mqtt_topic_garden_light_state_time:
+      friendly_name: "Garden Light State Time"
+      value_template: >
+        {%- set date = as_timestamp(states.sensor.garden_lightbot_raw.state.split("starting at ")[1]) -%}
+        {{ date | timestamp_custom("%k:%M %P") }}
+    mqtt_topic_garden_water_state_template:
+      friendly_name: "Garden Water State"
+      value_template: '{{ states.sensor.garden_waterbot_raw.state.split("at ")[0] }}'
+    mqtt_topic_garden_water_state_time:
+      friendly_name: "Garden Water State Time"
+      value_template: >
+        {%- set date = as_timestamp(states.sensor.garden_waterbot_raw.state.split("at ")[1]) -%}
+        {{ date | timestamp_custom("%k:%M %P") }}
+
+- platform: mqtt
   state_topic: 'dht11-garden/reading'
   name: Garden Humidity Raw
   value_template: "{{ value }}"
@@ -539,6 +581,32 @@
       value_template: >
         {%- set date = as_timestamp(states.sensor.garden_humidity_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
+
+- platform: mqtt
+  state_topic: 'psmqtt/octocam/cpu_percent'
+  name: Latest Reef CPU Percent
+  value_template: "{{ value }}"
+  unit_of_measurement: '%'
+
+- platform: mqtt
+  state_topic: 'psmqtt/octocam/boot_time/uptime'
+  name: Latest Reef CPU Uptime
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'psmqtt/octocam/disk_usage/percent/|'
+  name: Latest Reef CPU Disk Usage
+  value_template: "{{ value }}"
+  unit_of_measurement: '%'
+
+- platform: mqtt
+  state_topic: 'psmqtt/octocam/boot_time/uptime'
+  name: Latest Reef CPU Stats
+  value_template: "{{ value }}"
+
+- platform: date_countdown
+  name: Renew SSL
+  date: "02-03-2019 12:00"
 
 - platform: mqtt
   state_topic: 'temp-octo/reading'
@@ -831,6 +899,33 @@
   unit_of_measurement: 'pH'
   value_template: '{{ (value.split(",")[2]) | round(1) }}'
 
+#Google Sheets Amazon Stats
+- platform: file
+  name: 'Amazon Stats Raw'
+  entity_id: sensor.amazon_stats_raw
+  file_path: /home/homeassistant/.homeassistant/downloads/amazon_stats.csv
+
+- platform: template
+  sensors:
+    latest_amazon_stats_date:
+      value_template: "{{ (states.sensor.amazon_stats_raw.state.split(',')[0])|timestamp_custom('%m %d, %Y', false) }}"
+      friendly_name: 'Amazon Test Date'
+    latest_amazon_stats_ph:
+      friendly_name: 'Amazon Test pH'
+      value_template: '{{ states.sensor.amazon_stats_raw.state.split(",")[1].split(",")[0] | float }}'
+    latest_amazon_stats_nitrate:
+      friendly_name: 'Amazon Test Nitrate'
+      value_template: '{{ states.sensor.amazon_stats_raw.state.split(",")[2].split(",")[0] | float }}'
+    latest_amazon_stats_nitrite:
+      friendly_name: 'Amazon Test Nitrite'
+      value_template: '{{ states.sensor.amazon_stats_raw.state.split(",")[3].split(",")[0] | float }}'
+    latest_amazon_stats_ammonia:
+      friendly_name: 'Amazon Test Ammonia'
+      value_template: '{{ states.sensor.amazon_stats_raw.state.split(",")[4].split(",")[0] | float }}'
+    latest_amazon_stats_water_change:
+      friendly_name: 'Amazon Test Water Change'
+      value_template: "{{ (states.sensor.amazon_stats_raw.state.split(',')[5])|timestamp_custom('%m %d, %Y', false) }}"
+
 #Scrape For Reef Temp
 - platform: scrape
   resource: http://www.surf-forecast.com/breaks/Kuta-Beach/seatemp
@@ -838,6 +933,42 @@
   name: ReefOceanTemp
   force_update: true
   scan_interval: 3600
+
+#Google Sheets Reef Stats
+- platform: file
+  name: 'Reef Stats Raw'
+  entity_id: sensor.reef_stats_raw
+  file_path: /home/homeassistant/.homeassistant/downloads/reef_stats.csv
+
+- platform: template
+  sensors:
+    latest_reef_stats_date:
+      value_template: "{{ (states.sensor.reef_stats_raw.state.split(',')[0])|timestamp_custom('%m %d, %Y', false) }}"
+      friendly_name: 'Reef Test Date'
+    latest_reef_stats_ph:
+      friendly_name: 'Reef Test pH'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[1].split(",")[0] | float }}'
+    latest_reef_stats_salinity:
+      friendly_name: 'Reef Test Salinity'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[2].split(",")[0] | float }}'
+    latest_reef_stats_nitrate:
+      friendly_name: 'Reef Test Nitrate'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[3].split(",")[0] | float }}'
+    latest_reef_stats_nitrite:
+      friendly_name: 'Reef Test Nitrite'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[4].split(",")[0] | float }}'
+    latest_reef_stats_ammonia:
+      friendly_name: 'Reef Test Ammonia'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[5].split(",")[0] | float }}'
+    latest_reef_stats_calcium:
+      friendly_name: 'Reef Test Calcium'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[6].split(",")[0] | float }}'
+    latest_reef_stats_kh:
+      friendly_name: 'Reef Test kH'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[7].split(",")[0] | float }}'
+    latest_reef_stats_water_change:
+      friendly_name: 'Reef Test Water Change'
+      value_template: "{{ (states.sensor.reef_stats_raw.state.split(',')[5])|timestamp_custom('%m %d, %Y', false) }}"
 
 - platform: file
   name: 'NOAA Daily Reef Temp Raw'
@@ -941,14 +1072,14 @@
 #Empire State Colors
 - platform: scrape
   resource: http://www.esbnyc.com/explore/tower-lights
-  select: 'h1:nth-of-type(2)'
+  select: 'div.view-empty h1#page-title.title'
   name: EmpireStateLights
   friendly_name: "Empire State Building Lights"
   scan_interval: 10800
 
 - platform: scrape
   resource: http://www.esbnyc.com/explore/tower-lights
-  select: 'img:nth-of-type(5)'
+  select: 'div.view-empty p img'
   attribute: src
   name: empire_state_lights_pic_url
   scan_interval: 1800
@@ -1715,3 +1846,52 @@
         {% else %}
            /local/images/icons/weather_icons/animated/weather.svg
         {% endif %}
+
+# Fitbit
+- platform: fitbit
+  clock_format: 12H
+  monitored_resources:
+      - "activities/heart"
+      - "activities/steps"
+      - "activities/minutesFairlyActive"
+      - "activities/minutesSedentary"
+      - "activities/steps"
+      - "activities/floors"
+      - "activities/elevation"
+      - "activities/floors"
+      - "activities/distance"
+      - "activities/tracker/floors"
+      - "activities/tracker/elevation"
+      - "activities/tracker/floors"
+      - "activities/tracker/distance"
+      - "activities/tracker/minutesVeryActive"
+      - "activities/tracker/minutesSedentary"
+      - "activities/tracker/minutesLightlyActive"
+      - "activities/tracker/minutesFairlyActive"
+      - "activities/tracker/steps"
+      - "devices/battery"
+      - "sleep/awakeningsCount"
+      - "sleep/efficiency"
+      - "sleep/minutesAfterWakeup"
+      - "sleep/minutesAsleep"
+      - "sleep/minutesAwake"
+      - "sleep/minutesToFallAsleep"
+      - "sleep/startTime"
+      - "sleep/timeInBed"
+
+- platform: template
+  sensors:
+    fitbit_steps:
+      friendly_name: 'Steps'
+      value_template: >
+        {{ states.sensor.steps.state | replace(",","") }}
+      unit_of_measurement: 'steps'
+#    fitbit_calories:
+#      friendly_name: 'Calories'
+#      value_template: >
+#        {{ states.sensor.calories.state | replace(",","") }}
+#      unit_of_measurement: 'calories'
+#    weight_loss:
+#      friendly_name: 'Weight Loss'
+#      value_template: "{{ '%.1f' | format(245.0 - (states.sensor.weight.state | float)) }}"
+#      unit_of_measurement: 'lbs'

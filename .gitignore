@@ -20,6 +20,7 @@ certs
 deps
 cookie
 gtfs
+downloads
 remotes
 ssh
 TwitterGeoPics
@@ -27,6 +28,7 @@ sfgabe_tweets
 octocam_tweets
 panels
 ui-lovelace.yaml.sb*
+python_scripts/lib
 .well_known
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
@@ -49,7 +51,11 @@ configuration.cnf
 essexcrossing.py
 usps.py
 emulated_hue_ids.json
+www/google8caabc15f40815e1.html
+credentials*
+client_secret*
 passwordfile
+*.ini
 *log
 *.DS_Store
 .uuid

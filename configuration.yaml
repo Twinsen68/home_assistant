@@ -44,9 +44,13 @@ mqtt:
   port: 1883
   username: !secret mqtt_username
   password: !secret mqtt_password
-#  discovery: true
+  discovery: true
 
 updater:
+
+custom_updater:
+  card_urls:
+    - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
 
 # Discover some devices automatically
 discovery:
@@ -170,6 +174,24 @@ logbook:
       - sensor.mqtt_topic_garden_humidity_template_time
       - switch.garden_light
       - switch.garden_waterbot
+      - sensor.mqtt_topic_garden_water_state_template
+      - sensor.mqtt_topic_garden_water_state_time
+      - sensor.mqtt_topic_garden_light_state_template
+      - sensor.mqtt_topic_garden_light_state_time
+      - sensor.tracker_steps
+      - sensor.tracker_floors
+      - sensor.tracker_distance
+      - sensor.tracker_minutes_sedentary
+      - sensor.tracker_minutes_lightly_active
+      - sensor.tracker_minutes_fairly_active
+      - sensor.tracker_minutes_very_active
+      - sensor.resting_heart_rate
+      - sensor.sleep_efficiency
+      - sensor.sleep_start_time
+      - sensor.sleep_time_in_bed
+      - sensor.sleep_minutes_to_fall_asleep
+      - sensor.sleep_minutes_awake
+      - sensor.sleep_minutes_asleep
 
 recorder:
   purge_keep_days: 3
@@ -275,6 +297,24 @@ recorder:
       - sensor.mqtt_topic_garden_humidity_template_time
       - switch.garden_light
       - switch.garden_waterbot
+      - sensor.mqtt_topic_garden_water_state_template
+      - sensor.mqtt_topic_garden_water_state_time
+      - sensor.mqtt_topic_garden_light_state_template
+      - sensor.mqtt_topic_garden_light_state_time
+      - sensor.tracker_steps
+      - sensor.tracker_floors
+      - sensor.tracker_distance
+      - sensor.tracker_minutes_sedentary
+      - sensor.tracker_minutes_lightly_active
+      - sensor.tracker_minutes_fairly_active
+      - sensor.tracker_minutes_very_active
+      - sensor.resting_heart_rate
+      - sensor.sleep_efficiency
+      - sensor.sleep_start_time
+      - sensor.sleep_time_in_bed
+      - sensor.sleep_minutes_to_fall_asleep
+      - sensor.sleep_minutes_awake
+      - sensor.sleep_minutes_asleep
 
 #Panels
 #panel_custom:
@@ -321,7 +361,7 @@ mysensors:
 #Pilight 433mhz receiver
 pilight:
   host: 192.168.50.111
-  port: 5000
+  port: 5001
 
 #Tuya Smart Switches
 tuya:
@@ -373,6 +413,8 @@ input_text:
     name: Notification Text
     pattern: '[a-fA-F0-9]*'
     initial: No Message
+
+python_script:
 
 hue:
   bridges:

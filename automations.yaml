@@ -1,7 +1,7 @@
 - alias: Backup HA Configuration Files
   id: backup_config_files
   trigger:
-    platform: time
+    platform: time_pattern
     hours: 1
     minutes: 1
     seconds: 0 
@@ -332,7 +332,7 @@
 #Turn on sump pump every 20 min
 #- alias: Reef Sump Pump On Every Hour
 #  trigger:
-#    - platform: time
+#    - platform: time_pattern
 #      minutes: '/20'
 #  condition:
 #    condition: state
@@ -357,7 +357,7 @@
 #Turn on sump pump every 3 min
 - alias: Reef Sump Pulse
   trigger:
-    - platform: time
+    - platform: time_pattern
       minutes: '/4'
   condition:
     condition: state
@@ -407,18 +407,10 @@
     service: switch.turn_off
     entity_id: switch.garden_light
 
-- alias: Garden Turn On Waterbot Evening
-  trigger:
-    - platform: time
-      at: '17:00:00'
-  action:
-    service: switch.turn_on
-    entity_id: switch.garden_waterbot
-
 - alias: Garden Turn Off Waterbot Evening
   trigger:
     - platform: time
-      at: '2:00:00'
+      at: '1:00:00'
   action:
     service: switch.turn_off
     entity_id: switch.garden_waterbot
@@ -426,7 +418,7 @@
 - alias: Garden Turn On Waterbot Morning
   trigger:
     - platform: time
-      at: '5:00:00'
+      at: '6:00:00'
   action:
     service: switch.turn_on
     entity_id: switch.garden_waterbot
@@ -434,9 +426,17 @@
 - alias: Garden Turn Off Waterbot Morning
   trigger:
     - platform: time
-      at: '14:00:00'
+      at: '13:00:00'
   action:
     service: switch.turn_off
+    entity_id: switch.garden_waterbot
+
+- alias: Garden Turn On Waterbot Evening
+  trigger:
+    - platform: time
+      at: '18:00:00'
+  action:
+    service: switch.turn_on
     entity_id: switch.garden_waterbot
 
 ## Vacuuming
@@ -549,7 +549,7 @@
 - alias: Check for Tweets OctoCam
   id: twitter_check_octocam
   trigger:
-    - platform: time
+    - platform: time_pattern
       minutes: '/30'
   action:
     - service: shell_command.tweet_retrieve_octocam
@@ -557,7 +557,7 @@
 - alias: Check for Tweets SFGabe
   id: twitter_check_sfgabe
   trigger:
-    - platform: time
+    - platform: time_pattern
       minutes: '/60'
   action:
     - service: shell_command.tweet_retrieve_sfgabe
@@ -701,3 +701,34 @@
     - service: script.turn_on
       data:
         entity_id: script.bedroom_wake_up
+
+## IFTTT Test
+- id: IFTTT_test
+  alias: IFTTT Test
+  trigger:
+    platform: event
+    event_type: ifttt_webhook_received
+    event_data:
+      action: call_service
+  action:
+    service_template: '{{ trigger.event.data.service }}'
+    data_template:
+      entity_id: '{{ trigger.event.data.entity_id }}'
+
+- alias: Download Reef Stats File
+  id: auto_download_reef_stats
+  trigger:
+    platform: time
+    at: '20:15:00'
+  action:
+    - service: shell_command.download_reef_stats
+
+- alias: Download Amazon Stats File
+  id: auto_download_amazon_stats
+  trigger:
+    platform: time
+    at: '20:16:00'
+  action:
+    - service: shell_command.download_amazon_stats
+
+

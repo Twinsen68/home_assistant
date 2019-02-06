@@ -216,7 +216,7 @@ freshwater_feeder_script:
         filename: "latest_octocam.jpg"
         overwrite: true
     - delay:
-        seconds: 30
+        seconds: 240
     - service: switch.turn_off
       entity_id: switch.octofishfeeder
     - service: notify.octo_cam_bot_notifier

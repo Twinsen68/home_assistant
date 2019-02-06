@@ -3,7 +3,7 @@ resources:
     type: module
   - url: /local/custom_ui/monster-card.js?v=1
     type: module
-  - url: /local/custom_ui/card-modder.js?v=1
+  - url: /local/custom_ui/card-modder.js?v=2
     type: module
   - url: /local/custom_ui/color-glance-card.js?v=1
     type: module
@@ -25,7 +25,7 @@ resources:
     type: module
   - url: https://unpkg.com/moment@2.22.2/moment.js
     type: js
-  - url: /local/custom_ui/calendar-card.js?v=1.0.1
+  - url: /local/custom_ui/calendar-card.js?v=1.0.4
     type: module
   - url: /local/custom_ui/state-element.js?v=0.1
     type: module
@@ -47,6 +47,10 @@ resources:
     type: module
   - url: /local/custom_ui/roku-card.js?v=0
     type: module
+  - url: /local/custom_ui/circle-sensor-card.js?v=1
+    type: module
+  - url: /local/custom_ui/card-tools.js?v=0.0.1
+    type: js
 
 background: center / cover no-repeat url("/local/images/rollins.jpg") fixed
 name: Apartment 10R
@@ -360,19 +364,311 @@ views:
             left: 24%
   - type: vertical-stack            
     cards:
-    - type: custom:card-modder
-      card:
-        type: glance
-        entities:
-          - entity: sensor.stats_home
-            name: Home
-          - entity: sensor.stats_work
-            name: Work
-#      style:                 
-#        border-radius: 20px
-#        border: solid 1px rgba(100,100,100,0.3)
-#        box-shadow: 3px 3px rgba(0,0,0,0.4)
+    - type: picture-elements
+      image: /local/images/icons/fitbit.png
+      elements:
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_steps
+        max: 10000
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(255, 255, 255, .5)
+        name: steps
+        units: ' '
+        font_style:
+          font-size: 1em
+          font-color: white
+        color_stops:
+          1: '#09C7E8'
+          10000: '#0BDF0E'
+        style:
+          top: 70%
+          left: 34%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_floors
+        max: 10
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(255, 255, 255, .5)
+        name: floors
+        units: ' '
+        font_style:
+          font-size: 1em
+          font-color: white
+        color_stops:
+          1: '#09C7E8'
+          10: '#0BDF0E'
+        style:
+          top: 70%
+          left: 52%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_distance
+        max: 10
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(255, 255, 255, .5)
+        name: miles
+        units: ' '
+        font_style:
+          font-size: 1em
+          font-color: white
+        color_stops:
+          1: '#09C7E8'
+          10: '#0BDF0E'
+        style:
+          top: 70%
+          left: 70%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_minutes_sedentary
+        max: 500
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(252, 227, 224, .5)
+        name: loaf
+        shadow: true
+        units: ' '
+        font_style:
+          font-size: 1em
+        color_stops:
+          1: '#f2dada'
+          500: '#f7230c'
+        style:
+          top: 6%
+          left: 16%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_minutes_lightly_active
+        max: 500
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(249, 242, 212, .5)
+        name: light
+        units: ' '
+        font_style:
+          font-size: 1em
+          font-color: white
+        color_stops:
+          1: '#f7f5cd'
+          500: '#f9f227'
+        style:
+          top: 6%
+          left: 34%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_minutes_fairly_active
+        max: 60
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(212, 249, 214, .5)
+        name: active
+        units: ' '
+        font_style:
+          font-size: 1em
+        color_stops:
+          1: '#d6fce0'
+          60: '#18f954'
+        style:
+          top: 6%
+          left: 52%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: custom:circle-sensor-card
+        entity: sensor.tracker_minutes_very_active
+        max: 30
+        min: 0
+        stroke_width: 15
+        gradient: true
+        fill: rgba(212, 214, 249, .5)
+        name: very
+        units: ' '
+        font_style:
+          font-size: 1em
+        color_stops:
+          1: '#c7d2fc'
+          30: '#2954f2'
+        style:
+          top: 6%
+          left: 70%
+          width: 3.5em
+          height: 3.5em
+          transform: none
+      - type: image
+        entity: sensor.ionic_battery
+        title: Ionic Battery
+        image: /local/images/icons/battery_high.png
+        state_image:
+          "High": /local/images/icons/battery_high.png
+          "Medium": /local/images/icons/battery_medium.png
+          "Low": /local/images/icons/battery_low.png
+        style:
+          left: 88%
+          top: 82%
+          transform: none
+          width: 24px
+          height: 24px
+      - type: state-icon
+        entity: sensor.resting_heart_rate
+        title: Resting HR
+        style:
+          left: 10%
+          top: 68%
+          "--iron-icon-fill-color": red
+          transform: none
+      - type: state-label
+        entity: sensor.resting_heart_rate
+        title: Resting HR
+        style:
+          left: 14%
+          top: 86%
+          font-size: 18px
+          font-weight: bold
+          color: rgba(255, 255, 255, 1)
 
+  - type: vertical-stack            
+    cards:
+    - type: picture-elements
+      image: /local/images/nightsky.gif
+      elements:
+        - type: icon
+          entity: sensor.sleep_efficiency
+          title: Sleep Efficiency
+          icon: mdi:sleep
+          style:
+            top: 73%
+            left: 8%
+            size: 50%
+            color: rgba(255, 255, 255, 1)
+        - type: state-label
+          entity: sensor.sleep_efficiency
+          icon: mdi:sleep
+          units: '%'
+          style:
+            top: 73%
+            left: 17%
+            font-size: 18px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: icon
+          entity: sensor.sleep_start_time
+          title: Sleep Start Time
+          icon: mdi:clock
+          style:
+            top: 73%
+            left: 72%
+            size: 50%
+            color: rgba(255, 255, 255, 1)
+        - type: state-label
+          entity: sensor.sleep_start_time
+          icon: mdi:clock
+          units: '%'
+          style:
+            top: 73%
+            left: 85%
+            font-size: 18px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: custom:circle-sensor-card
+          entity: sensor.sleep_time_in_bed
+          max: 480
+          min: 0
+          stroke_width: 15
+          gradient: true
+          fill: rgba(252, 227, 224, .5)
+          name: in bed
+          shadow: true
+          units: ' '
+          font_style:
+            font-size: 1em
+          color_stops:
+            1: '#f2dada'
+            480: '#f7230c'
+          style:
+            top: 6%
+            left: 16%
+            width: 3.5em
+            height: 3.5em
+            transform: none
+        - type: custom:circle-sensor-card
+          entity: sensor.sleep_minutes_to_fall_asleep
+          max: 60
+          min: 0
+          stroke_width: 15
+          gradient: true
+          fill: rgba(249, 242, 212, .5)
+          name: pre
+          units: ' '
+          font_style:
+            font-size: 1em
+            font-color: white
+          color_stops:
+            1: '#f9f227'
+            60: '#f7f5cd'
+          style:
+            top: 6%
+            left: 34%
+            width: 3.5em
+            height: 3.5em
+            transform: none
+        - type: custom:circle-sensor-card
+          entity: sensor.sleep_minutes_awake
+          max: 120
+          min: 0
+          stroke_width: 15
+          gradient: true
+          fill: rgba(212, 249, 214, .5)
+          name: awake
+          units: ' '
+          font_style:
+            font-size: 1em
+          color_stops:
+            1: '#18f954'
+            120: '#d6fce0'
+          style:
+            top: 6%
+            left: 52%
+            width: 3.5em
+            height: 3.5em
+            transform: none
+        - type: custom:circle-sensor-card
+          entity: sensor.sleep_minutes_asleep
+          max: 480
+          min: 0
+          stroke_width: 15
+          gradient: true
+          fill: rgba(212, 214, 249, .5)
+          name: asleep
+          units: ' '
+          font_style:
+            font-size: 1em
+          color_stops:
+            1: '#c7d2fc'
+            480: '#2954f2'
+          style:
+            top: 6%
+            left: 70%
+            width: 3.5em
+            height: 3.5em
+            transform: none
     - type: custom:card-modder
       card:
         type: map
@@ -384,11 +680,24 @@ views:
         border-radius: 20px
         border: solid 1px rgba(100,100,100,0.3)
         box-shadow: 3px 3px rgba(0,0,0,0.4)
+    - type: custom:card-modder
+      card:
+        type: glance
+        entities:
+          - entity: sensor.stats_home
+            name: Home
+          - entity: sensor.stats_work
+            name: Work
+      style:                 
+        border-radius: 20px
+        border: solid 1px rgba(100,100,100,0.3)
+        box-shadow: 3px 3px rgba(0,0,0,0.4)
   - type: vertical-stack            
     cards:
     - type: custom:card-modder
       card:
         type: "custom:calendar-card"
+        numberOfDays: 7
         entities:
           - calendar.gabethisisgabescom
       style:                 
@@ -442,7 +751,6 @@ views:
                 style:
                   top: 50%
                   left: 84%
-                  color: rgba(31, 152, 6, 1)
               - type: state-label
                 entity: sensor.usps_mail
                 style:
@@ -613,6 +921,18 @@ views:
           border-radius: 20px
           border: solid 1px rgba(100,100,100,0.3)
           box-shadow: 3px 3px rgba(0,0,0,0.4)
+
+#      - type: custom:card-modder
+#        style:
+#          background-image: "url([[ sensor.empire_state_lights_pic_url ]])"
+#          background-repeat: no-repeat                                      
+#          background-color: rgba(0,0,0,0.0)
+#          background-size: 100% 100%
+#          display: block
+#        card:
+#          type: entities
+#          entities:
+#            - sensor.empirestatelights
 
       - type: conditional
         conditions:
@@ -2319,30 +2639,6 @@ views:
           type: picture-elements
           image: /local/images/herb_garden_off.jpg
           elements:
-            - type: state-icon
-              tap_action:
-                action: toggle
-              hold_action:
-                action: more-info
-              entity: switch.garden_light
-              icon: mdi:weather-sunny
-              size: 50%
-              color: auto
-              style:
-                top: 87%
-                left: 12%
-            - type: state-icon
-              tap_action:
-                action: toggle
-              hold_action:
-                action: more-info
-              entity: switch.garden_waterbot
-              icon: mdi:water-pump
-              size: 50%
-              color: auto
-              style:
-                top: 87%
-                left: 22%
             - type: state-label
               entity: sensor.mqtt_topic_garden_temperature_template
               icon: mdi:thermometer
@@ -2410,6 +2706,63 @@ views:
                 top: 30%
                 left: 18%
                 color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_light
+              icon: mdi:weather-sunny
+              size: 50%
+              color: auto
+              style:
+                top: 50%
+                left: 18%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_waterbot
+              icon: mdi:water-pump
+              size: 50%
+              color: auto
+              style:
+                top: 80%
+                left: 12%
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_light_state_template
+              style:
+                top: 57%
+                left: 15%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_light_state_time
+              style:
+                top: 62%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_water_state_template
+              style:
+                top: 87%
+                left: 38%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_water_state_time
+              style:
+                top: 92%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+
       - type: conditional
         conditions:
           - entity: switch.garden_light
@@ -2418,30 +2771,6 @@ views:
           type: picture-elements
           image: /local/images/herb_garden_on.jpg
           elements:
-            - type: state-icon
-              tap_action:
-                action: toggle
-              hold_action:
-                action: more-info
-              entity: switch.garden_light
-              icon: mdi:weather-sunny
-              size: 50%
-              color: auto
-              style:
-                top: 87%
-                left: 12%
-            - type: state-icon
-              tap_action:
-                action: toggle
-              hold_action:
-                action: more-info
-              entity: switch.garden_waterbot
-              icon: mdi:water-pump
-              size: 50%
-              color: auto
-              style:
-                top: 87%
-                left: 22%
             - type: state-label
               entity: sensor.mqtt_topic_garden_temperature_template
               icon: mdi:thermometer
@@ -2509,134 +2838,324 @@ views:
                 top: 30%
                 left: 18%
                 color: rgba(255, 255, 255, 1)
-  - type: vertical-stack
-    cards:
-      - type: picture-elements
-        image: /local/images/parsley-l.png
-        elements:
-          - type: custom:text-element
-            text: Parsley
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/thyme-l.png
-        elements:
-          - type: custom:text-element
-            text: Thyme
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/marjoram-l.png
-        elements:
-          - type: custom:text-element
-            text: Marjoram
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/tarragon-l.png
-        elements:
-          - type: custom:text-element
-            text: Tarragon
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/oregano-l.png
-        elements:
-          - type: custom:text-element
-            text: Oregano
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-  - type: vertical-stack
-    cards:
-      - type: picture-elements
-        image: /local/images/chives-l.png
-        elements:
-          - type: custom:text-element
-            text: Chives
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/mint-l.png
-        elements:
-          - type: custom:text-element
-            text: Mint
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/dill-l.png
-        elements:
-          - type: custom:text-element
-            text: Dill
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
-      - type: picture-elements
-        image: /local/images/basil-l.png
-        elements:
-          - type: custom:text-element
-            text: Basil
-            style:
-              top: 43%
-              left: 46%
-              font-size: 16px
-              font-weight: bold
-              align: right
-              color: rgba(255, 255, 255, 1)
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_light
+              icon: mdi:weather-sunny
+              size: 50%
+              color: auto
+              style:
+                top: 50%
+                left: 18%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              hold_action:
+                action: more-info
+              entity: switch.garden_waterbot
+              icon: mdi:water-pump
+              size: 50%
+              color: auto
+              style:
+                top: 80%
+                left: 12%
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_light_state_template
+              style:
+                top: 57%
+                left: 15%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_light_state_time
+              style:
+                top: 62%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_water_state_template
+              style:
+                top: 87%
+                left: 38%
+                font-size: 20px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+            - type: state-label
+              entity: sensor.mqtt_topic_garden_water_state_time
+              style:
+                top: 92%
+                left: 18%
+                font-size: 16px
+                font-weight: bold
+                color: rgba(255, 255, 255, 1)
+      - type: "custom:calendar-card"
+        numberOfDays: 7
+        entities:
+          - calendar.plants_and_fish
 
+  - type: vertical-stack
+    cards:
       - type: custom:card-modder
-        card:
-          type: custom:useful-markdown-card
-          style:
-              background-image: /local/images/herb_garden_on.jpg;
-              padding: 0
-          content: >
-              [Basil](https://www.almanac.com/plant/basil)
-              [Tarragon](https://www.almanac.com/plant/tarragon)
-              [Chive](https://www.almanac.com/plant/chive)
-              [Marjorum](https://www.almanac.com/plant/marjorum)
-              [Dill](https://www.almanac.com/plant/dill)
-              [Mint](https://www.almanac.com/plant/miny)
-              [Oregano](https://www.almanac.com/plant/oregano)
-              [THyme](https://www.almanac.com/plant/thyme)
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Parsley
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/parsley
+        style:
+          background-image: url("/local/images/parsley-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Thyme
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/thyme
+        style:
+          background-image: url("/local/images/thyme-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Parsley
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/marjoram
+        style:
+          background-image: url("/local/images/marjoram-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Tarragon
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/tarragon
+        style:
+          background-image: url("/local/images/tarragon-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Oregano
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/oregano
+        style:
+          background-image: url("/local/images/oregano-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+
+  - type: vertical-stack
+    cards:
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Chives
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/chives
+        style:
+          background-image: url("/local/images/chives-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Mint
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/mint
+        style:
+          background-image: url("/local/images/mint-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Dill
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/dill
+        style:
+          background-image: url("/local/images/dill-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        card:    
+          type: entities
+          entities:
+            - type: custom:card-modder
+              card: 
+                type: custom:text-element
+                text: Basil
+                style:
+                  top: 43%
+                  left: 46%
+                  font-size: 16px
+                  font-weight: bold
+                  align: right
+                  color: rgba(255, 255, 255, 1)
+            - type: weblink
+              name: Info
+              icon: mdi:leaf
+              url: https://www.almanac.com/plant/basil
+        style:
+          background-image: url("/local/images/basil-l.png")              
+          background-repeat: no-repeat                                      
+          background-color: rgba(0,0,0,0.0)
+          background-size: 100% 100%
+          font-size: 16px
+          font-weight: bold
+          align: right
+          color: rgba(255, 255, 255, 1)
 
 ## TRAVEL
 #- name: Travel
@@ -3593,6 +4112,14 @@ views:
   - type: entities
     title: Asus Router Speed
     entities:
+    - sensor.rt_acrh13_bytes_received
+    - sensor.rt_acrh13_bytes_sent
+    - sensor.rt_acrh13_kbyte_sec_received
+    - sensor.rt_acrh13_kbyte_sec_sent
+    - sensor.rt_acrh13_packets_received
+    - sensor.rt_acrh13_packets_sec_received
+    - sensor.rt_acrh13_packets_sec_sent
+    - sensor.rt_acrh13_packets_sent
     - sensor.asuswrt_download
     - sensor.asuswrt_download_speed
     - sensor.asuswrt_upload
