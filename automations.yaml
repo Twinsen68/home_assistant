@@ -53,7 +53,7 @@
   id: gabe_arrive_in_home_zone_lights_on
   trigger:
     - platform: zone
-      entity_id: device_tracker.gabes_mate
+      entity_id: device_tracker.5re0217120001465
       zone: zone.home
       event: enter
     - platform: zone
@@ -71,7 +71,7 @@
   id: gabe_arrive_in_home_zone_motion_off
   trigger:
     - platform: zone
-      entity_id: device_tracker.gabes_mate
+      entity_id: device_tracker.5re0217120001465
       zone: zone.home
       event: enter
     - platform: zone
@@ -86,26 +86,103 @@
 - alias: Welcome on Enter Home Zone
   id: gabe_arrive_in_home_zone_welcome
   trigger:
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      to: "Just Arrived"
+#  condition:
+#    condition: template
+#    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.gabe_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
+  action:
+    - delay: '00:02:00'
+    - service: notify.kiosk
+      data_template:
+        message:  >
+          {{ [ "Hello Gabe welcome home! " , "Welcome back Gabe. " , "Hello Sir. " , "Ahh... it's you. Hello Gabe " , "Greetings sir. " , "Nice of you to join us, Gabe. " ] |random }}
+
+- alias: Mom welcome
+  id: mom_arrive_in_home_zone_welcome
+  trigger:
     - platform: zone
-      entity_id: device_tracker.huawei_mate_992528f2b1a5
+      entity_id: group.berny
       zone: zone.home
       event: enter
+  condition:
+    condition: template
+    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
-#    - delay: '00:00:05'
-    - service: notify.gabes_alexa
-      data:
-        message: "Hello_Gayb,_Welcome_home!"
+    - delay: '00:02:00'
+    - service: notify.kiosk
+      data_template:
+        message:  >
+          {{ [ "Hello Berny, nice to see you again! " , "Welcome back Bernadette. " , "Hello Berny... welcome back. " , "Oh... it's you. Hello Bernadette " , "Nice of you to join us, Berny. " ] |random }}
 
-#- alias: Home Assistant Start
-#  trigger:
-#    platform: homeassistant
-#    event: start 
-#  action:
-#    - delay: '00:00:10'
-#    - service: tts.google_say
-#      data:
-#        entity_id: media_player.tts_bluetooth_speaker
-#        message: 'Home Assistant has started'
+#Morning Greeting
+- alias: 'Morning Greeting'
+  id: morning_greeting_update
+  trigger:
+    platform: state
+    entity_id: binary_sensor.dashboard_motion
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        before: '10:30:00'
+        after: '07:30:00'
+      - condition: template
+        value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.morning_greeting.attributes.last_triggered) | int > 10800 }}'
+  action:
+    - service: script.turn_on
+      entity_id: script.kiosk_good_morning
+
+#Dim Kiosk with light
+- alias: 'Dim Kiosk Screen'
+  id: dim_kiosk_screen
+  trigger:
+    platform: state
+    entity_id: light.entry_light
+    from: 'on'
+    to: 'off'
+  action:
+    - service: rest_command.kiosk_screen_dim
+
+#Bright Kiosk with light
+- alias: 'Brighten Kiosk Screen'
+  id: brihten_kiosk_screen
+  trigger:
+    platform: state
+    entity_id: light.entry_light
+    from: 'off'
+    to: 'on'
+  action:
+    - service: rest_command.kiosk_screen_mid
+
+- alias: Turn off kiosk charger
+  trigger:
+    platform: template
+    value_template: "{{ 80 < states.binary_sensor.dashboard_motion.attributes.battery_level }}"
+  action:
+    service: switch.turn_off
+    entity_id: switch.2437254184f3eb69e784
+
+- alias: Turn on kiosk charger
+  trigger:
+    platform: template
+    value_template: "{{ 20 > states.binary_sensor.dashboard_motion.attributes.battery_level }}"
+  action:
+    service: switch.turn_on
+    entity_id: switch.2437254184f3eb69e784
+
+- alias: Home Assistant Start
+  trigger:
+    platform: homeassistant
+    event: start 
+  action:
+    - delay: '00:00:10'
+    - service: notify.kiosk
+      data:
+        message: 'Home Assistant has started'
 
 - alias: Set Harmony activity
   hide_entity: True
@@ -346,7 +423,7 @@
   alias: 'download_noaa_temps'
   trigger:
     platform: time
-    at: '01:15:00'
+    at: '01:16:00'
   action:
     - service: downloader.download_file
       data_template:
@@ -410,7 +487,7 @@
 - alias: Garden Turn Off Waterbot Evening
   trigger:
     - platform: time
-      at: '1:00:00'
+      at: '1:03:00'
   action:
     service: switch.turn_off
     entity_id: switch.garden_waterbot
@@ -418,7 +495,7 @@
 - alias: Garden Turn On Waterbot Morning
   trigger:
     - platform: time
-      at: '6:00:00'
+      at: '6:03:00'
   action:
     service: switch.turn_on
     entity_id: switch.garden_waterbot
@@ -426,7 +503,7 @@
 - alias: Garden Turn Off Waterbot Morning
   trigger:
     - platform: time
-      at: '13:00:00'
+      at: '13:03:00'
   action:
     service: switch.turn_off
     entity_id: switch.garden_waterbot
@@ -434,10 +511,22 @@
 - alias: Garden Turn On Waterbot Evening
   trigger:
     - platform: time
-      at: '18:00:00'
+      at: '18:03:00'
   action:
     service: switch.turn_on
     entity_id: switch.garden_waterbot
+
+## Alert if Garden Bot is down
+- alias: garden_bot_alert
+  trigger:
+    platform: state
+    entity_id: device_tracker.octocam
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+  action:
+    - service: ifttt.trigger
+      data_template: {"event":"change_of_ip", "value1":"GardenBot changed state to {{ states.device_tracker.octocam.state }}"}
 
 ## Vacuuming
 - alias: Vacuum on Schedule
@@ -450,7 +539,7 @@
       - tue
       - thu
   - condition: state
-    entity_id: device_tracker.gabes_mate
+    entity_id: device_tracker.5re0217120001465
     state: work
   action:
     service: script.turn_on
@@ -469,7 +558,7 @@
     - service: ifttt.trigger
       data_template: {"event":"change_of_ip", "value1":"{{ states.sensor.ip_address.state }}"}
 
-#Text Message if there's mail
+#Text Message if theres mail
 - alias: usps_mail_alert
   trigger:
     platform: zone
@@ -523,8 +612,8 @@
     entity_id: binary_sensor.octoprint_status_printing
     state: 'off'
   # Trigger only if state was this for last 30 minutes.
-    for:
-      minutes: 30
+#    for:
+#      minutes: 30
   action:
 #    - delay:
 #        minutes: 15
@@ -546,142 +635,21 @@
       message: "Charger reported {{ states.sensor.rpi_power_status.state }}"
       title: "RPI Power Issue"
 
-- alias: Check for Tweets OctoCam
-  id: twitter_check_octocam
-  trigger:
-    - platform: time_pattern
-      minutes: '/30'
-  action:
-    - service: shell_command.tweet_retrieve_octocam
+#- alias: Check for Tweets OctoCam
+#  id: twitter_check_octocam
+#  trigger:
+#    - platform: time_pattern
+#      minutes: '/30'
+#  action:
+#    - service: shell_command.tweet_retrieve_octocam
 
-- alias: Check for Tweets SFGabe
-  id: twitter_check_sfgabe
-  trigger:
-    - platform: time_pattern
-      minutes: '/60'
-  action:
-    - service: shell_command.tweet_retrieve_sfgabe
-
-##Alarm Clock
-- id: start_alarm_clock_radio_off_day
-  alias: Start Alarm Clock Radio Off Day
-  initial_state: 'on'
-  trigger:
-    platform: template
-    value_template: '{{ states.sensor.time.state == states.sensor.alarm_time_off_day.state }}'
-  condition:
-    - condition: state
-      entity_id: input_boolean.alarm_clock
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.start_alarm_clock_off_day
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.alarm_clock_work_day
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.alarm_clock_off_day
-      state: 'on'
-  action:
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.alarm_clock
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.start_alarm_clock_off_day
-
-
-#
-- id: start_alarm_clock_radio_work_day
-  alias: Start Alarm Clock Radio Work Day
-  initial_state: 'on'
-  trigger:
-    platform: template
-    value_template: '{{ states.sensor.time.state == states.sensor.alarm_time_work_day.state }}'
-  condition:
-    - condition: time
-      weekday:
-        - tue
-        - wed
-        - thu
-        - fri
-    - condition: state
-      entity_id: input_boolean.alarm_clock
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.work_day
-      state: 'on'
-    - condition: state
-      entity_id: input_boolean.start_alarm_clock_work_day
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.alarm_clock_work_day
-      state: 'on'
-    - condition: state
-      entity_id: input_boolean.alarm_clock_off_day
-      state: 'off'
-  action:
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.start_alarm_clock_work_day
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.alarm_clock
-
-#
-- id: wake_up_radio
-  alias: Wake Up Radio
-  initial_state: 'on'
-  trigger:
-    - platform: state
-      entity_id: input_boolean.start_alarm_clock_work_day
-      to: 'on'
-    - platform: state
-      entity_id: input_boolean.start_alarm_clock_off_day
-      to: 'on'
-  condition:
-    - condition: state
-      entity_id: input_boolean.alarm_clock
-      state: 'on'
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: input_boolean.alarm_clock_work_day
-          state: 'on'
-        - condition: state
-          entity_id: input_boolean.alarm_clock_off_day
-          state: 'on'
-  action:
-    - service: input_boolean.turn_off
-      data:
-        entity_id: input_boolean.start_alarm_clock_work_day
-    - service: input_boolean.turn_off
-      data:
-        entity_id: input_boolean.start_alarm_clock_off_day
-    - service: script.turn_on
-      data:
-        entity_id: script.alarm_clock_loop
-            
-#
-- id: wake_up_radio_from_loop
-  alias: Wake Up Radio From Loop
-  initial_state: 'on'
-  trigger:
-    - platform: state
-      entity_id: input_boolean.alarm_clock_loop
-      to: 'on'
-  condition:
-    - condition: state
-      entity_id: input_boolean.alarm_clock
-      state: 'on'
-  action:
-    - delay: '00:00:03'
-    - service: input_boolean.turn_off
-      data:
-        entity_id: input_boolean.alarm_clock_loop
-    - service: script.turn_on
-      data:
-        entity_id: script.alarm_clock_loop
+#- alias: Check for Tweets SFGabe
+#  id: twitter_check_sfgabe
+#  trigger:
+#    - platform: time_pattern
+#      minutes: '/60'
+#  action:
+#    - service: shell_command.tweet_retrieve_sfgabe
 
 ## Alarm 2 test
 - id: wake_up_alarm_2
@@ -731,4 +699,71 @@
   action:
     - service: shell_command.download_amazon_stats
 
+#Presence Detection Logic
+- alias: Mark Gabe as just arrived
+  trigger:
+    - platform: state
+      entity_id: group.gabe
+      from: 'not_home'
+      to: 'home'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.gabe_status_dropdown
+        option: Just Arrived
+ 
+- alias: Mark Gabe as home
+  trigger:
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      to: 'Just Arrived'
+      for:
+        minutes: 10
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      from: 'Just Left'
+      to: 'Just Arrived'
+  condition:
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.gabe_status_dropdown
+        option: Home
+ 
+- alias: Mark Gabe as just left
+  trigger:
+    - platform: state
+      entity_id: group.gabe
+      from: 'home'
+      to: 'not_home'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.gabe_status_dropdown
+        option: Just Left
+ 
+- alias: Mark Gabe as away
+  trigger:
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      to: 'Just Left'
+      for:
+        minutes: 10
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.gabe_status_dropdown
+        option: Away
 
+- alias: Mark Gabe as extended away
+  trigger:
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      to: 'Away'
+      for:
+        hours: 24
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: input_select.gabe_status_dropdown
+        option: Extended Away

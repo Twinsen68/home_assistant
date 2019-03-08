@@ -309,3 +309,16 @@ input_boolean.bedroom_alarm_clock_status:
 #      if (state === 'on') return 'rgb(251, 210, 41)';
 #      return 'rgb(54, 95, 140)';
 
+#kiosk
+sensor.kiosk_brightness:
+  hidden: true
+binary_sensor.kiosk_screen:
+  hidden: true
+input_number.kiosk_brightness:
+  hidden: true
+
+sensor.gabe_status:
+  entity_picture: https://pbs.twimg.com/profile_images/729829958621773825/6tR5_2u-_400x400.jpg
+
+group.gabe:
+  entity_picture: https://pbs.twimg.com/profile_images/729829958621773825/6tR5_2u-_400x400.jpg

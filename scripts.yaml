@@ -177,8 +177,8 @@ octotank_morning_on:
         seconds: 3600
     - service: switch.turn_on
       entity_id: switch.06200940dc4f22cbb432_4
-    - service: switch.turn_on
-      entity_id: switch.06200940dc4f22cbb432_3
+#    - service: switch.turn_on
+#      entity_id: switch.06200940dc4f22cbb432_3
     - service: automation.trigger
       entity_id: automation.set_amazon_thermostat_max_daytime_selector
 
@@ -189,8 +189,8 @@ octotank_evening_off:
         seconds: 3600
     - service: switch.turn_off
       entity_id: switch.06200940dc4f22cbb432_4
-    - service: switch.turn_off
-      entity_id: switch.06200940dc4f22cbb432_3
+#    - service: switch.turn_off
+#      entity_id: switch.06200940dc4f22cbb432_3
     - service: automation.trigger
       entity_id: automation.set_amazon_thermostat_max_night_selector
 
@@ -336,6 +336,7 @@ bedroom_wake_up:
   sequence:
     - service_template: >
         {% if is_state('sensor.dark_sky_icon' , 'rain') %} script.early_wakeup
+        {% elif is_state('sensor.dark_sky_icon' , 'snow') %} script.early_wakeup
         {% else %} script.on_time_wakeup {% endif %}
 
 early_wakeup:
@@ -343,34 +344,32 @@ early_wakeup:
     - service: script.notify
       data:
         message: "I am triggering the alarm fifteen minutes early because of bad weather"
-    - service: homeassistant.turn_on
-      entity_id: group.all_lights
     - service_template: >
         {% if is_state('input_boolean.bedroom_alarm_clock_repeat' , 'on') %} homeassistant.turn_on
         {% else %} homeassistant.turn_off {% endif %}
       entity_id: input_boolean.bedroom_alarm_clock_status
-    - condition: state
-      entity_id: input_boolean.dark
-      state: 'on'
     - service: script.turn_on
       data:
         entity_id: sunrise_lights
+    - delay: 00:45:00
+    - service: rest_command.kiosk_sound_morning_birds
+    - delay: 01:15:00
+    - service: rest_command.kiosk_sound_morning_birds
 
 on_time_wakeup:
   sequence:
     - delay: 00:15:00
-    - service: homeassistant.turn_on
-      entity_id: group.all_lights
     - service_template: >
         {% if is_state('input_boolean.bedroom_alarm_clock_repeat' , 'on') %} homeassistant.turn_on
         {% else %} homeassistant.turn_off {% endif %}
       entity_id: input_boolean.bedroom_alarm_clock_status
-    - condition: state
-      entity_id: input_boolean.dark
-      state: 'on'
     - service: script.turn_on
       data:
         entity_id: sunrise_lights
+    - delay: 00:45:00
+    - service: rest_command.kiosk_sound_morning_birds
+    - delay: 01:15:00
+    - service: rest_command.kiosk_sound_morning_birds
 
 #Sunrise lights
 sunrise_lights:
@@ -427,3 +426,42 @@ usps_sms_notification:
     - service: automation.turn_off
       entity_id: automation.usps_mail_alert
 
+kiosk_screen_value:
+  sequence:
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.kiosk_brightness
+        value: "{{ brightness }}"
+    - service: rest_command.kiosk_screen_value
+
+kiosk_weather_report:
+  sequence:
+    - service: notify.kiosk
+      data:
+        message: "Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees faren height, inside the temperature is, {{ states('sensor.mqtt_topic_garden_temperature_template') }} degrees faren height. You can expect {{ states('sensor.dark_sky_daily_summary') }}"
+
+kiosk_good_morning:
+  sequence:
+    - service: rest_command.kiosk_sound_incomingtransmission
+    - delay:
+        seconds: 3.00
+    - service: notify.kiosk
+      data:
+        message: "Good morning Gabe! The time is now, {{ states('sensor.time') }}. Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees fahrenheit and {{ states('sensor.dark_sky_minutely_summary') }}. You can expect {{ states('sensor.dark_sky_daily_summary') }}"
+    - delay:
+        seconds: 25.00
+    - service: rest_command.kiosk_sound_spoken
+    - service: rest_command.kiosk_sound_startrek_computer2
+    - delay:
+        seconds: 20.00
+    - condition: template
+      value_template: "{{ ((as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - as_timestamp(now())) < 43200) and ((as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - as_timestamp(now())) > 0) }}"
+    - service: rest_command.kiosk_sound_startrek_computer1
+    - service: notify.kiosk
+      data:
+        message: "By the way, on your calendar today is,  {{ states('calendar.gabethisisgabescom.attributes.message') }}, at {{ states('calendar.gabethisisgabescom.attributes.start_time') }}"
+    - service: rest_command.kiosk_sound_startrek_computer2
+
+fart_machine:
+  sequence:
+    - service: rest_command.kiosk_sound_fart1

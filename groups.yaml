@@ -459,3 +459,17 @@ alarmclock:
   - automation.start_alarm_clock_radio_off_day
   - automation.wake_up_radio_from_loop
   - script.alarm_clock_loop
+
+gabe:
+#  - device_tracker.5re0217120001465
+  - device_tracker.gabe_mate_owntracks
+#  - device_tracker.gabes_mate
+  - device_tracker.gabesmatehotspot
+  - device_tracker.google_maps_114555423860561989456
+  - device_tracker.hassio_gabesmatephone
+  - device_tracker.huawei_mate_992528f2b1a5
+  - device_tracker.ionic
+  - device_tracker.phone
+
+berny:
+  - device_tracker.bernys_iphone

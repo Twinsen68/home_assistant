@@ -14,7 +14,7 @@
     minutes: 3
   initial_operation_mode: "auto"
   away_temp: 78
-  step: 0,01
+  precision: 0.1
 
 - platform: generic_thermostat
   name: Octo Tank Therm
@@ -32,4 +32,4 @@
     minutes: 3
   initial_operation_mode: "auto"
   away_temp: 80
-  step: 0,01
+  precision: 0.1

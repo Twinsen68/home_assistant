@@ -19,3 +19,14 @@ harmony:
     - Fishtank Morning
     - Vacuum
   icon: mdi:monitor
+
+gabe_status_dropdown:
+  name: Gabe
+  options:
+    - Home
+    - Just Arrived
+    - Just Left
+    - Away
+    - Extended Away
+    - Work
+  initial: Home

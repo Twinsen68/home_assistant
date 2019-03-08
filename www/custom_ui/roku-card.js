@@ -1,7 +1,7 @@
-var LitElement =
-  LitElement ||
-  Object.getPrototypeOf(customElements.get("hui-error-entity-row"));
-var html = LitElement.prototype.html;
+const LitElement = Object.getPrototypeOf(
+  customElements.get("ha-panel-lovelace")
+);
+const html = LitElement.prototype.html;
 
 class RokuCard extends LitElement {
   static get properties() {
@@ -12,8 +12,13 @@ class RokuCard extends LitElement {
     };
   }
 
-  constructor() {
-    super();
+  static async getConfigElement() {
+    await import("./roku-card-editor.js");
+    return document.createElement("roku-card-editor");
+  }
+
+  static getStubConfig() {
+    return {};
   }
 
   getCardSize() {
@@ -21,66 +26,59 @@ class RokuCard extends LitElement {
   }
 
   setConfig(config) {
-    if (!config.entity || !config.ip_address) {
+    if (!config.entity) {
       console.log("Invalid configuration");
       return;
     }
 
-    this._config = config;
-
-    const HttpApps = new XMLHttpRequest();
-    HttpApps.open("GET", this._config.ip_address + ":8060/query/apps");
-    HttpApps.send();
-    HttpApps.onreadystatechange = e => {
-      if (HttpApps.responseXML) {
-        const appsXml = HttpApps.responseXML;
-        const tags = appsXml.getElementsByTagName("app");
-        let apps = [];
-        for (let i = 0; i < tags.length && i < 4; i++) {
-          const HttpIcon = new XMLHttpRequest();
-          HttpIcon.open(
-            "GET",
-            this._config.ip_address +
-              ":8060/query/icon/" +
-              String(tags[i].getAttribute("id"))
-          );
-          HttpIcon.responseType = "arraybuffer";
-          HttpIcon.onreadystatechange = e => {
-            if (HttpIcon.response) {
-              const data = new Uint8Array(HttpIcon.response);
-              const raw = String.fromCharCode.apply(null, data);
-              const base64 = btoa(raw);
-              apps.push({
-                id: tags[i].getAttribute("id"),
-                name: tags[i].childNodes[0].nodeValue,
-                icon: "data:image/jpeg;base64," + base64
-              });
-            }
-          };
-          HttpIcon.send();
-        }
-        this._apps = apps;
-      }
-    };
+    this._config = { theme: "default", ...config };
   }
 
   render() {
-    if (!this._config || !this._apps || !this.hass) {
+    if (!this._config || !this.hass) {
       return html``;
     }
 
     const stateObj = this.hass.states[this._config.entity];
     return html`
       ${this.renderStyle()}
-      <ha-card .header="${this._config.title}">
+      <ha-card .header="${this._config.name}">
         <div class="remote">
-          ${
-            stateObj.state === "playing"
-              ? html`
-                  <div class="row playing">${stateObj.attributes.source}</div>
-                `
-              : ""
-          }
+          <div class="row">
+            <paper-dropdown-menu
+              label="Input Source"
+              @value-changed="${this.launchApp}"
+            >
+              <paper-listbox
+                slot="dropdown-content"
+                .selected="${
+                  stateObj.attributes.source_list.indexOf(
+                    stateObj.attributes.source
+                  )
+                }"
+              >
+                ${
+                  stateObj.attributes.source_list.map(source => {
+                    return html`
+                      <paper-item>${source}</paper-item>
+                    `;
+                  })
+                }
+              </paper-listbox>
+            </paper-dropdown-menu>
+            ${
+              this._config.tv || this._config.power
+                ? html`
+                    <paper-icon-button
+                      .action="${"power"}"
+                      @click="${this.handleActionClick}"
+                      icon="mdi:power"
+                      title="Power"
+                    ></paper-icon-button>
+                  `
+                : ""
+            }
+          </div>
           <div class="row">
             <paper-icon-button
               .action="${"back"}"
@@ -103,34 +101,12 @@ class RokuCard extends LitElement {
           </div>
 
           <div class="row">
-            ${
-              this._apps && this._apps.length > 0
-                ? html`
-                    <img
-                      src="${this._apps[0].icon}"
-                      .app="${this._apps[0].id}"
-                      @click="${this.launchApp}"
-                    />
-                  `
-                : ""
-            }
             <paper-icon-button
               .action="${"up"}"
               @click="${this.handleActionClick}"
               icon="mdi:chevron-up"
               title="Up"
             ></paper-icon-button>
-            ${
-              this._apps && this._apps.length > 1
-                ? html`
-                    <img
-                      src="${this._apps[1].icon}"
-                      .app="${this._apps[1].id}"
-                      @click="${this.launchApp}"
-                    />
-                  `
-                : ""
-            }
           </div>
 
           <div class="row">
@@ -155,39 +131,17 @@ class RokuCard extends LitElement {
           </div>
 
           <div class="row">
-            ${
-              this._apps && this._apps.length > 2
-                ? html`
-                    <img
-                      src="${this._apps[2].icon}"
-                      .app="${this._apps[2].id}"
-                      @click="${this.launchApp}"
-                    />
-                  `
-                : ""
-            }
             <paper-icon-button
               .action="${"down"}"
               @click="${this.handleActionClick}"
               icon="mdi:chevron-down"
               title="Down"
             ></paper-icon-button>
-            ${
-              this._apps && this._apps.length > 3
-                ? html`
-                    <img
-                      src="${this._apps[3].icon}"
-                      .app="${this._apps[3].id}"
-                      @click="${this.launchApp}"
-                    />
-                  `
-                : ""
-            }
           </div>
 
           <div class="row">
             <paper-icon-button
-              .action="${"rev"}"
+              .action="${"reverse"}"
               @click="${this.handleActionClick}"
               icon="mdi:rewind"
               title="Rewind"
@@ -199,15 +153,56 @@ class RokuCard extends LitElement {
               title="Play/Pause"
             ></paper-icon-button>
             <paper-icon-button
-              .action="${"fwd"}"
+              .action="${"forward"}"
               @click="${this.handleActionClick}"
               icon="mdi:fast-forward"
               title="Fast-Forward"
             ></paper-icon-button>
           </div>
+
+          ${
+            this._config.tv ||
+            this._config.volume_up ||
+            this._config.volume_down ||
+            this._config.volume_mute
+              ? html`
+                  <div class="row">
+                    <paper-icon-button
+                      .action="${"volume_mute"}"
+                      @click="${this.handleActionClick}"
+                      icon="mdi:volume-mute"
+                      title="Volume Mute"
+                    ></paper-icon-button>
+                    <paper-icon-button
+                      .action="${"volume_down"}"
+                      @click="${this.handleActionClick}"
+                      icon="mdi:volume-minus"
+                      title="Volume Down"
+                    ></paper-icon-button>
+                    <paper-icon-button
+                      .action="${"volume_up"}"
+                      @click="${this.handleActionClick}"
+                      icon="mdi:volume-plus"
+                      title="Volume Up"
+                    ></paper-icon-button>
+                  </div>
+                `
+              : ""
+          }
         </div>
       </ha-card>
     `;
+  }
+
+  updated(changedProps) {
+    if (!this._config) {
+      return;
+    }
+
+    const oldHass = changedProps.get("hass");
+    if (!oldHass || oldHass.themes !== this.hass.themes) {
+      this.applyThemesOnElement(this, this.hass.themes, this._config.theme);
+    }
   }
 
   renderStyle() {
@@ -216,47 +211,100 @@ class RokuCard extends LitElement {
         .remote {
           padding: 16px 0px 16px 0px;
         }
-
         img,
         paper-icon-button {
           width: 64px;
           height: 64px;
           cursor: pointer;
         }
-
-        img {
-          border-radius: 25px;
-        }
-
         .row {
           display: flex;
           padding: 8px 36px 8px 36px;
           justify-content: space-evenly;
         }
-
-        .row.playing {
-          padding-bottom: 36px;
-          font-size: 2.5em;
-          font-weight: bold;
-          font-style: italic;
+        .diagonal {
+          background-color: var(--light-primary-color);
         }
       </style>
     `;
   }
 
   launchApp(e) {
-    const Http = new XMLHttpRequest();
-    const url = this._config.ip_address + ":8060/launch/" + e.currentTarget.app;
-    Http.open("POST", url);
-    Http.send();
+    this.hass.callService("media_player", "select_source", {
+      entity_id: this._config.entity,
+      source: e.currentTarget.value
+    });
   }
 
   handleActionClick(e) {
-    const Http = new XMLHttpRequest();
-    const url =
-      this._config.ip_address + ":8060/keypress/" + e.currentTarget.action;
-    Http.open("POST", url);
-    Http.send();
+    const custom_services = [
+      "power",
+      "volume_up",
+      "volume_down",
+      "volume_mute"
+    ];
+
+    if (
+      custom_services.indexOf(e.currentTarget.action) >= 0 &&
+      this._config[e.currentTarget.action]
+    ) {
+      const [domain, service] = this._config[
+        e.currentTarget.action
+      ].service.split(".", 2);
+      this.hass.callService(
+        domain,
+        service,
+        this._config[e.currentTarget.action].service_data
+          ? this._config[e.currentTarget.action].service_data
+          : null
+      );
+    } else {
+      let remote = this._config.remote
+        ? this._config.remote
+        : "remote." + this._config.entity.split(".")[1];
+      this.hass.callService("remote", "send_command", {
+        entity_id: remote,
+        command: e.currentTarget.action
+      });
+    }
+  }
+
+  applyThemesOnElement(element, themes, localTheme) {
+    if (!element._themes) {
+      element._themes = {};
+    }
+    let themeName = themes.default_theme;
+    if (localTheme === "default" || (localTheme && themes.themes[localTheme])) {
+      themeName = localTheme;
+    }
+    const styles = Object.assign({}, element._themes);
+    if (themeName !== "default") {
+      var theme = themes.themes[themeName];
+      Object.keys(theme).forEach(key => {
+        var prefixedKey = "--" + key;
+        element._themes[prefixedKey] = "";
+        styles[prefixedKey] = theme[key];
+      });
+    }
+    if (element.updateStyles) {
+      element.updateStyles(styles);
+    } else if (window.ShadyCSS) {
+      // implement updateStyles() method of Polemer elements
+      window.ShadyCSS.styleSubtree(
+        /** @type {!HTMLElement} */ (element),
+        styles
+      );
+    }
+
+    const meta = document.querySelector("meta[name=theme-color]");
+    if (meta) {
+      if (!meta.hasAttribute("default-content")) {
+        meta.setAttribute("default-content", meta.getAttribute("content"));
+      }
+      const themeColor =
+        styles["--primary-color"] || meta.getAttribute("default-content");
+      meta.setAttribute("content", themeColor);
+    }
   }
 }
 

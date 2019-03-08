@@ -1,0 +1,4 @@
+#Kiosk
+- platform: mqtt
+  name: dashboard_motion
+  state_topic: note3/kiosk

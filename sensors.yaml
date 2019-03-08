@@ -11,7 +11,7 @@
     - 5
     - 6
     - 7
-  prefer_icons: 1
+#  prefer_icons: 1
   update_interval:
     # At least one of these must be specified:
     days: 0
@@ -42,108 +42,6 @@
     - daily_summary
     - precip_intensity_max
     - uv_index
-
-  sensors:
-    icon: sensor.dark_sky_icon
-    temperature: sensor.dark_sky_temperature
-    apparent_temperature: sensor.dark_sky_apparent_temperature
-    humidity: sensor.dark_sky_humidity
-    precip_probability: sensor.dark_sky_precip_probability
-    precip_intensity: sensor.dark_sky_precip_intensity
-    precip_type: sensor.dark_sky_precip
-    pressure: sensor.dark_sky_pressure
-    wind_speed: sensor.dark_sky_wind_speed
-    wind_bearing: sensor.dark_sky_wind_bearing
-    forecast_icon: sensor.dark_sky_icon_1
-    forecast_temperature_min: sensor.dark_sky_daily_low_temperature_1
-    forecast_temperature_max: sensor.dark_sky_daily_high_temperature_1
-    forecast_precip_probability: sensor.dark_sky_precip_probability_1
-    forecast_precip_type: sensor.dark_sky_precip_1
-  weather_now:
-    friendly_name: "Currently"
-    value_template: >
-      {{states.sensor.dark_sky_summary.state}}
-    entity_picture_template: >-
-      {{ '/local/icons/dark_sky/' ~ states.sensor.dark_sky_icon.state ~ '.png'}}      
-  weather_week_text:  
-    friendly_name: "Week"
-    value_template: >
-      {{states.sensor.dark_sky_daily_summary.state}}      
-  wind_bearing_text:
-    value_template: >-
-      {% if 11.25 <= states('sensor.dark_sky_wind_bearing')|float < 33.75 %}
-         NNE 
-      {% elif 33.75 <= states('sensor.dark_sky_wind_bearing')|float < 56.25 %}
-         NE
-      {% elif 56.25 <= states('sensor.dark_sky_wind_bearing')|float < 78.75 %}
-         ENE
-      {% elif 78.75 <= states('sensor.dark_sky_wind_bearing')|float < 101.25 %}
-         E
-      {% elif 101.25 <= states('sensor.dark_sky_wind_bearing')|float < 123.75 %}
-         ESE
-      {% elif 123.75 <= states('sensor.dark_sky_wind_bearing')|float < 146.25 %}
-         SE
-      {% elif 146.25 <= states('sensor.dark_sky_wind_bearing')|float < 168.75 %}
-         SSE
-      {% elif 168.75 <= states('sensor.dark_sky_wind_bearing')|float < 191.25 %}
-         S
-      {% elif 191.25 <= states('sensor.dark_sky_wind_bearing')|float < 213.75 %}
-         SSW
-      {% elif 213.75 <= states('sensor.dark_sky_wind_bearing')|float < 236.25 %}
-         SW
-      {% elif 236.25 <= states('sensor.dark_sky_wind_bearing')|float < 258.75 %}
-         WSW
-      {% elif 258.75 <= states('sensor.dark_sky_wind_bearing')|float < 281.25 %}
-         W
-      {% elif 281.25 <= states('sensor.dark_sky_wind_bearing')|float < 303.75 %}
-         WNW
-      {% elif 303.75 <= states('sensor.dark_sky_wind_bearing')|float < 326.25 %}
-         NW
-      {% elif 326.25 <= states('sensor.dark_sky_wind_bearing')|float < 348.75 %}
-         NNW
-      {% else %}
-         N 
-      {% endif %}      
-  wind_bearing:
-    friendly_name: "Wind Bearing"
-    value_template: "{{ states.sensor.dark_sky_wind_bearing.state }}° / {{ states.sensor.wind_bearing_text.state }}"
-    entity_picture_template: >
-      {% if is_state('sensor.wind_bearing_text', 'NNE') %}
-        /local/compass_points/fromNNE.png
-      {% elif is_state('sensor.wind_bearing_text', 'NE') %}
-        /local/compass_points/fromNE.png
-      {% elif is_state('sensor.wind_bearing_text', 'ENE') %}
-        /local/compass_points/fromENE.png
-      {% elif is_state('sensor.wind_bearing_text', 'E') %}
-        /local/compass_points/fromE.png
-      {% elif is_state('sensor.wind_bearing_text', 'ESE') %}
-        /local/compass_points/fromESE.png
-      {% elif is_state('sensor.wind_bearing_text', 'SE') %}
-        /local/compass_points/fromSE.png
-      {% elif is_state('sensor.wind_bearing_text', 'SSE') %}
-        /local/compass_points/fromSSE.png
-      {% elif is_state('sensor.wind_bearing_text', 'S') %}
-        /local/compass_points/fromS.png
-      {% elif is_state('sensor.wind_bearing_text', 'SSW') %}
-        /local/compass_points/fromSSW.png
-      {% elif is_state('sensor.wind_bearing_text', 'SW') %}
-        /local/compass_points/fromSW.png
-      {% elif is_state('sensor.wind_bearing_text', 'WSW') %}
-        /local/compass_points/fromWSW.png
-      {% elif is_state('sensor.wind_bearing_text', 'W') %}
-        /local/compass_points/fromW.png
-      {% elif is_state('sensor.wind_bearing_text', 'WNW') %}
-        /local/compass_points/fromWNW.png
-      {% elif is_state('sensor.wind_bearing_text', 'NW') %}
-        /local/compass_points/fromNW.png
-      {% elif is_state('sensor.wind_bearing_text', 'NNW') %}
-        /local/compass_points/fromNNW.png
-      {% elif is_state('sensor.wind_bearing_text', 'N') %}
-        /local/compass_points/fromN.png
-      {% endif %}
-  wind:
-    friendly_name: "Wind"
-    value_template: "{{ states.sensor.dark_sky_wind_speed.state|round(0) }} mph {{ states.sensor.wind_bearing_text.state }}"
 
 - platform: season
 
@@ -418,7 +316,7 @@
 
 - platform: darksky
   api_key: !secret darksky_api_key
-  mode: daily
+#  mode: daily
   name: Amazon Weather
   latitude: -12.653650
   longitude: -52.946115
@@ -582,6 +480,29 @@
         {%- set date = as_timestamp(states.sensor.garden_humidity_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
+- platform: filter
+  name: "Filtered Garden Humidity"
+  entity_id: sensor.mqtt_topic_garden_humidity_template
+  filters:
+    - filter: outlier
+      window_size: 5
+      radius: 5.0
+    - filter: lowpass
+      time_constant: 10
+      precision: 2
+- platform: filter
+  name: "Filtered Garden Temperature"
+  entity_id: sensor.mqtt_topic_garden_temperature_template
+  filters:
+    - filter: outlier
+      window_size: 5
+      radius: 5.0
+    - filter: lowpass
+      time_constant: 10
+    - filter: time_simple_moving_average
+      window_size: 00:05
+      precision: 2
+
 - platform: mqtt
   state_topic: 'psmqtt/octocam/cpu_percent'
   name: Latest Reef CPU Percent
@@ -603,6 +524,28 @@
   state_topic: 'psmqtt/octocam/boot_time/uptime'
   name: Latest Reef CPU Stats
   value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'octoprint-dht11/reading'
+  name: OctoPrint Humidity Raw
+  value_template: "{{ value }}"
+
+- platform: template
+  scan_interval: 120
+  sensors:
+    mqtt_topic_octoprint_humidity_template:
+      friendly_name: "OctoPrint Humidity"
+      value_template: '{{ states.sensor.octoprint_humidity_raw.state.split("Humidity=")[1].split("%")[0] }}'
+      unit_of_measurement: '%'
+    mqtt_topic_octoprint_temperature_template:
+      friendly_name: "OctoPrint Temperature"
+      value_template: '{{ states.sensor.octoprint_humidity_raw.state.split("Temp=")[1].split("*")[0] }}'
+      unit_of_measurement: '°C'      
+    mqtt_topic_octoprint_humidity_template_time:
+      friendly_name: "OctoPrint Humidity Time"
+      value_template: >
+        {%- set date = as_timestamp(states.sensor.octoprint_humidity_raw.state.split("at ")[1]) -%}
+        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
 - platform: date_countdown
   name: Renew SSL
@@ -631,6 +574,19 @@
       friendly_name: "Amazon Tank Water Temperature"
       value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[3] | multiply(0.001) | round(1) }}'
       unit_of_measurement: '°C'
+
+- platform: filter
+  name: "Filtered Amazon Tank Water Temperature"
+  entity_id: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+  filters:
+    - filter: outlier
+      window_size: 5
+      radius: 5.0
+    - filter: lowpass
+      time_constant: 10
+    - filter: time_simple_moving_average
+      window_size: 00:05
+      precision: 2
 
 - platform: mqtt
   name: 'USPS Mail'
@@ -729,7 +685,7 @@
   resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
   select: "div#grafico_estado_actual_texto_pleamar"
   name: AmazonNextHighTide
-  entity_id: sensor.amazonnexthightide
+#  entity_id: sensor.amazonnexthightide
   scan_interval: 14400
   value_template: '{{ value.split("de ")[1].split(" h")[0] }}'
 
@@ -737,7 +693,7 @@
   resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
   select: "div#grafico_estado_actual_texto_bajamar"
   name: AmazonNextLowTide
-  entity_id: sensor.amazonnextlowtide
+#  entity_id: sensor.amazonnextlowtide
   scan_interval: 14400
   value_template: '{{ value.split("de ")[1].split(" h")[0] }}'
 
@@ -745,7 +701,7 @@
   resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
   select: "#amanecer_anochecer_datos_salida_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
   name: AmazonSunriseTides
-  entity_id: sensor.amazonsunrisetides
+#  entity_id: sensor.amazonsunrisetides
   scan_interval: 7200
   value_template: '{{ (value.split(" h")[0]) }}'
 #  value_template: "{{ (value.split(' h')[0])|timestamp_custom('%k:%M', false) }}"
@@ -754,7 +710,7 @@
   resource: https://tides4fishing.com/br/amapa/rio-amazonas-ponta-do-ceu
   select: "#amanecer_anochecer_datos_puesta_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
   name: AmazonSunsetTides
-  entity_id: sensor.amazonsunsettides
+#  entity_id: sensor.amazonsunsettides
   scan_interval: 7200
   value_template: '{{ (value.split(" h")[0]) }}'
 
@@ -764,11 +720,6 @@
   name: AmazonWaterTempTides
   scan_interval: 7200
   value_template: '{{ (value.split("°C")[0]) }}'
-
-#- platform: file
-#  name: 'Monthly Amazon Temp Raw'
-#  entity_id: sensor.monthly_amazon_temp_raw
-#  file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
 
 - platform: command_line
   command: "cat /home/homeassistant/.homeassistant/scripts/BrancoRiver_CaracaraiWaterTemperature_ltv.txt"
@@ -887,14 +838,14 @@
 
 - platform: file
   name: 'Monthly Amazon Temp'
-  entity_id: sensor.monthly_amazon_temp
+#  entity_id: sensor.monthly_amazon_temp
   file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
   unit_of_measurement: '°C'
   value_template: '{{ (value.split(",")[1].split(",")[0]) | round(1) }}'
 
 - platform: file
   name: 'Monthly Amazon pH'
-  entity_id: sensor.monthly_amazon_ph
+#  entity_id: sensor.monthly_amazon_ph
   file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
   unit_of_measurement: 'pH'
   value_template: '{{ (value.split(",")[2]) | round(1) }}'
@@ -902,7 +853,7 @@
 #Google Sheets Amazon Stats
 - platform: file
   name: 'Amazon Stats Raw'
-  entity_id: sensor.amazon_stats_raw
+#  entity_id: sensor.amazon_stats_raw
   file_path: /home/homeassistant/.homeassistant/downloads/amazon_stats.csv
 
 - platform: template
@@ -931,13 +882,13 @@
   resource: http://www.surf-forecast.com/breaks/Kuta-Beach/seatemp
   select: "div#contdiv span.temp"
   name: ReefOceanTemp
-  force_update: true
+#  force_update: true
   scan_interval: 3600
 
 #Google Sheets Reef Stats
 - platform: file
   name: 'Reef Stats Raw'
-  entity_id: sensor.reef_stats_raw
+#  entity_id: sensor.reef_stats_raw
   file_path: /home/homeassistant/.homeassistant/downloads/reef_stats.csv
 
 - platform: template
@@ -972,12 +923,12 @@
 
 - platform: file
   name: 'NOAA Daily Reef Temp Raw'
-  entity_id: sensor.noaa_daily_reef_temp_raw
+#  entity_id: sensor.noaa_daily_reef_temp_raw
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
 
 - platform: file
   name: 'NOAA Daily Min Reef Temp'
-  entity_id: sensor.noaa_daily_reef_temp_raw
+#  entity_id: sensor.noaa_daily_reef_temp_raw
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
   value_template: >
@@ -988,7 +939,7 @@
 
 - platform: file
   name: 'NOAA Daily Max Reef Temp'
-  entity_id: sensor.noaa_daily_max_reef_temp
+#  entity_id: sensor.noaa_daily_max_reef_temp
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
   value_template: >
@@ -1031,7 +982,7 @@
 - platform: scrape
   resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
   select: "#amanecer_anochecer_datos_salida_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
-  entity_id: sensor.reefsunrisetides
+#  entity_id: sensor.reefsunrisetides
   name: ReefSunriseTides
   scan_interval: 7200
   value_template: '{{ (value.split(" h")[0]) }}'
@@ -1039,17 +990,10 @@
 - platform: scrape
   resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
   select: "#amanecer_anochecer_datos_puesta_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
-  entity_id: sensor.reefsunsettides
+#  entity_id: sensor.reefsunsettides
   name: ReefSunsetTides
   scan_interval: 7200
   value_template: '{{ (value.split(" h")[0]) }}'
-
-#Speedtest
-- platform: speedtest
-  monitored_conditions:
-    - ping
-    - download
-    - upload
 
 - platform: uptime
   name: Time Online
@@ -1073,8 +1017,8 @@
 - platform: scrape
   resource: http://www.esbnyc.com/explore/tower-lights
   select: 'div.view-empty h1#page-title.title'
-  name: EmpireStateLights
-  friendly_name: "Empire State Building Lights"
+#  name: EmpireStateLights
+#  friendly_name: "Empire State Building Lights"
   scan_interval: 10800
 
 - platform: scrape
@@ -1208,11 +1152,11 @@
 #  sensors:
 #    battery_gabes_mate:
 #      friendly_name: "Battery Status"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.battery | default(0) |int() }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.battery | default(0) |int() }}'
 #      entity_id: sensor.battery_gabes_mate
 #      unit_of_measurement: "%"
 #      icon_template: >
-#        {% set battery_level = states.device_tracker.gabes_mate.attributes.battery|default(0)|int %}
+#        {% set battery_level = states.device_tracker.5re0217120001465.attributes.battery|default(0)|int %}
 #        {% set battery_round = (battery_level / 10) |int * 10 %}
 #        {% if battery_round >= 100 %}
 #          mdi:battery
@@ -1223,39 +1167,45 @@
 #        {% endif %}
 #    altitude_gabes_mate:
 #      friendly_name: "Altitude"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.altitude | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.altitude | round(1) }}'
 #      entity_id: sensor.gps_altitude_gabes_mate
 #      unit_of_measurement: "m"
 #    activity_gabes_mate:
 #      friendly_name: "Activity"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.activity }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.activity }}'
 #      entity_id: sensor.activity_gabes_mate
 #    direction_gabes_mate:
 #      friendly_name: "Direction"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.direction }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.direction }}'
 #      entity_id: sensor.direction_gabes_mate
 #    speed_gabes_mate:
 #      friendly_name: "Speed"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.speed | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.speed | round(1) }}'
 #      entity_id: sensor.speed_gabes_mate
 #      unit_of_measurement: "mph"
 #    accuracy_gabes_mate:
 #      friendly_name: "Accuracy"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.gps_accuracy | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.gps_accuracy | round(1) }}'
 #      entity_id: sensor.gps_accuracy_gabes_mate
 #      unit_of_measurement: "m"
 #    provider_gabes_mate:
 #      friendly_name: "Provider"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.provider }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.provider }}'
 #      entity_id: sensor.net_provider_gabes_mate
 #    source_type_gabes_mate:
 #      friendly_name: "Source Type"
-#      value_template: '{{ states.device_tracker.gabes_mate.attributes.source_type }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.source_type }}'
 #      entity_id: sensor.source_type_gabes_mate
 #    last_seen_gabes_mate:
 #      friendly_name: "Last Seen"
-#      value_template: '{{ relative_time (states.device_tracker.gabes_mate.last_updated) + " ago"}}'
+#      value_template: '{{ relative_time (states.device_tracker.5re0217120001465.last_updated) + " ago"}}'
 #      entity_id: sensor.last_seen_gabes_mate
+
+- platform: template
+  sensors:
+    gabe_status:
+      value_template: '{{ states.input_select.phil_status_dropdown.state }}'
+      friendly_name: 'Gabe'
 
 #System Monitor
 - platform: version
@@ -1263,7 +1213,7 @@
   scan_interval: 86400
 
 - platform: rpi_power
-  name: RPi Power Status
+#  name: RPi Power Status
 
 - platform: command_line
   name: "HA Uptime"
@@ -1326,7 +1276,7 @@
 
 - platform: history_stats
   name: stats_work
-  entity_id: device_tracker.gabes_mate
+  entity_id: device_tracker.5re0217120001465
   state: 'Work'
   type: time
   end: '{{ now() }}'
@@ -1335,7 +1285,7 @@
 
 - platform: history_stats
   name: stats_home
-  entity_id: device_tracker.gabes_mate
+  entity_id: device_tracker.5re0217120001465
   state: 'home'
   type: time
   end: '{{ now() }}'
@@ -1535,9 +1485,9 @@
     {% elif lightbright_status > 75 %}Full
     {% else %}n/a
     {% endif %}
-  icon_color: >
-    if (state >= '10') return 'hs[98,158,81]'; 
-    return 'hs[191,27,0]';
+#  icon_color: >
+#    if (state >= '10') return 'hs[98,158,81]'; 
+#    return 'hs[191,27,0]';
 
 - platform: rest
   name: ReefControlPiLightColor
@@ -1595,9 +1545,9 @@
     {% elif pump_1_status == 0 %}Off
     {% else %}n/a
     {% endif %}
-  icon_color: >
-    if (state === '99') return 'hs[98,158,81]'; 
-    return 'hs[191,27,0]';
+#  icon_color: >
+#    if (state === '99') return 'hs[98,158,81]'; 
+#    return 'hs[191,27,0]';
 
 - platform: rest
   name: ReefControlPiPump1Forward
@@ -1657,9 +1607,9 @@
     {% elif pump_2_status == 0 %}Off
     {% else %}n/a
     {% endif %}
-  icon_color: >
-    if (state === '99') return 'hs[98,158,81]'; 
-    return 'hs[191,27,0]';
+#  icon_color: >
+#    if (state === '99') return 'hs[98,158,81]'; 
+#    return 'hs[191,27,0]';
 
 - platform: rest
   name: ReefControlPiFloat
@@ -1731,7 +1681,7 @@
   sensors:
     outside_alerts:
       value_template: >
-        Current Location: {{ states('device_tracker.gabes_mate') }}
+        Current Location: {{ states('device_tracker.5re0217120001465') }}
         ({{ (as_timestamp (now()) -as_timestamp (states.device_tracker.gabes_mate.last_changed)) }})
 
 #- platform: command_line
@@ -1764,6 +1714,12 @@
   variable: 'state'
   payload:
     protocol: secudo_smoke_sensor
+
+- platform: pilight
+  name: 'Some Screen Sensor'
+  variable: 'state'
+  payload:
+    protocol: arctech_screen_old
 
 - platform: pilight
   name: 'Some Gas Detector'
@@ -1895,3 +1851,23 @@
 #      friendly_name: 'Weight Loss'
 #      value_template: "{{ '%.1f' | format(245.0 - (states.sensor.weight.state | float)) }}"
 #      unit_of_measurement: 'lbs'
+
+#Kiosk
+- platform: template
+  sensors:
+    kiosk_screen:
+      friendly_name: 'Kiosk Screen'
+      value_template: '{{ states.light.dashboard_screen.state }}'
+      entity_id: sensor.kiosk_screen
+    kiosk_charging:
+      friendly_name: 'Kiosk Charging'
+      value_template: '{{ states.light.dashboard_screen.attributes.charging }}'
+      entity_id: sensor.kiosk_charging
+    kiosk_battery:
+      friendly_name: 'Kiosk Battery'
+      value_template: '{{ states.light.dashboard_screen.attributes.battery_level }}'
+      entity_id: sensor.kiosk_battery
+    kiosk_battery:
+      friendly_name: 'Kiosk Brightness'
+      value_template: '{{ states.light.dashboard_screen.attributes.brightness }}'
+      entity_id: sensor.kiosk_brightness

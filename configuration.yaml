@@ -10,6 +10,7 @@ homeassistant:
   whitelist_external_dirs:
       - /home/homeassistant/.homeassistant/scripts
       - /home/homeassistant/.homeassistant/www/images/
+      - /home/homeassistant/.homeassistant/downloads/
 
 # Enables the frontend
 frontend: 
@@ -46,11 +47,21 @@ mqtt:
   password: !secret mqtt_password
   discovery: true
 
+speedtestdotnet:
+  scan_interval:
+    minutes: 30
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
 updater:
 
 custom_updater:
   card_urls:
     - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
+    - https://raw.githubusercontent.com/kalkih/mini-graph-card/master/tracker.json
+    - https://raw.githubusercontent.com/nervetattoo/simple-thermostat/master/tracker.json
 
 # Discover some devices automatically
 discovery:
@@ -98,10 +109,10 @@ logbook:
       - sensor.speedtest_download
       - sensor.speedtest_upload
       - sensor.speedtest_ping 
-      - sensor.asuswrt_download_speed
-      - sensor.asuswrt_upload_speed
-      - sensor.asuswrt_download
-      - sensor.asuswrt_upload
+      - sensor.rt_acrh13_kbyte_sec_received
+      - sensor.rt_acrh13_kbyte_sec_sent
+      - sensor.rt_acrh13_bytes_received
+      - sensor.rt_acrh13_bytes_sent
       - sensor.myipopendnscom
       - sensor.ha_installed_version
       - sensor.ha_uptime
@@ -192,6 +203,9 @@ logbook:
       - sensor.sleep_minutes_to_fall_asleep
       - sensor.sleep_minutes_awake
       - sensor.sleep_minutes_asleep
+      - binary_sensor.dashboard_motion
+      - sensor.mqtt_topic_octoprint_humidity_template
+      - sensor.mqtt_topic_octoprint_temperature_template
 
 recorder:
   purge_keep_days: 3
@@ -221,10 +235,10 @@ recorder:
       - sensor.speedtest_download
       - sensor.speedtest_upload
       - sensor.speedtest_ping 
-      - sensor.asuswrt_download_speed
-      - sensor.asuswrt_upload_speed
-      - sensor.asuswrt_download
-      - sensor.asuswrt_upload
+      - sensor.rt_acrh13_kbyte_sec_received
+      - sensor.rt_acrh13_kbyte_sec_sent
+      - sensor.rt_acrh13_bytes_received
+      - sensor.rt_acrh13_bytes_sent
       - sensor.myipopendnscom
       - sensor.ha_installed_version
       - sensor.ha_uptime
@@ -258,6 +272,7 @@ recorder:
       - sensor.amazonsunrisetides
       - sensor.amazonsunsettides
       - sensor.mqtt_topic_octo_sysinfo_template_watertemp
+      - sensor.filtered_amazon_tank_water_temperature
       - sensor.monthly_amazon_temp_min
       - sensor.monthly_amazon_temp_lowmed
       - sensor.monthly_amazon_temp_med
@@ -295,6 +310,8 @@ recorder:
       - sensor.mqtt_topic_garden_humidity_template
       - sensor.mqtt_topic_garden_temperature_template
       - sensor.mqtt_topic_garden_humidity_template_time
+      - sensor.filtered_garden_temperature
+      - sensor.filtered_garden_humidity
       - switch.garden_light
       - switch.garden_waterbot
       - sensor.mqtt_topic_garden_water_state_template
@@ -315,6 +332,9 @@ recorder:
       - sensor.sleep_minutes_to_fall_asleep
       - sensor.sleep_minutes_awake
       - sensor.sleep_minutes_asleep
+      - binary_sensor.dashboard_motion
+      - sensor.mqtt_topic_octoprint_humidity_template
+      - sensor.mqtt_topic_octoprint_temperature_template
 
 #Panels
 #panel_custom:
@@ -361,7 +381,7 @@ mysensors:
 #Pilight 433mhz receiver
 pilight:
   host: 192.168.50.111
-  port: 5001
+  port: 5000
 
 #Tuya Smart Switches
 tuya:
@@ -406,6 +426,11 @@ notify 2:
   - platform: command_line
     name: gabes_alexa
     command: /home/homeassistant/.homeassistant/scripts/alexa_wrapper.sh -d "Gabe's Alexa"
+
+notify 3:
+  - name: kiosk
+    platform: command_line
+    command: "/home/homeassistant/.homeassistant/tts/kiosk_tts.py"
 
 # lovelace theme notification
 input_text:
@@ -464,9 +489,18 @@ asuswrt:
   protocol: ssh
   port: 22
   ssh_key: !secret asuswrt_ssh_key
+  sensors:
+    - upload
+    - download
+    - upload_speed
+    - download_speed
 
 downloader:
   download_dir: www/images/
+
+shopping_list:
+
+system_health:
 
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
@@ -505,3 +539,5 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 shell_command: !include shell_commands.yaml
 intent_script: !include intent_script.yaml
+binary_sensor: !include binary_sensor.yaml
+light: !include light.yaml
