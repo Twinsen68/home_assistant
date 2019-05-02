@@ -27,13 +27,15 @@ resources:
     type: js
   - url: /local/custom_ui/calendar-card.js?v=5
     type: module
-  - url: /local/custom_ui/state-element.js?v=0.1
+  - url: /local/custom_ui/state-element.js?v=1
     type: module
   - url: /local/custom_ui/text-element.js?v=0.1
     type: module
   - url: /local/custom_ui/tracker-card.js?v=0.1
     type: module
   - url: /local/custom_ui/state-attribute-element.js?v=0.1
+    type: module
+  - url: /local/custom_ui/flower-card.js?v=0.1
     type: module
   - url: /local/custom_ui/canvas-gauge-card.js?v=0.1
     type: module
@@ -62,6 +64,14 @@ resources:
   - url: /local/custom_ui/mini-graph-card-bundle.js?v=0.3.0
     type: module
   - url: /local/custom_ui/simple-thermostat.js?v=1
+    type: module
+  - url: /local/custom_ui/bar-card.js?v=0.1.9
+    type: js
+  - url: /local/custom_ui/radial-menu.js?v=0.1.0
+    type: module
+  - url: /local/custom_ui/camera-card.js?v=0.1.0
+    type: module
+  - url: /local/custom_ui/podcast-card.js?v=0.1.0
     type: module
 
 background: center / cover no-repeat url("/local/images/rollins.jpg") fixed
@@ -918,6 +928,11 @@ views:
           - entity: device_tracker.macbook
           - entity: device_tracker.5re0217120001465
           - entity: device_tracker.ionic
+          - entity: switch.sonoff_10006b7f44
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
       - type: custom:mini-graph-card
         hours_to_show: 48
         unit: °F
@@ -948,11 +963,13 @@ views:
             color: "#cc2c2c"
         entities: 
         - entity: sensor.filtered_garden_temperature
-          name: Kitchen
+          name: Garden
         - entity: sensor.mqtt_topic_octoprint_temperature_template
           name: Office
         - entity: sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
           name: Window
+        - entity: sensor.mailbox_temp_f
+          name: Kitchen
   - type: vertical-stack            
     cards:
       - type: picture-entity
@@ -963,7 +980,7 @@ views:
         card:
           type: custom:useful-markdown-card
           content: >
-            [[ sensor.empirestatelights.state ]]
+            [[ sensor.web_scrape.state ]]
         style:                 
           border-radius: 20px
           border: solid 1px rgba(100,100,100,0.3)
@@ -1305,10 +1322,20 @@ views:
   cards:
   - type: vertical-stack
     cards:
-      - type: picture-entity
-        entity: camera.reefcam
-        show_name: false
-        show_state: false
+      - type: custom:card-modder
+        card:
+          type: picture-glance
+          title: PanTilt Cam
+          camera_image: camera.pantiltcam
+          show_name: false
+          show_state: false
+          entities: 
+            - switch.pantilt_up
+            - switch.pantilt_down
+            - switch.pantilt_left
+            - switch.pantilt_right
+            - switch.pantilt_center
+            - switch.pantilt_snap
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -1372,7 +1399,7 @@ views:
             hold_action: 
               action: more-info
             size: 25%
-            icon: mdi:raspberrypi
+            icon: mdi:raspberry-pi
             color: rgba(61, 255, 145, 0.85)
             name: Server
             style:
@@ -1536,7 +1563,116 @@ views:
             name: Current
         hide:
           mode: true
-
+      - type: conditional
+        conditions:
+          - entity: switch.06200940dc4f22cbb94b_7
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/images/lab.jpg
+          elements:
+            - type: icon
+              entity: sensor.latest_reef_stats_date
+              title: Test Date
+              icon: mdi:calendar
+              style:
+                top: 13%
+                left: 12%
+                size: 40%
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-label
+              entity: sensor.latest_reef_stats_date
+              icon: mdi:calendar
+              style:
+                top: 13%
+                left: 26%
+                font-size: 16px
+                font-weight: bold
+                align: right
+                color: rgba(0, 0, 0, 1)
+            - type: state-icon
+              tap_action:
+                action: more-info
+              entity: automation.download_reef_stats_file
+              icon: mdi:toggle-switch
+              size: 50%
+              color: rgba(0, 0, 0, 1)
+              style:
+                top: 85%
+                left: 12%
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_salinity
+              prefix: "Salinity: "
+              style:
+                top: 12%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_ph
+              prefix: "pH: "
+              style:
+                top: 22%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_nitrate
+              prefix: "Nitrate: "
+              style:
+                top: 32%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_nitrite
+              prefix: "Nitrite: "
+              style:
+                top: 42%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_ammonia
+              prefix: "Ammonia: "
+              style:
+                top: 52%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_calcium
+              prefix: "Calcium: "
+              style:
+                top: 62%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_kh
+              prefix: "kH: "
+              style:
+                top: 72%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
+            - type: custom:state-element
+              entity: sensor.latest_reef_stats_water_change
+              prefix: "Water Change: "
+              style:
+                top: 82%
+                left: 66%
+                font-weight: bold
+                font-size: 14px
+                color: rgba(255, 255, 255, 1)
   - type: vertical-stack
     cards:
       - type: conditional
@@ -2201,7 +2337,7 @@ views:
             - type: icon
               entity: sensor.reefsysinfo_template_name
               title: Server Name
-              icon: mdi:raspberrypi
+              icon: mdi:raspberry-pi
               style:
                 top: 28%
                 left: 67%
@@ -2209,7 +2345,7 @@ views:
                 color: rgba(255, 255, 255, 1)
             - type: state-label
               entity: sensor.reefsysinfo_template_name
-              icon: mdi:raspberrypi
+              icon: mdi:raspberry-pi
               style:
                 top: 28%
                 left: 81%
@@ -2232,14 +2368,14 @@ views:
                 left: 24%
                 font-size: 13px
                 color: rgba(255, 255, 255, 1)
-            - type: custom:state-element
-              entity: sensor.reefsysinfo_template_uptime
-              prefix: "Restart: "
-              style:
-                top: 87%
-                left: 25%
-                font-size: 13px
-                color: rgba(255, 255, 255, 1)
+#            - type: custom:state-element
+#              entity: sensor.reefsysinfo_template_uptime
+#              prefix: "Restart: "
+#              style:
+#                top: 87%
+#                left: 25%
+#                font-size: 13px
+#                color: rgba(255, 255, 255, 1)
       - type: entities
         entities:
           - type: custom:fold-entity-row
@@ -2253,7 +2389,7 @@ views:
               - automation.start_fade_down_of_reef_lights_at_sunset
               - automation.start_fade_up_of_reef_lights_at_sunrise
               - automation.reef_sump_pump_low_off
-              - automation.reef_sump_pump_low_off_timer
+              - automation.reef_sump_pump_low_timer
               - automation.reef_sump_pulse
               - automation.regulate_reef_heater_to_off_on_low_misread
               - automation.turn_off_wavemaker_at_low_tide
@@ -2335,7 +2471,7 @@ views:
             hold_action: 
               action: more-info
             size: 25%
-            icon: mdi:raspberrypi
+            icon: mdi:raspberry-pi
             color: rgba(61, 255, 145, 0.85)
             name: Server
             style:
@@ -2635,7 +2771,7 @@ views:
             - type: icon
               entity: sensor.mqtt_topic_octo_sysinfo_template_serverload
               title: Server Name
-              icon: mdi:raspberrypi
+              icon: mdi:raspberry-pi
               style:
                 top: 33%
                 left: 15%
@@ -2687,7 +2823,7 @@ views:
             - type: icon
               entity: sensor.mqtt_topic_octo_sysinfo_template_serverload
               title: Server Name
-              icon: mdi:raspberrypi
+              icon: mdi:raspberry-pi
               style:
                 top: 33%
                 left: 15%
@@ -2702,6 +2838,20 @@ views:
                 font-weight: bold
                 align: right
                 color: rgba(27, 39, 1, 1)
+      - type: entities
+        entities:
+          - type: custom:fold-entity-row
+            head: 
+              type: section
+              label: Water Quality
+            items:
+              - entity: sensor.latest_amazon_stats_date
+              - entity: sensor.latest_amazon_stats_ph
+              - entity: sensor.latest_amazon_stats_nitrate
+              - entity: sensor.latest_amazon_stats_nitrite
+              - entity: sensor.latest_amazon_stats_ammonia
+              - entity: sensor.latest_amazon_stats_water_change
+              - entity: automation.download_amazon_stats_file
       - type: entities
         entities:
           - type: custom:fold-entity-row
@@ -3039,263 +3189,42 @@ views:
           name: Garden
         - entity: sensor.mqtt_topic_octoprint_humidity_template
           name: Office
+        - entity: sensor.mailbox_temp_h
+          name: Kitchen
   - type: vertical-stack
     cards:
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Parsley
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/parsley
-        style:
-          background-image: url("/local/images/parsley-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Thyme
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/thyme
-        style:
-          background-image: url("/local/images/thyme-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Parsley
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/marjoram
-        style:
-          background-image: url("/local/images/marjoram-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Tarragon
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/tarragon
-        style:
-          background-image: url("/local/images/tarragon-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Oregano
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/oregano
-        style:
-          background-image: url("/local/images/oregano-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "petroselinum crispum"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "ocimum basilicum"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "anethum graveolens"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "allium schoenoprasum"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "thymus vulgaris"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "artemisia dracunculus"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "origanum vulgare"
+      - type: custom:flower-card
+        entity: plant.herbs
+        species: "mentha x piperita"
   - type: vertical-stack
     cards:
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Chives
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/chives
-        style:
-          background-image: url("/local/images/chives-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Mint
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/mint
-        style:
-          background-image: url("/local/images/mint-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Dill
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/dill
-        style:
-          background-image: url("/local/images/dill-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
-      - type: custom:card-modder
-        card:    
-          type: entities
-          entities:
-            - type: custom:card-modder
-              card: 
-                type: custom:text-element
-                text: Basil
-                style:
-                  top: 43%
-                  left: 46%
-                  font-size: 16px
-                  font-weight: bold
-                  align: right
-                  color: rgba(255, 255, 255, 1)
-            - type: weblink
-              name: Info
-              icon: mdi:leaf
-              url: https://www.almanac.com/plant/basil
-        style:
-          background-image: url("/local/images/basil-l.png")              
-          background-repeat: no-repeat                                      
-          background-color: rgba(0,0,0,0.0)
-          background-size: 100% 100%
-          font-size: 16px
-          font-weight: bold
-          align: right
-          color: rgba(255, 255, 255, 1)
+      - type: custom:flower-card
+        entity: plant.bedroom
+        species: "nephrolepis exaltata 'bostoniensis'"
+      - type: custom:flower-card
+        entity: plant.bedroom
+        species: "asparagus densiflorus"
       - type: entities
         entities:
           - type: custom:fold-entity-row
@@ -3321,9 +3250,9 @@ views:
 #    title: Bus Times
 #    column_width: 33%
 #    entities:
-#      - entity: sensor.m15_local_uptown_allen__grand
+#      - entity: sensor.m15_local_uptown_allen_at_grand
 #        name: M15
-#      - entity: sensor.m15sbs_uptown_allen__grand
+#      - entity: sensor.m15sbs_uptown_allen_at_grand
 #        name: "M15-SBS"
 #      - entity: sensor.m14a_crosstown_at_clinton_street
 #        name: M14A
@@ -4038,6 +3967,12 @@ views:
     title: Media select
     entities:
       - input_select.harmony
+#  - type: 'custom:podcast-card'
+#    entity: sensor.gpodder
+#    name: Podcasts
+#    default_target: media_player.office_home
+#    show_player: True
+#    custom_player: True
   - type: custom:vertical-stack-in-card
     cards:
       - type: picture-elements
@@ -4371,8 +4306,8 @@ views:
         name: Bytes Received
     - type: custom:mini-graph-card
       hours_to_show: 48
-      unit: bytes
-      name: GB
+      unit: GB
+      name: Upload
       points_per_hour: 6
       line_width: 3
       decimals: 2
@@ -4436,7 +4371,7 @@ views:
             - type: icon
               entity: sensor.ip_address
               title: Server Name
-              icon: mdi:raspberrypi
+              icon: mdi:raspberry-pi
               style:
                 top: 43%
                 left: 13%
@@ -4500,14 +4435,14 @@ views:
                 left: 22%
                 font-size: 13px
                 color: rgba(33, 33, 33, 1)
-            - type: custom:state-element
-              entity: sensor.rpi_power_status
-              prefix: "Throttle: "
-              style:
-                top: 75%
-                left: 20%
-                font-size: 13px
-                color: rgba(33, 33, 33, 1)
+#            - type: custom:state-element
+#              entity: sensor.rpi_power_status
+#              prefix: "Throttle: "
+#              style:
+#                top: 75%
+#                left: 20%
+#                font-size: 13px
+#                color: rgba(33, 33, 33, 1)
   - type: entities
     title: HomeCam Server Info
     entities:
@@ -4821,6 +4756,9 @@ views:
               cards:
                 - type: entity-button
                   entity: script.fart_machine
+                  tap_action: 
+                    action: toggle
+                  momentary: 300
                   size: 100%
                   icon: mdi:skull-crossbones
                   color: rgba(219, 106, 0, 0.85)

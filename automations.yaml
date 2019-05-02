@@ -45,9 +45,7 @@
   action:
     - service: homeassistant.turn_off
       data:
-        entity_id: group.all_lights
-    - service: switch.turn_off
-      entity_id: switch.entry_light
+        entity_id: group.all_lightbulbs
 
 - alias: Turn On Lights on Enter Home Zone
   id: gabe_arrive_in_home_zone_lights_on
@@ -61,11 +59,8 @@
       zone: zone.home
       event: enter
   action:
-    - service: homeassistant.turn_on
-      data:
-        entity_id: group.all_lights
-    - service: switch.turn_on
-      entity_id: switch.entry_light
+    - service: script.turn_on
+      entity_id: script.welcome_lights_on
 
 - alias: Deactivate Motion Detect on Enter Home Zone
   id: gabe_arrive_in_home_zone_motion_off
@@ -93,7 +88,6 @@
 #    condition: template
 #    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.gabe_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
-    - delay: '00:02:00'
     - service: notify.kiosk
       data_template:
         message:  >
@@ -110,7 +104,6 @@
     condition: template
     value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
-    - delay: '00:02:00'
     - service: notify.kiosk
       data_template:
         message:  >
@@ -135,6 +128,18 @@
   action:
     - service: script.turn_on
       entity_id: script.kiosk_good_morning
+
+#Download News once a day
+- alias: 'download_npr_news'
+  trigger:
+    - platform: time
+      at: '06:16:00'
+  action:
+    - service: downloader.download_file
+      data_template:
+        url: "{{ states('sensor.npr_news_mp3_link') }}"
+        filename: "npr_news.mp3"
+        overwrite: true
 
 #Dim Kiosk with light
 - alias: 'Dim Kiosk Screen'
@@ -278,6 +283,77 @@
   - service: script.turn_on
     entity_id: script.reeftank_morning_fade_kessil
 
+#Moonrise Moonset on Tanks
+- alias: Stop Reef Moon
+  trigger:
+    platform: template
+    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefmoonrisetides.state , '%k:%M') }}"
+  condition:
+    condition: numeric_state
+    entity_id: sensor.reef_weather_moon_phase_1d
+    above: .35
+    below: .65 
+  action:
+  - service: script.turn_on
+    entity_id: script.reeftank_moon_off
+
+- alias: Start Reef Moon
+  trigger:
+    platform: template
+    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefmoonrisetides.state , '%k:%M') }}"
+  condition:
+    condition: or
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.reef_weather_moon_phase_1d
+        above: .38
+        below: .48 
+      - condition: numeric_state
+        entity_id: sensor.reef_weather_moon_phase_1d
+        above: .53
+        below: .63 
+  action:
+  - service: script.turn_on
+    entity_id: script.reeftank_moon_on
+  - service: script.turn_on
+    entity_id: script.reeftank_moon_up
+
+- alias: Stronger Fade Up of Reef Moon
+  trigger:
+    platform: template
+    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefmoonrisetides.state , '%k:%M') }}"
+  condition:
+    condition: or
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.reef_weather_moon_phase_1d
+        above: .48
+        below: .49 
+      - condition: numeric_state
+        entity_id: sensor.reef_weather_moon_phase_1d
+        above: .51
+        below: .53 
+  action:
+  - service: script.turn_on
+    entity_id: script.reeftank_moon_on
+  - service: script.turn_on
+    entity_id: script.reeftank_moon_up_stronger
+
+- alias: Reef Full Moon
+  trigger:
+    platform: template
+    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefmoonrisetides.state , '%k:%M') }}"
+  condition:
+    condition: numeric_state
+    entity_id: sensor.reef_weather_moon_phase_1d
+    above: .49
+    below: .51 
+  action:
+  - service: script.turn_on
+    entity_id: script.reeftank_moon_on
+  - service: script.turn_on
+    entity_id: script.reeftank_full_moon
+
 - alias: Freshwater Lights and O2 On at Sunrise
   trigger:
     platform: template
@@ -303,13 +379,13 @@
   - service: script.turn_on
     entity_id: script.freshwater_feeder_script
 
-- alias: Activate Feeder Script MidDay
-  trigger:
-    platform: time
-    at: '12:15:00'
-  action:
-  - service: script.turn_on
-    entity_id: script.freshwater_feeder_script
+#- alias: Activate Feeder Script MidDay
+#  trigger:
+#    platform: time
+#    at: '12:15:00'
+#  action:
+#  - service: script.turn_on
+#    entity_id: script.freshwater_feeder_script
 
 - alias: Activate Feeder Script Afternoon
   trigger:
@@ -364,7 +440,6 @@
      data_template:
        entity_id: climate.reef_tank_therm
        temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float }}'
-#       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float - 2 }}'
 
  # This automation script runs when a value is received via Reef sensor: noaa_daily_min_reef_temp
 - alias: Set Reef Thermostat Max Nighttime Selector
@@ -380,7 +455,6 @@
      data_template:
        entity_id: climate.reef_tank_therm
        temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float }}'
-#       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float - 2.0 }}'
 
 - alias: Regulate Reef Heater To Off on Low Misread
   trigger:
@@ -390,7 +464,7 @@
     service: switch.turn_off
     entity_id: switch.06200940dc4f22cbb94b_3
 
-- alias: Nightly Top Off On
+- alias: Nightly Top OffOn
   trigger:
     - platform: time
       at: '22:00:00'
@@ -398,7 +472,7 @@
     service: switch.turn_on
     entity_id: switch.reef_pump_1_scheduled
 
-- alias: Nightly Top Off Off
+- alias: Nightly Top OffOff
   trigger:
     - platform: time
       at: '1:00:00'
@@ -420,10 +494,10 @@
 #    entity_id: switch.2437254184f3eb695276
 
 #Update Reef temps once a day
-  alias: 'download_noaa_temps'
+- alias: 'download_noaa_temps'
   trigger:
-    platform: time
-    at: '01:16:00'
+    - platform: time
+      at: '01:16:00'
   action:
     - service: downloader.download_file
       data_template:
@@ -456,7 +530,7 @@
     entity_id: switch.2437254184f3eb695276
 
 #Turn sump pump off on low timer
-- alias: Reef Sump Pump Low Off Timer
+- alias: Reef Sump Pump Low Timer
   trigger:
     platform: state
     entity_id: sensor.reefcontrolpifloat
@@ -607,10 +681,10 @@
     platform: state
     entity_id: sensor.octoprint_target_tool1_temp
     to: '32'
-  condition:
-    condition: state
-    entity_id: binary_sensor.octoprint_status_printing
-    state: 'off'
+#  condition:
+#    condition: state
+#    entity_id: binary_sensor.octoprint_status_printing
+#    state: 'off'
   # Trigger only if state was this for last 30 minutes.
 #    for:
 #      minutes: 30
@@ -668,7 +742,7 @@
   action:
     - service: script.turn_on
       data:
-        entity_id: script.bedroom_wake_up
+        entity_id: script.sunrise_lights
 
 ## IFTTT Test
 - id: IFTTT_test
@@ -767,3 +841,76 @@
       data_template:
         entity_id: input_select.gabe_status_dropdown
         option: Extended Away
+
+- alias: Request Mailbox Temp
+  trigger:
+    - platform: time_pattern
+      minutes: '/5'
+  action:
+    service: script.turn_on
+    entity_id: script.get_mailbox_temp
+
+- alias: Mailbox Mail Flag On
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.usps_mail
+    above: 0
+  action:
+    - service: homeassistant.turn_on
+      data:
+        entity_id: switch.mailbox_flag
+    - service: homeassistant.turn_on
+      data:
+        entity_id: switch.mailbox_green_light
+
+- alias: Mailbox Package Light On
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.usps_packages
+    above: 0
+  action:
+    - service: homeassistant.turn_on
+      data:
+        entity_id: switch.mailbox_flag
+    - service: homeassistant.turn_on
+      data:
+        entity_id: switch.mailbox_red_light
+
+- alias: Mailbox Mail Flag Off
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.usps_mail
+    below: 1
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: switch.mailbox_flag
+    - service: homeassistant.turn_off
+      data:
+        entity_id: switch.mailbox_green_light
+
+- alias: Mailbox Package Light Off
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.usps_packages
+    below: 1
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: switch.mailbox_flag
+    - service: homeassistant.turn_off
+      data:
+        entity_id: switch.mailbox_red_light
+
+#Hue Dimmer Switch
+- id: Hue Dimmer Switch 1 Click
+  alias: Hue Dimmer Switch 1 Click
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "1_click"
+  action:
+    - service: scene.turn_on
+      data:
+        entity_id: scene.every_light_in_the_house
+

@@ -30,9 +30,11 @@ frontend:
 # Enables configuration UI
 config:
 
+api:
+
 http:
   # Secrets are defined in the file secrets.yaml
-#  api_password: !secret http_password
+  api_password: !secret http_password
   base_url: !secret config_base_url
   ssl_key: !secret config_ssl_key
   ssl_certificate: !secret config_ssl_cert
@@ -62,6 +64,7 @@ custom_updater:
     - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
     - https://raw.githubusercontent.com/kalkih/mini-graph-card/master/tracker.json
     - https://raw.githubusercontent.com/nervetattoo/simple-thermostat/master/tracker.json
+    - https://raw.githubusercontent.com/robmarkcole/Hue-sensors-HASS/master/custom_updater.json
 
 # Discover some devices automatically
 discovery:
@@ -206,6 +209,32 @@ logbook:
       - binary_sensor.dashboard_motion
       - sensor.mqtt_topic_octoprint_humidity_template
       - sensor.mqtt_topic_octoprint_temperature_template
+      - sensor.asuswrt_download
+      - sensor.asuswrt_upload
+      - sensor.asuswrt_download_speed
+      - sensor.asuswrt_upload_speed
+      - sensor.latest_amazon_stats_date
+      - sensor.latest_amazon_stats_ph
+      - sensor.latest_amazon_stats_nitrate
+      - sensor.latest_amazon_stats_nitrite
+      - sensor.latest_amazon_stats_ammonia
+      - sensor.latest_amazon_stats_water_change
+      - sensor.latest_reef_stats_date
+      - sensor.latest_reef_stats_salinity
+      - sensor.latest_reef_stats_ph
+      - sensor.latest_reef_stats_nitrate
+      - sensor.latest_reef_stats_nitrite
+      - sensor.latest_reef_stats_ammonia
+      - sensor.latest_reef_stats_calcium
+      - sensor.latest_reef_stats_kh
+      - sensor.latest_reef_stats_water_change
+      - sensor.mailbox_temp_f
+      - sensor.mailbox_temp_h
+      - binary_sensor.mailbox_flag
+      - switch.sonoff_10006b7f44
+      - sensor.disk_use_percent
+      - sensor.memory_use_percent
+      - sensor.swap_use_percent
 
 recorder:
   purge_keep_days: 3
@@ -335,6 +364,32 @@ recorder:
       - binary_sensor.dashboard_motion
       - sensor.mqtt_topic_octoprint_humidity_template
       - sensor.mqtt_topic_octoprint_temperature_template
+      - sensor.asuswrt_download
+      - sensor.asuswrt_upload
+      - sensor.asuswrt_download_speed
+      - sensor.asuswrt_upload_speed
+      - sensor.latest_amazon_stats_date
+      - sensor.latest_amazon_stats_ph
+      - sensor.latest_amazon_stats_nitrate
+      - sensor.latest_amazon_stats_nitrite
+      - sensor.latest_amazon_stats_ammonia
+      - sensor.latest_amazon_stats_water_change
+      - sensor.latest_reef_stats_date
+      - sensor.latest_reef_stats_salinity
+      - sensor.latest_reef_stats_ph
+      - sensor.latest_reef_stats_nitrate
+      - sensor.latest_reef_stats_nitrite
+      - sensor.latest_reef_stats_ammonia
+      - sensor.latest_reef_stats_calcium
+      - sensor.latest_reef_stats_kh
+      - sensor.latest_reef_stats_water_change
+      - sensor.mailbox_temp_f
+      - sensor.mailbox_temp_h
+      - binary_sensor.mailbox_flag
+      - switch.sonoff_10006b7f44
+      - sensor.disk_use_percent
+      - sensor.memory_use_percent
+      - sensor.swap_use_percent
 
 #Panels
 #panel_custom:
@@ -361,7 +416,9 @@ sun:
 
 # Text to speech
 tts:
-  - platform: google
+  - platform: google_translate
+    service_name: google_say
+    language: 'en'
 
 # Cloud
 cloud:
@@ -450,37 +507,92 @@ hue:
 # alexa integration
 emulated_hue:
   host_ip: 192.168.50.111
-  exposed_domains:
-  - switch
-  - scene
-  - script
+  expose_by_default: false
+#  exposed_domains:
+#  - scene
+#  - script
   entities:
+    scene.every_light_in_the_house:
+      name: "Every Light In The House"
+      hidden: false
+    script.tv_lights_off:
+      name: "TV Lights Off"
+      hidden: false
+    script.tv_lights_on:
+      name: "TV Lights On"
+      hidden: false
+    script.sunrise_lights:
+      name: "Bedroom Lights Alarm"
+      hidden: false
     switch.06200940dc4f22cbb94b_4:
       name: "Reef Light"
+      hidden: false
     switch.harmony_watch_roku:
       name: "Tee Vee" 
+      hidden: false
     switch.kessil_light_level_11:
       name: "Reef Blue Lights" 
+      hidden: false
     switch.kessil_light_level_5:
       name: "Reef Bright Lights"
+      hidden: false
     switch.2437254184f3eb695327:
       name: "Printer"
+      hidden: false
     switch.octofishfeeder:
       name: "Fish Feeder"
+      hidden: false
     switch.2437254184f3eb695715:
       name: "Home Assistant"
+      hidden: false
     switch.06200940dc4f22cbb94b_7:
       name: "Reef Pie"
+      hidden: false
     switch.reef_pump_1:
       name: "Reef Top Up" 
+      hidden: false
     switch.reef_pump_1_reverse:
       name: "Reef Reverse Pump" 
+      hidden: false
     switch.reef_pump_2:
-      name: "Reef Doser" 
+      name: "Reef Doser"
+      hidden: false 
     switch.2437254184f3eb695276:
       name: "Reef Sump" 
+      hidden: false
+    switch.sonoff_10006b7f44:
+      name: "Humidifier"
+      hidden: false 
     light.table:
       name: "Table Light" 
+      hidden: false
+    light.bedroom:
+      name: "Bedroom" 
+      hidden: false
+    light.bedroom_desk:
+      name: "Bedroom Desk"
+      hidden: false 
+    light.bedside_table:
+      name: "Bedside Table"
+      hidden: false 
+    light.dashboard_screen:
+      name: "Kiosk Screen"
+      hidden: false 
+    light.desk:
+      name: "Desk" 
+      hidden: false
+    light.entry_light:
+      name: "Entry Light"
+      hidden: false 
+    light.kitchen:
+      name: "Kitchen"
+      hidden: false 
+    light.living_room:
+      name: "Living room"
+      hidden: false 
+    light.office:
+      name: "Office"
+      hidden: false
 
 asuswrt:
   host: !secret asuswrt_host
@@ -502,8 +614,74 @@ shopping_list:
 
 system_health:
 
+## cpu speed raspberry device
+- platform: cpuspeed
+
+## system monitor raspberry device
+- platform: systemmonitor
+  resources:
+  - type: disk_use_percent
+    arg: /
+  - type: disk_use_percent
+    arg: /var/log
+  - type: memory_use_percent
+  - type: memory_use
+  - type: memory_free
+  - type: processor_use
+  - type: swap_use_percent
+  - type: swap_use
+  - type: swap_free
+  - type: last_boot
+  - type: since_last_boot
+## LAN Adapter
+  - type: network_in
+    arg: eth0
+  - type: network_out
+    arg: eth0
+  - type: packets_in
+    arg: eth0
+  - type: packets_out
+    arg: eth0
+  - type: ipv4_address
+    arg: eth0
+  - type: ipv6_address
+    arg: eth0
+## WLAN Adapter   
+  - type: network_in
+    arg: wlan0
+  - type: network_out
+    arg: wlan0
+  - type: packets_in
+    arg: wlan0
+  - type: packets_out
+    arg: wlan0
+  - type: ipv4_address
+    arg: wlan0
+  - type: ipv6_address
+    arg: wlan0
+
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
+
+esphome:
+  name: bedroom
+  platform: ESP8266
+  board: nodemcuv2
+
+sonoff:
+  username: !secret sonoff_username
+  password: !secret sonoff_password
+  scan_interval: 60
+  grace_period: 600
+#  debug: true
+
+#gpodder:
+#  username: !secret gpodder_udername
+#  password: !secret gpodder_password
+#  sensor:
+#    - enabled: true
+#      name: homeassistant
+#      device: kiosk
 
 # This crashes the pi
 #image_processing:
@@ -521,6 +699,7 @@ ffmpeg:
 #    minutes: 20
 #  max_entries: 1
 
+plant: !include plants.yaml
 scene: !include scenes.yaml
 zone: !include zone.yaml
 input_datetime: !include input_datetime.yaml
@@ -541,3 +720,4 @@ shell_command: !include shell_commands.yaml
 intent_script: !include intent_script.yaml
 binary_sensor: !include binary_sensor.yaml
 light: !include light.yaml
+

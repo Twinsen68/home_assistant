@@ -30,6 +30,7 @@ panels
 ui-lovelace.yaml.sb*
 python_scripts/lib
 .well_known
+www/.well-known
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
 ip_bans.yaml

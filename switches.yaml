@@ -97,6 +97,37 @@
             device: 55925028
       entity_picture_template: 'images/roomba.jpg'
 
+#Switch for PanTilt
+- platform: command_line
+  switches:
+    pantilt_down:
+      friendly_name: PanTilt Down
+      command_on: !secret switches_pantilt_down
+
+- platform: command_line
+  switches:
+    pantilt_up:
+      friendly_name: PanTilt Up
+      command_on: !secret switches_pantilt_up
+
+- platform: command_line
+  switches:
+    pantilt_left:
+      friendly_name: PanTilt Left
+      command_on: !secret switches_pantilt_left
+
+- platform: command_line
+  switches:
+    pantilt_right:
+      friendly_name: PanTilt Right
+      command_on: !secret switches_pantilt_right
+
+- platform: command_line
+  switches:
+    pantilt_center:
+      friendly_name: PanTilt Center
+      command_on: !secret switches_pantilt_center
+
 - platform: template
   switches:
     harmony_fishtank_morning:
@@ -385,3 +416,67 @@
       friendly_name: Garden Waterer
       command_on: !secret switches_garden_water_schedule_on
       command_off: !secret switches_garden_water_schedule_off
+
+- platform: mqtt
+  name: Mailbox Red Light
+  command_topic: "mailbox/reading"
+  state_on: "0"
+  payload_on: "0"
+  state_off: "1"
+  payload_off: "1"
+
+- platform: mqtt
+  name: Mailbox Temp Request
+  command_topic: "mailbox/reading"
+  state_on: "8"
+  payload_on: "8"
+  state_off: "9"
+  payload_off: "9"
+
+- platform: mqtt
+  name: Mailbox Green Light
+  command_topic: "mailbox/reading"
+  state_on: "4"
+  payload_on: "4"
+  state_off: "5"
+  payload_off: "5"
+
+- platform: mqtt
+  name: Mailbox Flag
+  command_topic: "mailbox/reading"
+  state_on: "7"
+  payload_on: "7"
+  state_off: "6"
+  payload_off: "6"
+
+- platform: mqtt
+  name: 5V Relay 1
+  command_topic: "/flux-cap-1/reading"
+  state_on: "0"
+  payload_on: "0"
+  state_off: "1"
+  payload_off: "1"
+
+- platform: mqtt
+  name: 5V Relay 2
+  command_topic: "/flux-cap-1/reading"
+  state_on: "2"
+  payload_on: "2"
+  state_off: "3"
+  payload_off: "3"
+
+- platform: mqtt
+  name: 5V Relay All
+  command_topic: "/flux-cap-1/reading"
+  state_on: "5"
+  payload_on: "5"
+  state_off: "4"
+  payload_off: "4"
+
+- platform: mqtt
+  name: Flux Capacitor
+  command_topic: "/flux-capacitor/reading"
+  state_on: "Fluxing"
+  payload_on: "Fluxing"
+  state_off: "Turned Off"
+  payload_off: "Turned Off"

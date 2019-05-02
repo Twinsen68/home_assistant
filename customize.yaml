@@ -224,10 +224,10 @@ sensor.northbound_z_essex_st:
 sensor.m14a_crosstown_at_clinton_street:
   entity_picture: /local/images/icons/M14A.png
 
-sensor.m15_local_uptown_allen__grand:
+sensor.m15_local_uptown_allen_at_grand:
   entity_picture: /local/images/icons/M15.png
 
-sensor.m15sbs_uptown_allen__grand:
+sensor.m15sbs_uptown_allen_at_grand:
   entity_picture: /local/images/icons/M15SBS.png
 
 climate.reef_tank_therm:
@@ -299,6 +299,16 @@ sensor.mqtt_topic_garden_humidity_template_time:
   icon: mdi:clock
 input_boolean.bedroom_alarm_clock_status:
   icon: mdi:alarm
+switch.pantilt_up:
+  icon: mdi:arrow-up-box
+switch.pantilt_down:
+  icon: mdi:arrow-down-box
+switch.pantilt_left:
+  icon: mdi:arrow-left-box
+switch.pantilt_right:
+  icon: mdi:arrow-right-box
+switch.pantilt_center:
+  icon: mdi:image-filter-center-focus
 
 #input_boolean.bedroom_alarm_clock_status:
 #  templates:
@@ -316,6 +326,9 @@ binary_sensor.kiosk_screen:
   hidden: true
 input_number.kiosk_brightness:
   hidden: true
+
+switch.sonoff_10006b7f44:
+  entity_picture: /local/images/humidifier.jpg
 
 sensor.gabe_status:
   entity_picture: https://pbs.twimg.com/profile_images/729829958621773825/6tR5_2u-_400x400.jpg

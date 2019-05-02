@@ -12,11 +12,11 @@
     - 6
     - 7
 #  prefer_icons: 1
-  update_interval:
+  scan_interval:
     # At least one of these must be specified:
     days: 0
     hours: 0
-    minutes: 15
+    minutes: 30
     seconds: 0
     milliseconds: 0
   monitored_conditions:
@@ -37,6 +37,7 @@
     - pressure
     - visibility
     - ozone
+    - moon_phase
     - minutely_summary
     - hourly_summary
     - daily_summary
@@ -44,6 +45,46 @@
     - uv_index
 
 - platform: season
+
+- platform: template
+  sensors:
+    moonphases:
+      entity_id: sensor.dark_sky_moon_icon
+      friendly_name: 'Moon Phase'
+      value_template: '{{ states.sensor.dark_sky_moon_phase_1d.state }}'
+      entity_picture_template: >
+        {% set mphase = states.sensor.dark_sky_moon_phase_1d.state | int %}
+        {% if mphase == 0.0 -%} 
+           /local/images/moonphases/NNewMoon.jpg
+        {% elif mphase > 0.0 -%} 
+           /local/images/moonphases/NWaxingCrescent.jpg
+        {% elif mphase == 0.25 -%} 
+           /local/images/moonphases/NFirstQuarter.jpg
+        {% elif mphase > 0.25 -%} 
+           /local/images/moonphases/NWaxingGibbous.jpg
+        {% elif mphase == 0.5 -%} 
+           /local/images/moonphases/NFullMoon.jpg
+        {% elif mphase > 0.5 -%} 
+           /local/images/moonphases/NWaningGibbous.jpg
+        {% elif mphase == 0.75 -%} 
+           /local/images/moonphases/NLastQuarter.jpg
+        {% elif mphase > 0.75 -%} 
+           /local/images/moonphases/NWaningCrescent.jpg
+        {% else %}
+           /local/images/moonphases/NNewMoon.jpg
+        {% endif %}
+      value_template: >
+        {% set mphase = states.sensor.dark_sky_moon_phase.state | int %}
+        {% if mphase == 0.0 -%} "New Moon"
+        {% elif mphase > 0.0 -%} "Waxing Crescent"
+        {% elif mphase == 0.25 -%} "First Quarter"
+        {% elif mphase > 0.25 -%} "Waxing Gibbous"
+        {% elif mphase == 0.5 -%} "Full Moon"
+        {% elif mphase > 0.5 -%} "Waning Gibbous"
+        {% elif mphase == 0.75 -%} "Last Quarter"
+        {% elif mphase > 0.75 -%} "Waning Crescent"
+        {% else %} "Error"
+        {% endif %}
 
 - platform: template
   sensors:
@@ -299,7 +340,9 @@
   name: Reef Weather
   latitude: -8.499113
   longitude: 115.696371
-  update_interval:
+  forecast:
+    - 1
+  scan_interval:
     hours: 2
   monitored_conditions:
     - summary
@@ -313,6 +356,7 @@
     - humidity
     - daily_summary
     - uv_index
+    - moon_phase
 
 - platform: darksky
   api_key: !secret darksky_api_key
@@ -320,7 +364,9 @@
   name: Amazon Weather
   latitude: -12.653650
   longitude: -52.946115
-  update_interval:
+  forecast:
+    - 1
+  scan_interval:
     hours: 2
   monitored_conditions:
     - summary
@@ -334,6 +380,48 @@
     - humidity
     - daily_summary
     - uv_index
+    - moon_phase
+
+
+- platform: template
+  sensors:
+    amazon_moonphases:
+      entity_id: sensor.amazon_weather_moon_icon
+      friendly_name: 'Amazon Moon'
+      value_template: '{{ states.sensor.amazon_weather_moon_phase_1d.state }}'
+      entity_picture_template: >
+        {% set mphase = states.sensor.amazon_weather_moon_phase_1d.state | int %}
+        {% if mphase == 0.0 -%} 
+           /local/images/moonphases/NNewMoon.jpg
+        {% elif mphase > 0.0 -%} 
+           /local/images/moonphases/NWaxingCrescent.jpg
+        {% elif mphase == 0.25 -%} 
+           /local/images/moonphases/NFirstQuarter.jpg
+        {% elif mphase > 0.25 -%} 
+           /local/images/moonphases/NWaxingGibbous.jpg
+        {% elif mphase == 0.5 -%} 
+           /local/images/moonphases/NFullMoon.jpg
+        {% elif mphase > 0.5 -%} 
+           /local/images/moonphases/NWaningGibbous.jpg
+        {% elif mphase == 0.75 -%} 
+           /local/images/moonphases/NLastQuarter.jpg
+        {% elif mphase > 0.75 -%} 
+           /local/images/moonphases/NWaningCrescent.jpg
+        {% else %}
+           /local/images/moonphases/NNewMoon.jpg
+        {% endif %}
+      value_template: >
+        {% set mphase = states.sensor.amazon_weather_moon_phase_1d.state | int %}
+        {% if mphase == 0.0 -%} "New Moon"
+        {% elif mphase > 0.0 -%} "Waxing Crescent"
+        {% elif mphase == 0.25 -%} "First Quarter"
+        {% elif mphase > 0.25 -%} "Waxing Gibbous"
+        {% elif mphase == 0.5 -%} "Full Moon"
+        {% elif mphase > 0.5 -%} "Waning Gibbous"
+        {% elif mphase == 0.75 -%} "Last Quarter"
+        {% elif mphase > 0.75 -%} "Waning Crescent"
+        {% else %} "Error"
+        {% endif %}
 
 # Time Date
 - platform: time_date
@@ -503,6 +591,50 @@
       window_size: 00:05
       precision: 2
 
+#Plant monitor channels
+- platform: mqtt
+  state_topic: 'groot-soil-temp/reading'
+  name: Plant Monitor Soil Temp
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'groot-soil-moisture/reading'
+  name: Plant Monitor Soil Moisture
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor Temp F'
+  state_topic: 'groot-temp-f/reading'
+  unit_of_measurement: '°F'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor Temp C'
+  state_topic: 'groot-temp-c/reading'
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor Temp H'
+  state_topic: 'groot-temp-h/reading'
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor HIF'
+  state_topic: 'groot-temp-hif/reading'
+  unit_of_measurement: '°F'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor HIC'
+  state_topic: 'groot-temp-hic/reading'
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+#Octocam status
 - platform: mqtt
   state_topic: 'psmqtt/octocam/cpu_percent'
   name: Latest Reef CPU Percent
@@ -547,9 +679,9 @@
         {%- set date = as_timestamp(states.sensor.octoprint_humidity_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
-- platform: date_countdown
-  name: Renew SSL
-  date: "02-03-2019 12:00"
+#- platform: date_countdown
+#  name: Renew SSL
+#  date: "02-03-2019 12:00"
 
 - platform: mqtt
   state_topic: 'temp-octo/reading'
@@ -594,8 +726,43 @@
   value_template: "{{ value }}"
 
 - platform: mqtt
-  name: USPS Packages
+  name: 'USPS Packages'
   state_topic: '/usps/packages'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Mailbox Temp F'
+  state_topic: 'mailbox-temp-f/reading'
+  unit_of_measurement: '°F'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Mailbox Temp C'
+  state_topic: 'mailbox-temp-c/reading'
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Mailbox Temp H'
+  state_topic: 'mailbox-temp-h/reading'
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Mailbox Temp HIF'
+  state_topic: 'mailbox-temp-hif/reading'
+  unit_of_measurement: '°F'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Mailbox Temp HIC'
+  state_topic: 'mailbox-temp-hic/reading'
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'mailbox/reading'
+  name: 'Mailbox Firehose'
   value_template: "{{ value }}"
 
 - platform: template
@@ -890,7 +1057,6 @@
   name: 'Reef Stats Raw'
 #  entity_id: sensor.reef_stats_raw
   file_path: /home/homeassistant/.homeassistant/downloads/reef_stats.csv
-
 - platform: template
   sensors:
     latest_reef_stats_date:
@@ -923,30 +1089,25 @@
 
 - platform: file
   name: 'NOAA Daily Reef Temp Raw'
-#  entity_id: sensor.noaa_daily_reef_temp_raw
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
 
 - platform: file
   name: 'NOAA Daily Min Reef Temp'
-#  entity_id: sensor.noaa_daily_reef_temp_raw
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
   value_template: >
     {% set rawvalue = states.sensor.noaa_daily_reef_temp_raw.state %}
     {% set adjvalue =  (rawvalue.split(" ")[3]) | round(1) %}
-    {{ (adjvalue - 2) | round(1) }}
-#  value_template: '{{ (value.split(" ")[3]) | round(1) }}'
+    {{ (adjvalue - 3) | round(1) }}
 
 - platform: file
   name: 'NOAA Daily Max Reef Temp'
-#  entity_id: sensor.noaa_daily_max_reef_temp
   file_path: /home/homeassistant/.homeassistant/www/images/east_java_bali.txt
   unit_of_measurement: '°C'
   value_template: >
     {% set rawvalue = states.sensor.noaa_daily_reef_temp_raw.state %}
     {% set adjvalue =  (rawvalue.split(" ")[4]) | round(1) %}
-    {{ (adjvalue - 2) | round(1) }}
-#  value_template: '{{ (value.split(" ")[4].split(" ")[0]) | round(1) }}'
+    {{ (adjvalue - 3) | round(1) }}
 
 - platform: min_max
   name: reef_avg_daily_temp
@@ -982,7 +1143,6 @@
 - platform: scrape
   resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
   select: "#amanecer_anochecer_datos_salida_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
-#  entity_id: sensor.reefsunrisetides
   name: ReefSunriseTides
   scan_interval: 7200
   value_template: '{{ (value.split(" h")[0]) }}'
@@ -990,10 +1150,23 @@
 - platform: scrape
   resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
   select: "#amanecer_anochecer_datos_puesta_sol div.amanecer_anochecer_datos_salida_puesta_sol2"
-#  entity_id: sensor.reefsunsettides
   name: ReefSunsetTides
   scan_interval: 7200
   value_template: '{{ (value.split(" h")[0]) }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
+  select: "div.grafico_salida_puesta_luna_texto div.grafico_estado_actual_texto1 p"
+  name: ReefMoonriseTides
+  scan_interval: 7200
+  value_template: '{{ (value.split("at ")[1].split(" h")[0]) }}'
+
+- platform: scrape
+  resource: https://tides4fishing.com/as/west-indonesia/banjuwangi-bali-str
+  select: "div.grafico_salida_puesta_luna_texto div.grafico_estado_actual_texto1 p"
+  name: ReefMoonsetTides
+  scan_interval: 7200
+  value_template: '{{ (value.split("at ")[2].split(" h")[0]) }}'
 
 - platform: uptime
   name: Time Online
@@ -1073,7 +1246,7 @@
       friendly_name: 'Date'
 
 #Bustime Sensors
-#- platform: gtfs_realtime
+#- platform: gtfs
 #  name: Next Bus
 #  trip_update_url: !secret gtfs_bus_trip_update_url
 #  vehicle_position_url: !secret gtfs_bus_trip_position_url
@@ -1082,14 +1255,14 @@
 #  - name: M14A Crosstown at Clinton Street
 #    route: M14A
 #    stopid: 401150
-#  - name: 'M15SBS Uptown Allen & Grand'
+#  - name: 'M15SBS Uptown Allen at Grand'
 #    route: "M15-SBS"
 #    stopid: 405320
-#  - name: M15 Local Uptown Allen & Grand
+#  - name: M15 Local Uptown Allen at Grand
 #    route: M15
 #    stopid: 405320
 
-#- platform: gtfs_realtime
+#- platform: gtfs
 #  name: Essex Subway B D F M
 #  trip_update_url: !secret gtfs_subway1_trip_update_url
 #  offset: 10
@@ -1110,7 +1283,7 @@
 #    stopid: F16S
 #    route: F
 
-#- platform: gtfs_realtime
+#- platform: gtfs
 #  name: Essex Subway J Z
 #  trip_update_url: !secret gtfs_subway2_trip_update_url
 #  offset: 10
@@ -1204,7 +1377,7 @@
 - platform: template
   sensors:
     gabe_status:
-      value_template: '{{ states.input_select.phil_status_dropdown.state }}'
+      value_template: '{{ states.input_select.gabe_status_dropdown.state }}'
       friendly_name: 'Gabe'
 
 #System Monitor
@@ -1212,8 +1385,54 @@
   name: HA Installed Version
   scan_interval: 86400
 
+# cpu speed raspberry device
+- platform: cpuspeed
+
+# system monitor raspberry device
+- platform: systemmonitor
+  resources:
+    - type: disk_use_percent
+      arg: /
+    - type: disk_use_percent
+      arg: /var/log
+    - type: memory_use_percent
+    - type: memory_use
+    - type: memory_free
+    - type: processor_use
+    - type: swap_use_percent
+    - type: swap_use
+    - type: swap_free
+    - type: last_boot
+## LAN Adapter
+    - type: network_in
+      arg: eth0
+    - type: network_out
+      arg: eth0
+    - type: packets_in
+      arg: eth0
+    - type: packets_out
+      arg: eth0
+    - type: ipv4_address
+      arg: eth0
+    - type: ipv6_address
+      arg: eth0
+## WLAN Adapter   
+    - type: network_in
+      arg: wlan0
+    - type: network_out
+      arg: wlan0
+    - type: packets_in
+      arg: wlan0
+    - type: packets_out
+      arg: wlan0
+    - type: ipv4_address
+      arg: wlan0
+    - type: ipv6_address
+      arg: wlan0
+
 - platform: rpi_power
 #  name: RPi Power Status
+  text_state: true
 
 - platform: command_line
   name: "HA Uptime"
@@ -1251,6 +1470,69 @@
 
 - platform: dnsip
   name: "IP Address"
+
+- platform: feedparser
+  name: News Top
+  feed_url: 'http://feeds.reuters.com/reuters/topNews'
+  date_format: '%a, %b %d %I:%M %p'
+  inclusions:
+    - title
+    - link
+    - description
+    - image
+    - pubDate
+
+- platform: feedparser
+  name: News Tech
+  feed_url: 'http://feeds.reuters.com/reuters/technologyNews'
+  date_format: '%a, %b %d %I:%M %p'
+  inclusions:
+    - title
+    - link
+    - description
+    - image
+    - pubDate
+
+- platform: feedparser
+  name: News Weird
+  feed_url: 'http://feeds.reuters.com/reuters/oddlyEnoughNews'
+  date_format: '%a, %b %d %I:%M %p'
+  inclusions:
+    - title
+    - link
+    - description
+    - image
+    - pubDate
+
+- platform: feedparser
+  name: News Arts
+  feed_url: 'http://feeds.reuters.com/news/artsculture'
+  date_format: '%a, %b %d %I:%M %p'
+  inclusions:
+    - title
+    - link
+    - description
+    - image
+    - pubDate
+
+- platform: feedparser
+  name: News NPR Audio
+  feed_url: 'https://www.npr.org/rss/podcast.php?id=500005'
+  date_format: '%a, %b %d %I:%M %p'
+
+- platform: template
+  sensors:
+    npr_news_mp3_link:
+      friendly_name: 'NPR News mp3 link'
+      value_template: >
+        {{(states.sensor.news_npr_audio.attributes | string).split("'href': '")[1].split("?")[0]}}
+
+- platform: template
+  sensors:
+    npr_news_mp3_date:
+      friendly_name: 'NPR News mp3 date'
+      value_template: >
+        {{(states.sensor.news_npr_audio.attributes | string).split("'published': '")[1].split("'")[0]}}
 
 #- platform: feedparser
 #  name: sfgabe Feed
@@ -1641,6 +1923,46 @@
 #  resource: http://reefcontrolpi.local/api/equipments/1
 #  value_template: '{{ value_json.on }}'
 
+- platform: template
+  sensors:
+    reef_moonphases:
+      entity_id: sensor.reef_weather_moon_icon
+      friendly_name: 'Reef Moon'
+      value_template: '{{ states.sensor.reef_weather_moon_phase_1d.state }}'
+      entity_picture_template: >
+        {% set mphase = states.sensor.reef_weather_moon_phase_1d.state | int %}
+        {% if mphase == 0.0 -%} 
+           /local/images/moonphases/NNewMoon.jpg
+        {% elif mphase > 0.0 -%} 
+           /local/images/moonphases/NWaxingCrescent.jpg
+        {% elif mphase == 0.25 -%} 
+           /local/images/moonphases/NFirstQuarter.jpg
+        {% elif mphase > 0.25 -%} 
+           /local/images/moonphases/NWaxingGibbous.jpg
+        {% elif mphase == 0.5 -%} 
+           /local/images/moonphases/NFullMoon.jpg
+        {% elif mphase > 0.5 -%} 
+           /local/images/moonphases/NWaningGibbous.jpg
+        {% elif mphase == 0.75 -%} 
+           /local/images/moonphases/NLastQuarter.jpg
+        {% elif mphase > 0.75 -%} 
+           /local/images/moonphases/NWaningCrescent.jpg
+        {% else %}
+           /local/images/moonphases/NNewMoon.jpg
+        {% endif %}
+      value_template: >
+        {% set mphase = states.sensor.reef_weather_moon_phase_1d.state | int %}
+        {% if mphase == 0.0 -%} "New Moon"
+        {% elif mphase > 0.0 -%} "Waxing Crescent"
+        {% elif mphase == 0.25 -%} "First Quarter"
+        {% elif mphase > 0.25 -%} "Waxing Gibbous"
+        {% elif mphase == 0.5 -%} "Full Moon"
+        {% elif mphase > 0.5 -%} "Waning Gibbous"
+        {% elif mphase == 0.75 -%} "Last Quarter"
+        {% elif mphase > 0.75 -%} "Waning Crescent"
+        {% else %} "Error"
+        {% endif %}
+
 #alarm clock
 - platform: template
   sensors:
@@ -1867,7 +2189,30 @@
       friendly_name: 'Kiosk Battery'
       value_template: '{{ states.light.dashboard_screen.attributes.battery_level }}'
       entity_id: sensor.kiosk_battery
-    kiosk_battery:
+    kiosk_brightness:
       friendly_name: 'Kiosk Brightness'
       value_template: '{{ states.light.dashboard_screen.attributes.brightness }}'
       entity_id: sensor.kiosk_brightness
+
+- platform: mqtt
+  state_topic: "/flux-cap-1/reading"
+  name: 5V Relay
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "/flux-capacitor/reading"
+  name: Flux Capacitor
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "temp-bedroom/reading"
+  name: Bedroom Temp
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "humidity-bedroom/reading"
+  name: Bedroom Humidity
+  value_template: "{{ value }}"
+
+#This is to use the remote
+- platform: huesensor

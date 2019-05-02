@@ -79,21 +79,16 @@ system:
 
 #Groups
 
-lights:
-  name: Lights
+all_lightbulbs:
+  name: All Lightbulbs
   entities:
-    - light.bedroom
-    - light.bedroom_2
-    - light.custom_group_for_lights
+    - light.bedroom_desk
+    - light.bedside_table
+    - light.desk
     - light.kitchen
-    - light.living_room
-    - light.office
-    - light.stairs
-    - light.kitchen_2
-    - light.table_lamp
-    - light.window
-    - group.all_lights
-#    - binary_sensor.floorplan
+    - light.entry_light
+    - light.table
+    - light.white_bulb
 
 reef_tides:
   name: Reef Tides
@@ -289,8 +284,8 @@ birthday:
 bus:
   name: Bus Times
   entities:
-    - sensor.m15_local_uptown_allen__grand
-    - sensor.m15sbs_uptown_allen__grand
+    - sensor.m15_local_uptown_allen_at_grand
+    - sensor.m15sbs_uptown_allen_at_grand
     - sensor.m14a_crosstown_at_clinton_street
 
 subway:
