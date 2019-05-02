@@ -1,0 +1,20 @@
+alarm_hour:
+  name: Hour
+  icon: mdi:timer
+  initial: 6
+  min: 0
+  max: 20
+  step: 1
+alarm_minutes:
+  name: Minutes
+  icon: mdi:timer
+  initial: 25
+  min: 0
+  max: 55
+  step: 1
+kiosk_brightness:
+  name: kiosk_brightness
+  initial: 128
+  min: 0
+  max: 255
+  step: 1

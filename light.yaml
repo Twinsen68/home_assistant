@@ -1,0 +1,17 @@
+- platform: template
+  lights:
+#kiosk
+    dashboard_screen:
+      friendly_name: "Kiosk"
+      turn_on:
+        service: rest_command.kiosk_screen_on
+      turn_off:
+        service: rest_command.kiosk_screen_off
+      set_level:
+        service: script.kiosk_screen_value
+        data_template:
+          brightness: "{{ brightness }}"
+#entry light
+- platform: switch
+  name: "Entry Light"
+  entity_id: switch.entry_light

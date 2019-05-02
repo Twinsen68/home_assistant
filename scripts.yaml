@@ -1,0 +1,808 @@
+#Manual Backup Button
+backup:
+  alias: Backup HA Configuration Files
+  sequence:
+    - service: shell_command.backup_configuration
+
+#Manual Reefcam Restart Button
+reefcam_restart:
+  alias: Reefcam Restart
+  sequence:
+    - service: shell_command.reefcam_restart
+
+#Manual ReefControlPi Restart Button
+reef_control_restart:
+  alias: Reef Control Pi Restart
+  sequence:
+    - service: shell_command.reefcontrolpi_reboot
+
+#Manual Octocam Restart Button
+#octocam_restart:
+#  alias: Octocam Restart
+#  sequence:
+#    - service: shell_command.octocam_restart
+
+#Manual Home Assistant Restart Button
+ha_restart:
+  alias: Home Assistant Restart
+  sequence:
+    - service: shell_command.ha_reboot
+
+#Reef Tank Kessil Morning and Evening Light Fades
+reeftank_morning_fade_kessil:  
+  alias: "Reef Light Morning Fade Kessil"
+  sequence:
+    - delay:
+        seconds: 7200
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.reef_temp_nightime_state
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.reef_temp_daytime_state
+    - service: automation.trigger
+      entity_id: automation.set_reef_thermostat_max_daytime_selector
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_2
+    - service: automation.trigger
+      entity_id: automation.set_reef_thermostat_max_daytime_selector
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_4
+    - delay:
+        seconds: 480
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_1
+    - delay:
+        seconds: 1800
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_2
+    - delay:
+        seconds: 900
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_3
+    - delay:
+        seconds: 900
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['PowerToggle','2']
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_4
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'FastForward'
+    - delay:
+        seconds: 900
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_5
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'FastForward'
+    - delay:
+        seconds: 5200
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_6
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'FastForward'
+    - delay:
+        seconds: 12600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_7
+    - delay:
+        seconds: 10800
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_8
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Rewind'
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_9
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Rewind'
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_10
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Rewind'
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_11
+    - delay:
+        seconds: 3600
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_12
+
+reeftank_evening_fade_kessil:  
+  alias: "Reef Light Evening Fade Kessil"
+  sequence:
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: 'Stop'
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['1','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Stop']
+    - delay:
+        seconds: 3600
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.reef_temp_daytime_state
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.reef_temp_nightime_state
+    - service: automation.trigger
+      entity_id: automation.set_reef_thermostat_max_nighttime_selector
+    - service: homeassistant.turn_off
+      entity_id: switch.kessil_light_level_12
+    - delay:
+        seconds: 480
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_4
+
+reeftank_moon_on:  
+  alias: "Reef Light Moon On"
+  sequence:
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['PowerToggle','1','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind']
+
+reeftank_moon_up:  
+  alias: "Reef Light Moon Up"
+  sequence:
+    - delay:
+        seconds: 600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 10800
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+
+reeftank_moon_up_stronger:  
+  alias: "Reef Light Moon Stronger"
+  sequence:
+    - delay:
+        seconds: 600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward','FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 7200
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind','Rewind']
+
+reeftank_full_moon:  
+  alias: "Reef Full Moon"
+  sequence:
+    - delay:
+        seconds: 600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['FastForward']
+    - service: homeassistant.turn_on
+      entity_id: switch.kessil_light_level_12
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_4
+    - delay:
+        seconds: 7200
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_4
+    - service: homeassistant.turn_off
+      entity_id: switch.kessil_light_level_12
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Rewind']
+
+reeftank_moon_off:  
+  alias: "Reef Light Moon Off"
+  sequence:
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 43857787
+        command: ['Stop']
+
+# LED light
+# Buttons 1Blue 2white 4green 5yellow 8orange
+
+reeftank_sump_pulse:  
+  alias: "Reef Tank Sump Pulse"
+  sequence:
+    - service: homeassistant.turn_on
+      entity_id: switch.2437254184f3eb695276
+    - delay:
+        seconds: 30
+    - service: homeassistant.turn_off
+      entity_id: switch.2437254184f3eb695276
+
+
+octotank_morning_on:
+  alias: "Octo Light Morning On"
+  sequence:
+    - delay:
+        seconds: 3600
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_4
+#    - service: switch.turn_on
+#      entity_id: switch.06200940dc4f22cbb432_3
+    - service: automation.trigger
+      entity_id: automation.set_amazon_thermostat_max_daytime_selector
+
+octotank_evening_off:
+  alias: "Octo Light Evening Off"
+  sequence:
+    - delay:
+        seconds: 3600
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_4
+#    - service: switch.turn_off
+#      entity_id: switch.06200940dc4f22cbb432_3
+    - service: automation.trigger
+      entity_id: automation.set_amazon_thermostat_max_night_selector
+
+#Vacuum Room
+roomba_turn_on:  
+  alias: "Turn On Roomba"
+  sequence:
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 55925028
+        command: 'Medium'
+
+#Freshwater Feeder
+freshwater_feeder_script:  
+  alias: "Feed the Fish"
+  sequence:
+    - service: switch.turn_on
+      entity_id: switch.octofishfeeder
+    - service: downloader.download_file
+      data_template:
+        url: "http://octocam.local:8765/picture/1/current/?_username=admin&_signature=a96455e6bfe50190508c4b21bc26d8f2ef93221d"
+        filename: "latest_octocam.jpg"
+        overwrite: true
+    - delay:
+        seconds: 240
+    - service: switch.turn_off
+      entity_id: switch.octofishfeeder
+    - service: notify.octo_cam_bot_notifier
+      data:
+        message: "I, OctoCamBot, just fed the fish! \U0001F420 \U0001F95E \U0001F389 \U0001F32E \U0001F420 \U0001F9C1 \U0001F355 EmojiStats: \U0001F321 {{ states.sensor.mqtt_topic_octo_sysinfo_template_watertemp.state }}F \U0001F964  {{ states.sensor.mqtt_topic_octo_water_level_template_level.state }} \U0001F305 {{ states.sensor.amazonsunrisetides.state }} \U0001F307 {{ states.sensor.amazonsunsettides.state }}"
+        data:
+          media: /home/homeassistant/.homeassistant/www/images/latest_octocam.jpg
+
+#Freshwater Waves
+freshwater_waves_on_script:  
+  alias: "Turn On Freshwater Waves"
+  sequence:
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_1
+    - delay:
+        seconds: 6300
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_1
+    - delay:
+        seconds: 14400
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb432_1
+    - delay:
+        seconds: 6300
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb432_1
+
+#Reef Waves
+reef_waves_lowtide_fade_script:  
+  alias: "Low Tide Reef Waves Fade"
+  sequence:
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 360
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 980
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2100
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2905
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3465
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3885
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 4095
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 4200
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 4095
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3885
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 3465
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2905
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 2100
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 980
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 360
+    - service: switch.turn_on
+      entity_id: switch.06200940dc4f22cbb94b_2
+    - delay:
+        seconds: 230
+    - service: switch.turn_off
+      entity_id: switch.06200940dc4f22cbb94b_2
+
+# Lovelace Theme Notification Text Clear
+clear_notification_text:
+  sequence:
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.notification_text
+        value: "No Message"
+
+# Alarm Clock
+alarm_clock_loop:
+  alias: Alarm Clock Loop
+  sequence:
+  - service: script.turn_on
+    data:
+      entity_id: script.sunrise_lights
+
+#Alarm 2
+bedroom_wake_up:
+  sequence:
+    - service_template: >
+        {% if is_state('sensor.dark_sky_icon' , 'rain') %} script.early_wakeup
+        {% elif is_state('sensor.dark_sky_icon' , 'snow') %} script.early_wakeup
+        {% else %} script.on_time_wakeup {% endif %}
+
+early_wakeup:
+  sequence:
+    - service: script.notify
+      data:
+        message: "I am triggering the alarm fifteen minutes early because of bad weather"
+#    - service_template: >
+#        {% if is_state('input_boolean.bedroom_alarm_clock_repeat' , 'on') %} homeassistant.turn_on
+#        {% else %} homeassistant.turn_off {% endif %}
+#      entity_id: input_boolean.bedroom_alarm_clock_status
+    - service: script.turn_on
+      data:
+        entity_id: script.sunrise_lights
+#    - delay:
+#        seconds: 2700
+#    - service: rest_command.kiosk_sound_morning_birds
+#    - delay:
+#        seconds: 900
+#    - service: rest_command.kiosk_sound_morning_birds
+
+on_time_wakeup:
+  sequence:
+    - delay:
+        seconds: 900
+#    - service_template: >
+#        {% if is_state('input_boolean.bedroom_alarm_clock_repeat' , 'on') %} homeassistant.turn_on
+#        {% else %} homeassistant.turn_off {% endif %}
+#      entity_id: input_boolean.bedroom_alarm_clock_status
+    - service: script.turn_on
+      data:
+        entity_id: sunrise_lights
+#    - delay:
+#        seconds: 2700
+#    - service: rest_command.kiosk_sound_morning_birds
+#    - delay:
+#        seconds: 900
+#    - service: rest_command.kiosk_sound_morning_birds
+
+#Sunrise lights
+sunrise_lights:
+  sequence:
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom
+        xy_color: [0.67,0.39]
+        brightness: 1
+    - delay:
+        seconds: 1
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom
+        xy_color: [0.65,0.41]
+        brightness: 85
+        transition: 600
+    - delay:
+        seconds: 600
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom
+        xy_color: [0.60,0.40]
+        brightness: 170
+        transition: 600
+    - delay:
+        seconds: 600
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom
+        xy_color: [0.48,0.40]
+        brightness: 255
+        transition: 600
+
+usps_sms_notification:
+  sequence:
+    - service: ifttt.trigger
+      data_template: {"event":"usps_mail_alert_1", "value1":"{{ sensor.usps_mail }}", "value2":"{{ sensor.usps_packages }}"}
+    - service: ifttt.trigger
+      data_template: {"event":"usps_mail_alert_2", "value1":"{{ sensor.usps_mail }}", "value2":"{{ sensor.usps_packages }}"}
+    - service: automation.turn_off
+      entity_id: automation.usps_mail_alert
+
+kiosk_screen_value:
+  sequence:
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.kiosk_brightness
+        value: "{{ brightness }}"
+    - service: rest_command.kiosk_screen_value
+
+kiosk_weather_report:
+  sequence:
+    - service: notify.kiosk
+      data:
+        message: "Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees faren height, inside the temperature is, {{ states('sensor.mqtt_topic_garden_temperature_template') }} degrees faren height. You can expect {{ states('sensor.dark_sky_daily_summary') }}"
+
+kiosk_good_morning:
+  sequence:
+    - delay:
+        seconds: 180
+    - service: rest_command.kiosk_sound_incomingtransmission
+    - delay:
+        seconds: 3.00
+    - service: notify.kiosk
+      data:
+        message: "Good morning Gabe! The time is now, {{ states('sensor.time') }}. Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees fahrenheit and {{ states('sensor.dark_sky_minutely_summary') }}. You can expect {{ states('sensor.dark_sky_daily_summary') }}"
+    - delay:
+        seconds: 25.00
+    - service: notify.kiosk
+      data:
+        message: The leading reuters headline this morning is {{(states.sensor.news_top.attributes | string).split("'")[1].split("'")[-1]}}. In technology the top headline is {{(states.sensor.news_tech.attributes | string).split("'")[1].split("'")[-1]}}. The arts headline is {{(states.sensor.news_arts.attributes | string).split("'")[1].split("'")[-1]}}. And finally in news of the weird, {{(states.sensor.news_weird.attributes | string).split("'")[1].split("'")[-1]}}
+    - delay:
+        seconds: 35.00
+    - service: rest_command.kiosk_sound_spoken
+    - delay:
+        seconds: 3.00
+    - service: rest_command.kiosk_sound_startrek_computer2
+    - delay:
+        seconds: 15.00
+    - service: switch.turn_on
+      entity_id: switch.entry_light
+    - service: light.turn_on
+      data:
+        entity_id: light.kitchen
+        rgb_color: [255,251,4]
+        brightness: 255
+        transition: 120
+    - service: rest_command.kiosk_sound_npr_news
+    - delay:
+        seconds: 350.00
+    - condition: template
+      value_template: "{{ ((as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - as_timestamp(now())) < 64800) and ((as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - as_timestamp(now())) > 0) }}"
+    - service: rest_command.kiosk_sound_startrek_computer1
+    - service: notify.kiosk
+      data:
+        message: "By the way, you have an event on your calendar today. At {{as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) | timestamp_custom('%-I:%M %P')}} is {{states.calendar.gabethisisgabescom.attributes.message}}. It will be located at {{states.calendar.gabethisisgabescom.attributes.location}}"
+    - service: rest_command.kiosk_sound_startrek_computer2
+
+fart_machine:
+  sequence:
+    - service: rest_command.kiosk_sound_fart1
+
+get_mailbox_temp:
+  sequence:
+    - service: switch.turn_on
+      entity_id: switch.mailbox_temp_request
+    - delay: 00:00:02
+    - service: switch.turn_off 
+      entity_id: switch.mailbox_temp_request
+
+#Lighting Scripts
+tv_lights_off:
+  sequence:
+    - service: light.turn_on
+      data:
+        entity_id: light.table
+        rgb_color: [255,251,4]
+        brightness: 255
+        transition: 120
+    - service: light.turn_on
+      data:
+        entity_id: light.desk
+        rgb_color: [255,251,4]
+        brightness: 170
+        transition: 120
+    - service: light.turn_on
+      data:
+        entity_id: light.kitchen
+        rgb_color: [255,251,4]
+        brightness: 255
+        transition: 120
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom_desk
+        xy_color: [0.48,0.40]
+        brightness: 70
+        transition: 120
+    - service: light.turn_on
+      data:
+        entity_id: light.bedside_table
+        xy_color: [0.65,0.41]
+        brightness: 70
+        transition: 120
+
+tv_lights_on:
+  sequence:
+    - service: switch.turn_off
+      entity_id: switch.entry_light
+    - service: light.turn_on
+      data:
+        entity_id: light.table
+        xy_color: [0.67,0.39]
+        brightness: 44
+        transition: 60
+    - service: light.turn_off
+      data:
+        entity_id: light.desk
+        transition: 60
+    - service: light.turn_off
+      data:
+        entity_id: light.kitchen
+        xy_color: [0.65,0.41]
+        brightness: 60
+        transition: 60
+
+welcome_lights_on:
+  sequence:
+    - service: switch.turn_on
+      entity_id: switch.entry_light
+    - delay:
+        seconds: 60
+    - service: light.turn_on
+      data:
+        entity_id: light.bedside_table
+        brightness: 20
+        rgb_color: 255,132,26
+        hs_color: 27.632,89.412
+        xy_color: 0.601,0.376
+        transition: 60
+    - delay:
+        seconds: 30
+    - service: light.turn_on
+      data:
+        entity_id: light.table
+        rgb_color: 255,200,145
+        hs_color: 30,43.137
+        xy_color: 0.443,0.379
+        brightness: 221
+        transition: 60
+    - delay:
+        seconds: 20
+    - service: light.turn_on
+      data:
+        entity_id: light.kitchen
+        brightness: 254
+        rgb_color: 255,172,146
+        hs_color: 13.889,42.353
+        xy_color: 0.466,0.345
+        transition: 60
+    - delay:
+        seconds: 60
+    - service: light.turn_on
+      data:
+        entity_id: light.desk
+        rgb_color: 101,49,255
+        hs_color: 255.146,80.784
+        xy_color: 0.188,0.078
+        brightness: 50
+        transition: 60

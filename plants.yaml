@@ -1,0 +1,17 @@
+herbs:
+  sensors:
+    moisture: sensor.mqtt_topic_garden_humidity_template
+    temperature: sensor.mqtt_topic_garden_temperature_template
+  min_moisture: 20
+  max_moisture: 60
+  min_temperature: 50
+  max_temperature: 85
+
+bedroom:
+  sensors:
+    moisture: sensor.plant_monitor_soil_moisture
+    temperature: sensor.plant_monitor_temp_f
+  min_moisture: 20
+  max_moisture: 60
+  min_temperature: 50
+  max_temperature: 85

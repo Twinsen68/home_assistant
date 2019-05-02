@@ -1,0 +1,32 @@
+#- radio_station:
+#    name: 'Select Radio Station:'
+#    options:
+#      - WKFU 1111
+#      - WK Some Station
+#    initial: WKFU 1111
+#    icon: mdi:radio 
+
+harmony:
+  name: Harmony
+  options:
+    - Speaker
+    - Fishtank Evening
+    - Lights Up
+    - Watch Roku
+    - Watch a Movie
+    - Morning News
+    - TV Lights
+    - Fishtank Morning
+    - Vacuum
+  icon: mdi:monitor
+
+gabe_status_dropdown:
+  name: Gabe
+  options:
+    - Home
+    - Just Arrived
+    - Just Left
+    - Away
+    - Extended Away
+    - Work
+  initial: Home
