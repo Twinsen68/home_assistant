@@ -7,7 +7,7 @@
 #!.gitignore
 #!*.md
 !ha_bali.png
-!custom_components
+!custom_components/*
 
 # Ignore folders.
 .storage
