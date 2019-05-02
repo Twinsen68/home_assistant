@@ -2021,8 +2021,8 @@
 #  scan_interval: 180
 
 - platform: cert_expiry
-  host: thisisgabes.asuscomm.com
-  port: 8008
+  host: !secret cert_expiry_host
+  port: !secret cert_expiry_port
 
 - platform: pilight
   name: 'Some Inside Temperature Sensor'
