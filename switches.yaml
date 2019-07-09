@@ -38,13 +38,13 @@
           entity_id: remote.gabes_harmony_hub
           data:
             command: '1'
-            device: 43857787
+            device: 'Generic LED'
       turn_off:
         - service: remote.send_command
           entity_id: remote.gabes_harmony_hub
           data:
             command: '2'
-            device: 43857787
+            device: 'Generic LED'
 
 - platform: template
   switches:
@@ -56,13 +56,13 @@
           entity_id: remote.gabes_harmony_hub
           data:
             command: ['PowerToggle','2']
-            device: 43857787
+            device: 'Generic LED'
       turn_off:
         - service: remote.send_command
           entity_id: remote.gabes_harmony_hub
           data:
             command: 'Stop'
-            device: 43857787
+            device: 'Generic LED'
 
 - platform: template
   switches:
@@ -78,24 +78,24 @@
         service: remote.turn_off
         entity_id: remote.gabes_harmony_hub
 
-- platform: template
-  switches:
-    harmony_turn_on_roomba:
-      value_template: "{{ is_state('input_boolean.turn_on_roomba_switch_boolean','on') }}"
-      friendly_name: Turn Roomba On/Off
-      turn_on:
-        - service: remote.send_command
-          entity_id: remote.gabes_harmony_hub
-          data:
-            command: 'Medium'
-            device: 55925028
-      turn_off:
-        - service: remote.send_command
-          entity_id: remote.gabes_harmony_hub
-          data:
-            command: 'Pause'
-            device: 55925028
-      entity_picture_template: 'images/roomba.jpg'
+#- platform: template
+#  switches:
+#    harmony_turn_on_roomba:
+#      value_template: "{{ is_state('input_boolean.turn_on_roomba_switch_boolean','on') }}"
+#      friendly_name: Turn Roomba On/Off
+#      turn_on:
+#        - service: remote.send_command
+#          entity_id: remote.gabes_harmony_hub
+#          data:
+#            command: 'Medium'
+#            device: 55925028
+#      turn_off:
+#        - service: remote.send_command
+#          entity_id: remote.gabes_harmony_hub
+#          data:
+#            command: 'Pause'
+#            device: 55925028
+#      entity_picture_template: 'images/roomba.jpg'
 
 #Switch for PanTilt
 - platform: command_line
@@ -103,30 +103,21 @@
     pantilt_down:
       friendly_name: PanTilt Down
       command_on: !secret switches_pantilt_down
-
-- platform: command_line
-  switches:
     pantilt_up:
       friendly_name: PanTilt Up
       command_on: !secret switches_pantilt_up
-
-- platform: command_line
-  switches:
     pantilt_left:
       friendly_name: PanTilt Left
       command_on: !secret switches_pantilt_left
-
-- platform: command_line
-  switches:
     pantilt_right:
       friendly_name: PanTilt Right
       command_on: !secret switches_pantilt_right
-
-- platform: command_line
-  switches:
     pantilt_center:
       friendly_name: PanTilt Center
       command_on: !secret switches_pantilt_center
+    pantilt_snap:
+      friendly_name: PanTilt Snap
+      command_on: !secret switches_pantilt_snap
 
 - platform: template
   switches:
@@ -138,13 +129,13 @@
           entity_id: remote.gabes_harmony_hub
           data:
             command: ['PowerToggle','2','FastForward','FastForward','FastForward','FastForward','FastForward','FastForward','FastForward','FastForward']
-            device: 43857787
+            device: 'Generic LED'
       turn_off:
         - service: remote.send_command
           entity_id: remote.gabes_harmony_hub
           data:
             command: ['1','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Stop']
-            device: 43857787
+            device: 'Generic LED'
 
 - platform: rest
   name: Reef Pump 1
@@ -167,7 +158,7 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
 #  authentication: basic  
-  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":99,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:38"}}},"3":{"name":"Forward - 99","min":0,"start_min":99,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:38"}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
+  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":99,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:34"}}},"3":{"name":"Forward - 99","min":0,"start_min":99,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:34"}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
   body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
   is_on_template: '{{ value_json.channels["3"].profile.type == "diurnal" }}'
   headers:
@@ -480,3 +471,90 @@
   payload_on: "Fluxing"
   state_off: "Turned Off"
   payload_off: "Turned Off"
+
+- platform: mqtt
+  name: Garden Light Manual
+  command_topic: "octocam-gpio-lights/reading"
+  state_on: "ON"
+  payload_on: "ON"
+  state_off: "OFF"
+  payload_off: "OFF"
+
+#Harmony
+- platform: template
+  switches:
+    samsung_soundbar_power:
+      friendly_name: Samsung Soundbar Power
+      value_template: "{{ is_state('switch.samsung_soundbar_power', 'on') }}"
+      turn_on:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - PowerToggle
+            device: 'Samsung Amp'
+      turn_off:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - PowerToggle
+            device: 'Samsung Amp'
+    samsung_soundbar_input:
+      friendly_name: Samsung Soundbar Input
+      value_template: "{{ is_state('switch.samsung_soundbar_input', 'on') }}"
+      turn_on:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - Source
+            device: 'Samsung Amp'
+        - delay: 00:00:02
+        - service: switch.turn_off 
+          entity_id: switch.samsung_soundbar_input
+      turn_off:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - null
+            device: 'Samsung Amp'
+    samsung_soundbar_bt_input:
+      friendly_name: Samsung Soundbar Bluetooth Input
+      value_template: "{{ is_state('switch.samsung_soundbar_input', 'on') }}"
+      turn_on:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - InputBT
+            device: 'Samsung Amp'
+        - delay: 00:00:02
+        - service: switch.turn_off 
+          entity_id: switch.samsung_soundbar_input
+      turn_off:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - null
+            device: 'Samsung Amp'
+    samsung_soundbar_mute:
+      friendly_name: Samsung Soundbar Mute
+      value_template: "{{ is_state('switch.samsung_soundbar_input', 'on') }}"
+      turn_on:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - Mute
+            device: 'Samsung Amp'
+          entity_id: switch.samsung_soundbar_input
+      turn_off:
+        - service: remote.send_command
+          data:
+            entity_id: remote.gabes_harmony_hub
+            command:
+              - Mute
+            device: 'Samsung Amp'

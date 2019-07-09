@@ -12,6 +12,17 @@
   action:
     - service: shell_command.backup_configuration
 
+#Set Theme
+- alias: 'Set Theme to Midnight'
+  initial_state: 'on'
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+  - service: frontend.set_theme
+    data:
+      name: midnight
+
 - alias: Activate Motion Detect on Leaving Home Zone
   id: gabe_out_of_home_zone_motion_on
   trigger:
@@ -59,8 +70,8 @@
       zone: zone.home
       event: enter
   action:
-    - service: script.turn_on
-      entity_id: script.welcome_lights_on
+    - service: switch.turn_on
+      entity_id: switch.entry_light
 
 - alias: Deactivate Motion Detect on Enter Home Zone
   id: gabe_arrive_in_home_zone_motion_off
@@ -88,10 +99,11 @@
 #    condition: template
 #    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.gabe_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
-    - service: notify.kiosk
-      data_template:
-        message:  >
-          {{ [ "Hello Gabe welcome home! " , "Welcome back Gabe. " , "Hello Sir. " , "Ahh... it's you. Hello Gabe " , "Greetings sir. " , "Nice of you to join us, Gabe. " ] |random }}
+    - service: script.janet_speech_engine
+      data:
+        call_greeting_gabe: 1
+    - service: script.turn_on
+      entity_id: script.welcome_lights_on
 
 - alias: Mom welcome
   id: mom_arrive_in_home_zone_welcome
@@ -104,10 +116,24 @@
     condition: template
     value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
-    - service: notify.kiosk
-      data_template:
-        message:  >
-          {{ [ "Hello Berny, nice to see you again! " , "Welcome back Bernadette. " , "Hello Berny... welcome back. " , "Oh... it's you. Hello Bernadette " , "Nice of you to join us, Berny. " ] |random }}
+    - service: script.janet_speech_engine
+      data:
+        call_greeting_berny: 1
+
+- alias: Nanoo welcome
+  id: nanoo_arrive_in_home_zone_welcome
+  trigger:
+    - platform: zone
+      entity_id: group.nanoo
+      zone: zone.home
+      event: enter
+  condition:
+    condition: template
+    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
+  action:
+    - service: script.janet_speech_engine
+      data:
+        call_greeting_nanoo: 1
 
 #Morning Greeting
 - alias: 'Morning Greeting'
@@ -179,15 +205,30 @@
     service: switch.turn_on
     entity_id: switch.2437254184f3eb69e784
 
-- alias: Home Assistant Start
+#- alias: Home Assistant Start
+#  trigger:
+#    platform: homeassistant
+#    event: start 
+#  action:
+#    - delay: '00:00:10'
+#    - service: notify.kiosk
+#      data:
+#        message: 'Home Assistant has started'
+
+- alias: Start Up
   trigger:
-    platform: homeassistant
-    event: start 
+    - event: start
+      platform: homeassistant    
   action:
-    - delay: '00:00:10'
+    - delay: '00:00:10'  
+    - service: script.janet_speech_engine
+      data:
+        call_introduction: 1 
+    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+      timeout: 00:00:10
     - service: notify.kiosk
       data:
-        message: 'Home Assistant has started'
+        message: 'I think Janet was trying to tell you that Home Assistant has started'
 
 - alias: Set Harmony activity
   hide_entity: True
@@ -203,16 +244,10 @@
           29883813
         {% elif is_state("input_select.harmony", "Fishtank Evening") %}
           25723108
-        {% elif is_state("input_select.harmony", "Lights Up") %}
-          22279074
         {% elif is_state("input_select.harmony", "Watch Roku") %}
           26106880
         {% elif is_state("input_select.harmony", "Watch a Movie") %}
           26106724
-        {% elif is_state("input_select.harmony", "Morning News") %}
-          22279583
-        {% elif is_state("input_select.harmony", "TV Lights") %}
-          22279102
         {% elif is_state("input_select.harmony", "Fishtank Morning") %}
           25723061
         {% else %}
@@ -545,31 +580,36 @@
 - alias: Garden Turn On Lights
   trigger:
     - platform: time
-      at: '09:00:00'
+      at: '06:00:00'
   action:
     service: switch.turn_on
-    entity_id: switch.garden_light
+    entity_id: switch.garden_light_manual
+
+- alias: Garden Turn Lights Bugfix
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.garden_monitor_light_level
+    below: 25
+  condition:
+    - condition: time
+      after: '06:02:00'
+      before: '20:58:00'
+  action:
+    service: switch.turn_on
+    entity_id: switch.garden_light_manual
 
 - alias: Garden Turn Off Lights
   trigger:
     - platform: time
-      at: '20:00:00'
+      at: '21:00:00'
   action:
     service: switch.turn_off
-    entity_id: switch.garden_light
-
-- alias: Garden Turn Off Waterbot Evening
-  trigger:
-    - platform: time
-      at: '1:03:00'
-  action:
-    service: switch.turn_off
-    entity_id: switch.garden_waterbot
+    entity_id: switch.garden_light_manual
 
 - alias: Garden Turn On Waterbot Morning
   trigger:
     - platform: time
-      at: '6:03:00'
+      at: '7:03:00'
   action:
     service: switch.turn_on
     entity_id: switch.garden_waterbot
@@ -577,18 +617,72 @@
 - alias: Garden Turn Off Waterbot Morning
   trigger:
     - platform: time
-      at: '13:03:00'
+      at: '15:03:00'
   action:
     service: switch.turn_off
     entity_id: switch.garden_waterbot
 
-- alias: Garden Turn On Waterbot Evening
+#Alert if plants need water
+- alias: ferns_needs_water
   trigger:
-    - platform: time
-      at: '18:03:00'
+    platform: numeric_state
+    entity_id: sensor.plant_monitor_soil_moisture
+    below: 20
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        before: '22:30:00'
+        after: '09:30:00'
+      - condition: template
+        value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.ferns_needs_water.attributes.last_triggered) | int > 43200 }}'
   action:
-    service: switch.turn_on
-    entity_id: switch.garden_waterbot
+    - service: ifttt.trigger
+      data_template: {"event":"plant_needs_water", "value1":"Bedroom Ferns", "value2":"{{ states.sensor.plant_monitor_soil_moisture.state }}"}
+    - service: persistent_notification.create
+      data:
+        message: "Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}%"
+        title: "Bedroom Ferns Water Alert!"
+- alias: plant_needs_water
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.garden_monitor_soil_moisture
+    below: 10
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        before: '22:30:00'
+        after: '09:30:00'
+      - condition: template
+        value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.plant_needs_water.attributes.last_triggered) | int > 43200 }}'
+  action:
+    - service: ifttt.trigger
+      data_template: {"event":"plant_needs_water", "value1":"Hydroponic Garden", "value2":"{{ states.sensor.garden_monitor_soil_moisture.state }}"}
+    - service: persistent_notification.create
+      data:
+        message: "Your herb garden needs water. Soil moisture is currently at {{ states.sensor.garden_monitor_soil_moisture.state }}%"
+        title: "Hydroponic Garden Water Alert!"
+- alias: empty_garden_drain
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.garden_monitor_water_level
+    above: 60
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        before: '22:30:00'
+        after: '09:30:00'
+      - condition: template
+        value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.empty_garden_drain.attributes.last_triggered) | int > 43200 }}'
+  action:
+    - service: ifttt.trigger
+      data_template: {"event":"empty_garden_drain", "value1":"Hydroponic Garden", "value2":"{{ states.sensor.garden_monitor_water_level.state }}"}
+    - service: persistent_notification.create
+      data:
+        message: "Empty the drainage reservoir soon. It is currently at {{ states.sensor.garden_monitor_water_level.state }}%"
+        title: "Hydroponic Garden Reservoir Alert!"
 
 ## Alert if Garden Bot is down
 - alias: garden_bot_alert
@@ -728,7 +822,7 @@
 ## Alarm 2 test
 - id: wake_up_alarm_2
   alias: Alarm clock
-  initial_state: on
+  initial_state: off
   trigger:
     platform: template
     value_template: "{{ states('sensor.time') == (((state_attr('input_datetime.bedroom_alarm_clock_time' , 'timestamp')) - (15 * 60))|timestamp_custom('%H:%M', false)) }}"
@@ -742,7 +836,7 @@
   action:
     - service: script.turn_on
       data:
-        entity_id: script.sunrise_lights
+        entity_id: script.bedroom_wake_up
 
 ## IFTTT Test
 - id: IFTTT_test
@@ -914,3 +1008,139 @@
       data:
         entity_id: scene.every_light_in_the_house
 
+- id: Hue Dimmer Switch 2 Click
+  alias: Hue Dimmer Switch 2 Click
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "2_click"
+  action:
+    service: script.turn_on
+    entity_id: script.lights_loop
+
+- id: Hue Dimmer Switch 3 Click
+  alias: Hue Dimmer Switch 3 Click
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "3_click"
+  action:
+    service: script.turn_on
+    entity_id: script.lights_chill_blue
+
+- id: Hue Dimmer Switch 4 Click
+  alias: Hue Dimmer Switch 4 Click
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "4_click"
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: group.all_lightbulbs
+
+- id: Hue Dimmer Switch 1 Click Up
+  alias: Hue Dimmer Switch 1 Click Up
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "1_click_up"
+  action:
+    - service: scene.turn_on
+      data:
+        entity_id: scene.every_light_in_the_house
+
+- id: Hue Dimmer Switch 2 Click Up
+  alias: Hue Dimmer Switch 2 Click Up
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "2_click_up"
+  action:
+    service: script.turn_on
+    entity_id: script.lights_loop
+
+- id: Hue Dimmer Switch 3 Click Up
+  alias: Hue Dimmer Switch 3 Click Up
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "3_click_up"
+  action:
+    service: script.turn_on
+    entity_id: script.lights_chill_blue
+
+- id: Hue Dimmer Switch 4 Click Up
+  alias: Hue Dimmer Switch 4 Click Up
+  trigger:
+    - platform: state
+      entity_id: sensor.hue_dimmer_switch_1
+      to: "4_click_up"
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: group.all_lightbulbs
+
+# Alert if Offline
+- alias: Alert when device goes offline
+  trigger:
+    - platform: state
+      entity_id: sensor.online_device_amazon_echo, sensor.online_device_mailbox, sensor.online_device_harmony_hub, sensor.online_device_homecam_pi, sensor.online_device_octoprint, sensor.online_device_phillips_hue,  sensor.online_device_entry_pi, sensor.online_device_reefcam_pantilt, sensor.online_device_reef_pi, sensor.online_device_entry_kiosk, sensor.online_device_gardenbot, sensor.online_device_plant_monitor
+      from: 'Online'
+      to: 'Offline'
+      for:
+        minutes: 60
+  condition:
+    condition: and
+    conditions:
+      - condition: template
+        value_template: >
+          {% if states.automation.alert_when_device_goes_offline.last_triggered is not none %}
+            {% if as_timestamp(now()) | int   -  as_timestamp(states.automation.alert_when_device_goes_offline.attributes.last_triggered) | int > 3600 %} true {% else %} false
+            {% endif %}
+          {% else %}
+          false
+          {% endif %}
+  action:
+    - service: ifttt.trigger
+      data_template: {"event":"change_of_ip", "value1":"{{trigger.to_state.attributes.friendly_name}} has been offline for 1 hour. Please check the status of this device."}
+
+# Harmony Soundbar
+- id: samsung_soundbar_power
+  alias: 'Soundbar'
+  trigger: 
+    platform: state
+    entity_id: input_boolean.samsung_soundbar_power   #### Triggered by either turning on or off the input_boolen
+  action:
+    service: remote.send_command
+    data_template:
+      entity_id: remote.gabes_harmony_hub
+      device: 29883813
+      command: >
+        {% if is_state(trigger.entity_id, 'on') %}
+          PowerOn
+        {% else %}
+          PowerOff
+        {% endif %}
+
+- alias: Samsung Soundbar Volume (Media to Slider)
+  trigger:
+    - platform: state
+      entity_id: media_player.yamaha_receiver
+  action:
+     service: input_number.set_value
+     data_template:
+       entity_id: input_number.samsung_soundbar
+       value: >
+          {{ ( ( -1.0 + trigger.to_state.attributes.volume_level | float ) * 100.0 ) | round(0.0) }}
+
+- alias: Samsung Soundbar Volume (Slider to Media)
+  trigger:
+    - platform: state
+      entity_id: input_number.samsung_soundbar
+  action:
+    - service: media_player.volume_set
+      data_template:
+        entity_id: media_player.yamaha_receiver
+        volume_level: >
+          {{ (1.0 - trigger.to_state.state | float / 100.0) | round(2) }}

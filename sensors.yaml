@@ -50,8 +50,7 @@
   sensors:
     moonphases:
       entity_id: sensor.dark_sky_moon_icon
-      friendly_name: 'Moon Phase'
-      value_template: '{{ states.sensor.dark_sky_moon_phase_1d.state }}'
+      friendly_name: 'Moon Phase NYC'
       entity_picture_template: >
         {% set mphase = states.sensor.dark_sky_moon_phase_1d.state | int %}
         {% if mphase == 0.0 -%} 
@@ -334,61 +333,89 @@
           error
         {% endif %}
 
-
 - platform: darksky
   api_key: !secret darksky_api_key
   name: Reef Weather
   latitude: -8.499113
   longitude: 115.696371
   forecast:
+    - 0
     - 1
-  scan_interval:
-    hours: 2
+    - 2
+    - 3
+    - 4
+    - 5
   monitored_conditions:
-    - summary
     - icon
-    - precip_type
-    - precip_intensity
+    - summary
+    - nearest_storm_distance
+    - nearest_storm_bearing
+    - humidity
     - temperature
+    - temperature_high
+    - temperature_low
+    - apparent_temperature
+    - apparent_temperature_high
+    - apparent_temperature_low
     - wind_speed
     - wind_bearing
-    - cloud_cover
-    - humidity
-    - daily_summary
+    - precip_type
+    - precip_probability
+    - precip_accumulation
+    - precip_intensity
+    - precip_intensity_max
     - uv_index
+    - daily_summary
+    - pressure
+    - visibility
     - moon_phase
+  scan_interval:
+    hours: 2
 
 - platform: darksky
   api_key: !secret darksky_api_key
-#  mode: daily
   name: Amazon Weather
   latitude: -12.653650
   longitude: -52.946115
   forecast:
+    - 0
     - 1
-  scan_interval:
-    hours: 2
+    - 2
+    - 3
+    - 4
+    - 5
   monitored_conditions:
-    - summary
     - icon
-    - precip_type
-    - precip_intensity
+    - summary
+    - nearest_storm_distance
+    - nearest_storm_bearing
+    - humidity
     - temperature
+    - temperature_high
+    - temperature_low
+    - apparent_temperature
+    - apparent_temperature_high
+    - apparent_temperature_low
     - wind_speed
     - wind_bearing
-    - cloud_cover
-    - humidity
-    - daily_summary
+    - precip_type
+    - precip_probability
+    - precip_accumulation
+    - precip_intensity
+    - precip_intensity_max
     - uv_index
+    - daily_summary
+    - pressure
+    - visibility
     - moon_phase
-
+  scan_interval:
+    hours: 2
 
 - platform: template
   sensors:
     amazon_moonphases:
       entity_id: sensor.amazon_weather_moon_icon
       friendly_name: 'Amazon Moon'
-      value_template: '{{ states.sensor.amazon_weather_moon_phase_1d.state }}'
       entity_picture_template: >
         {% set mphase = states.sensor.amazon_weather_moon_phase_1d.state | int %}
         {% if mphase == 0.0 -%} 
@@ -500,23 +527,6 @@
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
 - platform: mqtt
-  state_topic: 'moisture-level-garden/reading'
-  name: Garden Moisture Level Raw
-  value_template: "{{ value }}"
-
-- platform: template
-  scan_interval: 120
-  sensors:
-    mqtt_topic_garden_moisture_level_template_level:
-      friendly_name: "Garden Moisture Level"
-      value_template: '{{ states.sensor.garden_moisture_level_raw.state.split("|")[0] }}'
-    mqtt_topic_garden_moisture_level_template_time:
-      friendly_name: "Garden Moisture Last Flip"
-      value_template: >
-        {%- set date = as_timestamp(states.sensor.garden_moisture_level_raw.state.split("at ")[1]) -%}
-        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
-
-- platform: mqtt
   state_topic: 'waterbot-garden/reading'
   name: Garden Waterbot Raw
   value_template: "{{ value }}"
@@ -529,14 +539,9 @@
 - platform: template
   scan_interval: 120
   sensors:
-    mqtt_topic_garden_light_state_template:
-      friendly_name: "Garden Light State"
-      value_template: '{{ states.sensor.garden_lightbot_raw.state.split("turned ")[1].split("starting at")[0] }}'
-    mqtt_topic_garden_light_state_time:
-      friendly_name: "Garden Light State Time"
-      value_template: >
-        {%- set date = as_timestamp(states.sensor.garden_lightbot_raw.state.split("starting at ")[1]) -%}
-        {{ date | timestamp_custom("%k:%M %P") }}
+    garden_light_manual_state_time:
+      friendly_name: "Garden Light Last Update"
+      value_template: '{{ relative_time (states.switch.garden_light_manual.last_updated) + " ago"}}'
     mqtt_topic_garden_water_state_template:
       friendly_name: "Garden Water State"
       value_template: '{{ states.sensor.garden_waterbot_raw.state.split("at ")[0] }}'
@@ -546,91 +551,130 @@
         {%- set date = as_timestamp(states.sensor.garden_waterbot_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%k:%M %P") }}
 
-- platform: mqtt
-  state_topic: 'dht11-garden/reading'
-  name: Garden Humidity Raw
-  value_template: "{{ value }}"
-
-- platform: template
-  scan_interval: 120
-  sensors:
-    mqtt_topic_garden_humidity_template:
-      friendly_name: "Garden Humidity"
-      value_template: '{{ states.sensor.garden_humidity_raw.state.split("Humidity=")[1].split("%")[0] }}'
-      unit_of_measurement: '%'
-    mqtt_topic_garden_temperature_template:
-      friendly_name: "Garden Temperature"
-      value_template: '{{ states.sensor.garden_humidity_raw.state.split("Temp=")[1].split("*")[0] }}'
-      unit_of_measurement: '°C'      
-    mqtt_topic_garden_humidity_template_time:
-      friendly_name: "Garden Humidity Time"
-      value_template: >
-        {%- set date = as_timestamp(states.sensor.garden_humidity_raw.state.split("at ")[1]) -%}
-        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
-
-- platform: filter
-  name: "Filtered Garden Humidity"
-  entity_id: sensor.mqtt_topic_garden_humidity_template
-  filters:
-    - filter: outlier
-      window_size: 5
-      radius: 5.0
-    - filter: lowpass
-      time_constant: 10
-      precision: 2
-- platform: filter
-  name: "Filtered Garden Temperature"
-  entity_id: sensor.mqtt_topic_garden_temperature_template
-  filters:
-    - filter: outlier
-      window_size: 5
-      radius: 5.0
-    - filter: lowpass
-      time_constant: 10
-    - filter: time_simple_moving_average
-      window_size: 00:05
-      precision: 2
-
-#Plant monitor channels
+#Garden monitor channels
 - platform: mqtt
   state_topic: 'groot-soil-temp/reading'
-  name: Plant Monitor Soil Temp
+  name: Garden Monitor Soil Temp
   unit_of_measurement: '°C'
   value_template: "{{ value }}"
 
 - platform: mqtt
-  state_topic: 'groot-soil-moisture/reading'
-  name: Plant Monitor Soil Moisture
+  state_topic: 'groot-water-level/reading'
+  name: Garden Monitor Water Level
   unit_of_measurement: '%'
   value_template: "{{ value }}"
 
 - platform: mqtt
-  name: 'Plant Monitor Temp F'
+  state_topic: 'groot-soil-moisture/reading'
+  name: Garden Monitor Soil Moisture
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'groot-light-level/reading'
+  name: Garden Monitor Light Level
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Garden Monitor Temp F'
   state_topic: 'groot-temp-f/reading'
   unit_of_measurement: '°F'
   value_template: "{{ value }}"
 
 - platform: mqtt
-  name: 'Plant Monitor Temp C'
+  name: 'Garden Monitor Temp C'
   state_topic: 'groot-temp-c/reading'
   unit_of_measurement: '°C'
   value_template: "{{ value }}"
 
 - platform: mqtt
-  name: 'Plant Monitor Temp H'
+  name: 'Garden Monitor Temp H'
   state_topic: 'groot-temp-h/reading'
   unit_of_measurement: '%'
-  value_template: "{{ value }}"
+  value_template: "{{ value |round(0)}}"
 
 - platform: mqtt
-  name: 'Plant Monitor HIF'
+  name: 'Garden Monitor HIF'
   state_topic: 'groot-temp-hif/reading'
   unit_of_measurement: '°F'
   value_template: "{{ value }}"
 
 - platform: mqtt
-  name: 'Plant Monitor HIC'
+  name: 'Garden Monitor HIC'
   state_topic: 'groot-temp-hic/reading'
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+#- platform: filter
+#  name: "Filtered Garden Humidity"
+#  entity_id: sensor.mqtt_topic_garden_humidity_template
+#  filters:
+#    - filter: outlier
+#      window_size: 5
+#      radius: 5.0
+#    - filter: lowpass
+#      time_constant: 10
+#      precision: 2
+#- platform: filter
+#  name: "Filtered Garden Temperature"
+#  entity_id: sensor.mqtt_topic_garden_temperature_template
+#  filters:
+#    - filter: outlier
+#      window_size: 5
+#      radius: 5.0
+#    - filter: lowpass
+#      time_constant: 10
+#    - filter: time_simple_moving_average
+#      window_size: 00:05
+#      precision: 2
+
+#Plant monitor channels
+- platform: mqtt
+  state_topic: 'groot2-soil-temp/reading'
+  name: Plant Monitor Soil Temp
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'groot2-soil-moisture/reading'
+  name: Plant Monitor Soil Moisture
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: 'groot2-light-level/reading'
+  name: Plant Monitor Light Level
+  unit_of_measurement: '%'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor Temp F'
+  state_topic: 'groot2-temp-f/reading'
+  unit_of_measurement: '°F'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor Temp C'
+  state_topic: 'groot2-temp-c/reading'
+  unit_of_measurement: '°C'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor Temp H'
+  state_topic: 'groot2-temp-h/reading'
+  unit_of_measurement: '%'
+  value_template: "{{ value |round(0)}}"
+
+- platform: mqtt
+  name: 'Plant Monitor HIF'
+  state_topic: 'groot2-temp-hif/reading'
+  unit_of_measurement: '°F'
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  name: 'Plant Monitor HIC'
+  state_topic: 'groot2-temp-hic/reading'
   unit_of_measurement: '°C'
   value_template: "{{ value }}"
 
@@ -716,9 +760,9 @@
       radius: 5.0
     - filter: lowpass
       time_constant: 10
-    - filter: time_simple_moving_average
-      window_size: 00:05
-      precision: 2
+    - filter: range
+      lower_bound: 35
+      upper_bound: 120
 
 - platform: mqtt
   name: 'USPS Mail'
@@ -746,7 +790,7 @@
   name: 'Mailbox Temp H'
   state_topic: 'mailbox-temp-h/reading'
   unit_of_measurement: '%'
-  value_template: "{{ value }}"
+  value_template: "{{ value |round(2)}}"
 
 - platform: mqtt
   name: 'Mailbox Temp HIF'
@@ -764,6 +808,35 @@
   state_topic: 'mailbox/reading'
   name: 'Mailbox Firehose'
   value_template: "{{ value }}"
+
+- platform: filter
+  name: "Mailbox Filtered Humidity"
+  entity_id: sensor.mailbox_temp_h
+  filters:
+    - filter: outlier
+      window_size: 4
+      radius: 4.0
+    - filter: lowpass
+      time_constant: 10
+      precision: 2
+    - filter: range
+      lower_bound: 1
+      upper_bound: 100
+- platform: filter
+  name: "Mailbox Filtered Temperature"
+  entity_id: sensor.mailbox_temp_f
+  filters:
+    - filter: outlier
+      window_size: 4
+      radius: 2.0
+    - filter: lowpass
+      time_constant: 10
+    - filter: time_simple_moving_average
+      window_size: 00:05
+      precision: 2
+    - filter: range
+      lower_bound: 35
+      upper_bound: 120
 
 - platform: template
   sensors:
@@ -1186,12 +1259,56 @@
       column: 'value'
       unit_of_measurement: MB
 
-#Empire State Colors
+- platform: template
+  sensors:
+    switches_on_count:
+      friendly_name: Switches On
+      value_template: "{{ states.switch|selectattr('state','equalto','on')|list|length }}"
+    lights_on_count:
+      friendly_name: Lights On
+      value_template: "{{ states.light|selectattr('state', 'equalto', 'on')|list|length }}"
+    devices_online_count:
+      friendly_name: Devices Online
+      value_template: "{{ states.sensor|selectattr('state','equalto','Online')|list|length }}"
+    switches_count:
+      friendly_name: 'Number of Switches'
+      value_template: >
+        {%- set domains = ['switch'] -%}
+        {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+            {% if loop.first %}
+              {{loop.length}}
+            {% endif %}
+          {%- endfor -%}
+        {%- endfor -%}
+    lights_count:
+      friendly_name: 'Number of Lights'
+      value_template: >
+        {%- set domains = ['light'] -%}
+        {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+            {% if loop.first %}
+              {{loop.length}}
+            {% endif %}
+          {%- endfor -%}
+        {%- endfor -%}
+    devices_count:
+      friendly_name: 'Number of Devices'
+      value_template: >
+        {%- set domains = ['device_tracker'] -%}
+        {%- for domain in domains -%}
+          {%- for item in states[domain] -%}
+            {% if loop.first %}
+              {{loop.length}}
+            {% endif %}
+          {%- endfor -%}
+        {%- endfor -%}
+
+#Empire State Colors White
 - platform: scrape
+  name: empire_state_lights_info_white
   resource: http://www.esbnyc.com/explore/tower-lights
   select: 'div.view-empty h1#page-title.title'
-#  name: EmpireStateLights
-#  friendly_name: "Empire State Building Lights"
   scan_interval: 10800
 
 - platform: scrape
@@ -1199,7 +1316,25 @@
   select: 'div.view-empty p img'
   attribute: src
   name: empire_state_lights_pic_url
-  scan_interval: 1800
+  scan_interval: 10800
+  value_template: >
+    {% set url = value.split("sites/")[1] %}
+    {% set prefix = "http://www.esbnyc.com/sites/" %}
+    {{ [prefix, url] | join("") }}
+
+#Empire State Colors Other
+- platform: scrape
+  name: empire_state_lights_info_color
+  resource: http://www.esbnyc.com/explore/tower-lights
+  select: 'div.views-row h1#page-title.title'
+  scan_interval: 10800
+
+- platform: scrape
+  resource: http://www.esbnyc.com/explore/tower-lights
+  select: 'div.field--type-image picture img'
+  attribute: src
+  name: empire_state_lights_pic_url_color
+  scan_interval: 10800
   value_template: >
     {% set url = value.split("sites/")[1] %}
     {% set prefix = "http://www.esbnyc.com/sites/" %}
@@ -1224,6 +1359,21 @@
     nextcal_end_time:
       value_template: '{{ states.calendar.gabethisisgabescom.attributes.end_time| timestamp_custom("%h %d, %Y %k:%M %P") }}'
       friendly_name: 'End Time'
+    nextcal_start_day:
+      value_template: >
+        {%- set date = as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) -%}
+        {{ date | timestamp_custom("%A, %B %d") }}
+      friendly_name: 'Start Day'
+    nextcal_start_time_short:
+      value_template:  >
+        {%- set date = as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) -%}
+        {{ date | timestamp_custom("%k:%M %P") }}
+      friendly_name: 'Start Time Short'
+    nextcal_end_time_short:
+      value_template: >
+        {%- set date = as_timestamp(states.calendar.gabethisisgabescom.attributes.end_time) -%}
+        {{ date | timestamp_custom("%k:%M %P") }}
+      friendly_name: 'End Time Short'
     nextcal_message:
       value_template: '{{ states.calendar.gabethisisgabescom.attributes.message }}'
       friendly_name: 'Event'
@@ -1325,11 +1475,11 @@
 #  sensors:
 #    battery_gabes_mate:
 #      friendly_name: "Battery Status"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.battery | default(0) |int() }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.battery | default(0) |int() }}'
 #      entity_id: sensor.battery_gabes_mate
 #      unit_of_measurement: "%"
 #      icon_template: >
-#        {% set battery_level = states.device_tracker.5re0217120001465.attributes.battery|default(0)|int %}
+#        {% set battery_level = states.device_tracker.5re0217120001465_2.attributes.battery|default(0)|int %}
 #        {% set battery_round = (battery_level / 10) |int * 10 %}
 #        {% if battery_round >= 100 %}
 #          mdi:battery
@@ -1340,38 +1490,38 @@
 #        {% endif %}
 #    altitude_gabes_mate:
 #      friendly_name: "Altitude"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.altitude | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.altitude | round(1) }}'
 #      entity_id: sensor.gps_altitude_gabes_mate
 #      unit_of_measurement: "m"
 #    activity_gabes_mate:
 #      friendly_name: "Activity"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.activity }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.activity }}'
 #      entity_id: sensor.activity_gabes_mate
 #    direction_gabes_mate:
 #      friendly_name: "Direction"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.direction }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.direction }}'
 #      entity_id: sensor.direction_gabes_mate
 #    speed_gabes_mate:
 #      friendly_name: "Speed"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.speed | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.speed | round(1) }}'
 #      entity_id: sensor.speed_gabes_mate
 #      unit_of_measurement: "mph"
 #    accuracy_gabes_mate:
 #      friendly_name: "Accuracy"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.gps_accuracy | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.gps_accuracy | round(1) }}'
 #      entity_id: sensor.gps_accuracy_gabes_mate
 #      unit_of_measurement: "m"
 #    provider_gabes_mate:
 #      friendly_name: "Provider"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.provider }}'
+#      value_template: {{ states("device_tracker.5re0217120001465_2.attributes.provider") }}
 #      entity_id: sensor.net_provider_gabes_mate
 #    source_type_gabes_mate:
 #      friendly_name: "Source Type"
-#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.source_type }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.source_type }}'
 #      entity_id: sensor.source_type_gabes_mate
 #    last_seen_gabes_mate:
 #      friendly_name: "Last Seen"
-#      value_template: '{{ relative_time (states.device_tracker.5re0217120001465.last_updated) + " ago"}}'
+#      value_template: '{{ relative_time (states.device_tracker.5re0217120001465_.last_updated) + " ago"}}'
 #      entity_id: sensor.last_seen_gabes_mate
 
 - platform: template
@@ -1558,7 +1708,7 @@
 
 - platform: history_stats
   name: stats_work
-  entity_id: device_tracker.5re0217120001465
+  entity_id: device_tracker.5re0217120001465_2
   state: 'Work'
   type: time
   end: '{{ now() }}'
@@ -1567,7 +1717,7 @@
 
 - platform: history_stats
   name: stats_home
-  entity_id: device_tracker.5re0217120001465
+  entity_id: device_tracker.5re0217120001465_2
   state: 'home'
   type: time
   end: '{{ now() }}'
@@ -1950,18 +2100,6 @@
         {% else %}
            /local/images/moonphases/NNewMoon.jpg
         {% endif %}
-      value_template: >
-        {% set mphase = states.sensor.reef_weather_moon_phase_1d.state | int %}
-        {% if mphase == 0.0 -%} "New Moon"
-        {% elif mphase > 0.0 -%} "Waxing Crescent"
-        {% elif mphase == 0.25 -%} "First Quarter"
-        {% elif mphase > 0.25 -%} "Waxing Gibbous"
-        {% elif mphase == 0.5 -%} "Full Moon"
-        {% elif mphase > 0.5 -%} "Waning Gibbous"
-        {% elif mphase == 0.75 -%} "Last Quarter"
-        {% elif mphase > 0.75 -%} "Waning Crescent"
-        {% else %} "Error"
-        {% endif %}
 
 #alarm clock
 - platform: template
@@ -2003,7 +2141,7 @@
   sensors:
     outside_alerts:
       value_template: >
-        Current Location: {{ states('device_tracker.5re0217120001465') }}
+        Current Location: {{ states('device_tracker.5re0217120001465_2') }}
         ({{ (as_timestamp (now()) -as_timestamp (states.device_tracker.gabes_mate.last_changed)) }})
 
 #- platform: command_line
@@ -2194,6 +2332,25 @@
       value_template: '{{ states.light.dashboard_screen.attributes.brightness }}'
       entity_id: sensor.kiosk_brightness
 
+- platform: template
+  sensors:
+    tablet_screen:
+      friendly_name: 'Tablet Screen'
+      value_template: '{{ states.light.tablet_screen.state }}'
+      entity_id: sensor.tablet_screen
+    tablet_charging:
+      friendly_name: 'Tablet Charging'
+      value_template: '{{ states.light.tablet_screen.attributes.charging }}'
+      entity_id: sensor.tablet_charging
+    tablet_battery:
+      friendly_name: 'Tablet Battery'
+      value_template: '{{ states.light.tablet_screen.attributes.battery_level }}'
+      entity_id: sensor.tablet_battery
+    tablet_brightness:
+      friendly_name: 'Tablet Brightness'
+      value_template: '{{ states.light.tablet_screen.attributes.brightness }}'
+      entity_id: sensor.tablet_brightness
+
 - platform: mqtt
   state_topic: "/flux-cap-1/reading"
   name: 5V Relay
@@ -2216,3 +2373,238 @@
 
 #This is to use the remote
 - platform: huesensor
+
+#monitor devices
+- platform: template
+  sensors:
+    online_device_bluray_player:
+      friendly_name: "BluRay Player"
+      value_template: >-
+        {% if is_state('device_tracker.104fa8d6e235', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+    online_device_amazon_echo:
+      friendly_name: "Amazon Echo Dot"
+      value_template: >-
+        {% if states.device_tracker.amazon_9dff0b9a7 %}
+        {% if is_state('device_tracker.amazon_9dff0b9a7', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_samsung_soundbar:
+      friendly_name: "Samsung Soundbar"
+      value_template: >-
+        {% if states.device_tracker.av_samsung_soundbar_k360_kseries %}
+        {% if is_state('device_tracker.av_samsung_soundbar_k360_kseries', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_roku_dongle:
+      friendly_name: "Roku Dongle"
+      value_template: >-
+        {% if states.device_tracker.d04d2c107c33 %}
+        {% if is_state('device_tracker.d04d2c107c33', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_mailbox:
+      friendly_name: "Smart Mailbox"
+      value_template: >-
+        {% if states.device_tracker.esp_2fdf0d %}
+        {% if is_state('device_tracker.esp_2fdf0d', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_white_macbook:
+      friendly_name: "White MacBook"
+      value_template: >-
+        {% if states.device_tracker.gabes_macbook %}
+        {% if is_state('device_tracker.gabes_macbook', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_harmony_hub:
+      friendly_name: "Harmony Hub"
+      value_template: >-
+        {% if states.device_tracker.harmonyhub %}
+        {% if is_state('device_tracker.harmonyhub', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_homecam_pi:
+      friendly_name: "Home Cam"
+      value_template: >-
+        {% if states.device_tracker.homecam %}
+        {% if is_state('device_tracker.homecam', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_huawei_mate:
+      friendly_name: "Huawei Mate"
+      value_template: >-
+        {% if states.device_tracker.huawei_mate_9_92528f2b1a5 %}
+        {% if is_state('device_tracker.huawei_mate_9_92528f2b1a5', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_octoprint:
+      friendly_name: "OctoPrint Server"
+      value_template: >-
+        {% if states.device_tracker.octopi_2 %}
+        {% if is_state('device_tracker.octopi_2', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+    online_device_phillips_hue:
+      value_template: >-
+        {% if states.device_tracker.philipshue %}
+        {% if is_state('device_tracker.philipshue', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Phillips Hue'
+    online_device_entry_pi:
+      value_template: >-
+        {% if states.device_tracker.lightswitch_pi %}
+        {% if is_state('device_tracker.lightswitch_pi', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Entry Pi'
+    online_device_reefcam_pantilt:
+      value_template: >-
+        {% if states.device_tracker.reefcam_pantilt %}
+        {% if is_state('device_tracker.reefcam_pantilt', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Pan Tilt ReefCam'
+    online_device_reef_pi:
+      value_template: >-
+        {% if states.device_tracker.reefcontrolpi %}
+        {% if is_state('device_tracker.reefcontrolpi', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Reef Pi'
+    online_device_entry_kiosk:
+      value_template: >-
+        {% if states.device_tracker.android_ac43312d0683f1c6 %}
+        {% if is_state('device_tracker.android_ac43312d0683f1c6', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Entry Kiosk'
+    online_device_flux_capacitor:
+      value_template: >-
+        {% if states.device_tracker.retropie %}
+        {% if is_state('device_tracker.retropie', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Flux Capacitor'
+    online_device_gardenbot:
+      value_template: >-
+        {% if states.device_tracker.octocam %}
+        {% if is_state('device_tracker.octocam', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Garden Robot'
+    online_device_plant_monitor_1:
+      value_template: >-
+        {% if states.device_tracker.esp_55f8c6 %}
+        {% if is_state('device_tracker.esp_55f8c6', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Plant Monitor 1'
+    online_device_plant_monitor_2:
+      value_template: >-
+        {% if states.device_tracker.esp_55f7c6 %}
+        {% if is_state('device_tracker.esp_55f7c6', 'home') %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+        {% else %}
+          Unknown
+        {% endif %}
+      friendly_name: 'Plant Monitor 2'
+    harmony_activity:
+      value_template: >
+        {% if is_state("remote.gabes_harmony_hub", 'on') %}
+          {{ states.remote.gabes_harmony_hub.attributes.current_activity }}
+        {% else %}
+          PowerOff
+        {% endif %}

@@ -11,17 +11,20 @@ class BarCard extends HTMLElement {
     if (!config.direction) config.direction = 'right'
     if (!config.rounding) config.rounding = '3px'
     if (!config.title_position) config.title_position = 'left'
+    if (!config.icon_position) config.icon_position = 'off'
     if (!config.indicator) config.indicator = 'auto'
     if (!config.saturation) config.saturation = '50%'
     if (!config.animation) config.animation = 'auto'
     if (!config.speed) config.speed = 1000
     if (!config.delay) config.delay = 5000
+    if (!config.min) config.min = 0
+    if (!config.max) config.max = 100
     if (!config.padding) config.padding = '4px'
     if (!config.align) config.align = 'center'
     if (!config.color) config.color = 'var(--primary-color)'
     if (!config.tap_action) config.tap_action = 'info'
-    if (!config.show_icon) config.show_icon = false
     if (!config.show_value) config.show_value = true
+    if (!config.show_minmax) config.show_minmax = false
     if (!config.title) config.title = false
     if (!config.severity) config.severity = false
     if (!config.target) config.target = false
@@ -33,6 +36,7 @@ class BarCard extends HTMLElement {
     if (!config.icon_style) config.icon_style = false
     if (!config.title_style) config.title_style = false
     if (!config.value_style) config.value_style = false
+    if (!config.minmax_style) config.minmax_style = false
     if (!config.background_style) config.background_style = false
     if (!config.visibility) config.visibility = false
 
@@ -60,13 +64,39 @@ class BarCard extends HTMLElement {
 
     // Check if title position is inside
     if (!config.width) {
-      if (config.title_position != 'inside') {
-        config.width = '70%'
-      } else {
-        config.width = '100%'
+      switch (config.title_position) {
+        case 'inside':
+        case 'top':
+        case 'bottom':
+        case 'off':
+          config.width = '100%'
+          break
+        case 'left':
+        case 'right':
+          config.width = '70%'
       }
-      if (config.title_position == 'top' || config.title_position == 'bottom' || config.title_position == 'off'){
-        config.width = '100%'
+      switch (config.icon_position) {
+        case 'top':
+        case 'bottom':
+          config.width = '100%'
+          break
+        case 'left':
+        case 'right':
+          config.width = 'calc(100% - 50px)'
+          break
+        case 'inside':
+        case 'off':
+          switch (config.title_position) {
+            case 'inside':
+            case 'top':
+            case 'bottom':
+            case 'off':
+              config.width = '100%'
+              break
+            case 'left':
+            case 'right':
+              config.width = '70%'
+          }
       }
     }
 
@@ -149,8 +179,14 @@ class BarCard extends HTMLElement {
     title.id = 'title_'+id
     var titleBar = document.createElement('div')
     titleBar.id = 'titleBar_'+id
+    const valueContainer = document.createElement('div')
+    valueContainer.id = 'value_container_'+id
+    const minValue = document.createElement('div')
+    minValue.id = 'min_value_'+id
     const value = document.createElement('div')
     value.id = 'value_'+id
+    const maxValue = document.createElement('div')
+    maxValue.id = 'max_value_'+id
     var chargeBar = document.createElement('div')
     chargeBar.id = 'chargeBar_'+id
     var targetBar = document.createElement('div')
@@ -182,7 +218,18 @@ class BarCard extends HTMLElement {
       default:
         background.appendChild(indicatorContainer)
     }
-    contentBar.appendChild(icon) 
+    switch (config.icon_position) {
+      case 'inside':
+      case 'off':
+        contentBar.appendChild(icon)
+        break
+      case 'left':
+      case 'right':
+      case 'top':
+      case 'bottom':
+        titleBar.appendChild(icon)
+        container.appendChild(titleBar)
+    }
     switch (config.title_position) {
       case 'left':
       case 'right':
@@ -202,7 +249,14 @@ class BarCard extends HTMLElement {
       case 'off':
         container.appendChild(background)      
     }
-    contentBar.appendChild(value)
+    contentBar.appendChild(valueContainer)
+    if (config.show_minmax == true) {
+      valueContainer.appendChild(minValue)
+    }
+    valueContainer.appendChild(value)
+    if (config.show_minmax == true) {
+      valueContainer.appendChild(maxValue)
+    }
     background.appendChild(contentBar)
     card.appendChild(container)
     card.appendChild(this._styleElements(config, id))
@@ -226,6 +280,7 @@ class BarCard extends HTMLElement {
   _styleElements(config, id) {
     const style = document.createElement('style');
     if (config.value_style !== false) var valueStyle = this._customStyle(config.value_style)
+    if (config.minmax_style !== false) var minmaxStyle = this._customStyle(config.minmax_style)
     if (config.title_style !== false) var titleStyle = this._customStyle(config.title_style)
     if (config.icon_style !== false) var iconStyle = this._customStyle(config.icon_style)
     if (config.background_style !== false) var backgroundStyle = this._customStyle(config.background_style)
@@ -254,6 +309,51 @@ class BarCard extends HTMLElement {
         titleWidth = 'width: 100%;'
         titleAlign = 'justify-content: center;'
         titleflexDirection = 'flex-direction: column-reverse;'
+        break
+    }
+    switch (config.icon_position) {
+      case 'left':
+        titleWidth = 'width: calc(100% - ' + config.width + ');'
+        if (config.title_position == 'off' || config.title_position == 'inside') titleAlign = 'justify-content: center;'
+        else titleAlign = 'justify-content: flex-start;'
+        titleflexDirection = 'flex-direction: row;'
+        break
+      case 'right':
+        titleWidth = 'width: calc(100% - ' + config.width + ');'
+        if (config.title_position == 'off' || config.title_position == 'inside') titleAlign = 'justify-content: center;'
+        else titleAlign = 'justify-content: flex-start;'
+        titleflexDirection = 'flex-direction: row-reverse;'
+        break
+      case 'top':
+        titleWidth = 'width: 100%;'
+        titleAlign = 'justify-content: center;'
+        titleflexDirection = 'flex-direction: column;'
+        break
+      case 'bottom':
+        titleWidth = 'width: 100%;'
+        titleAlign = 'justify-content: center;'
+        titleflexDirection = 'flex-direction: column-reverse;'
+        break
+    }
+    
+    // Set value flex direction based on card direction
+    let valueflexDirection
+    switch (config.direction) {
+      case 'left':
+      case 'left-reverse':
+        valueflexDirection = 'flex-direction: row-reverse;'
+        break
+      case 'right':
+      case 'right-reverse':
+        valueflexDirection = 'flex-direction: row;'
+        break
+      case 'up':
+      case 'up-reverse':
+        valueflexDirection = 'flex-direction: column-reverse;'
+        break
+      case 'down':
+      case 'down-reverse':
+        valueflexDirection = 'flex-direction: column;'
         break
     }
 
@@ -325,6 +425,12 @@ class BarCard extends HTMLElement {
       overflow: hidden;
       `      
     }
+    let iconMarginStyle = ''
+    if (config.icon_position !== 'inside' && config.title_position !== 'off' && config.title_position !== 'inside') {
+      iconMarginStyle = `
+      margin-left: 8px;
+      `
+    }
 
     let justifyContent
     let alignItems
@@ -353,7 +459,8 @@ class BarCard extends HTMLElement {
         flexDirection = 'row'
         justifyContent = 'space-between'
         alignItems = 'flex-start'
-        if (config.show_icon == true) textAlign = 'center'
+        if (config.icon_position != 'off') textAlign = 'center'
+        if (config.icon_position == 'inside') textAlign = 'center'
         else textAlign = 'left'
         break
       case 'bottom':
@@ -366,14 +473,16 @@ class BarCard extends HTMLElement {
         flexDirection = 'row'
         justifyContent = 'space-between'
         alignItems = 'flex-end'
-        if (config.show_icon == true) textAlign = 'center'
+        if (config.icon_position != 'off') textAlign = 'center'
+        if (config.icon_position == 'inside') textAlign = 'center'
         else textAlign = 'left'
         break
       case 'split':
         alignItems = 'center'
         flexDirection = 'row'
         justifyContent = 'space-between'
-        if (config.show_icon == true) textAlign = 'center'
+        if (config.icon_position != 'off') textAlign = 'center'
+        if (config.icon_position == 'inside') textAlign = 'center'
         else textAlign = 'left'
         break
       case 'left-split':
@@ -478,6 +587,7 @@ class BarCard extends HTMLElement {
         font-weight: bold;
         color: #FFF;
         filter: drop-shadow(1px 1px #0005);
+        ${iconMarginStyle}
         ${iconStyle}
       }
       #title_${id} {
@@ -486,14 +596,31 @@ class BarCard extends HTMLElement {
         ${titlePositionStyle}
         ${titleStyle};
       }
-      #value_${id} {
+      #value_container_${id} {
+        position: relative;
+        display: ${config.show_minmax ? 'flex' : 'contents'};
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        ${config.show_minmax ? 'text-align: center;' : ''};
+        ${valueflexDirection};
+      }
+      #value_${id}, #min_value_${id}, #max_value_${id} {
         position: relative;
         font-weight: bold;
         font-size: 13px;
         color: #FFF;
         text-shadow: 1px 1px #0007;
         white-space: nowrap;
+        ${config.show_minmax ? 'flex-grow: 1;' : ''};
+        ${config.show_minmax ? 'text-align: center;' : ''};
+      }
+      #value_${id} {
         ${valueStyle}
+      }
+      #min_value_${id}, #max_value_${id} {
+        ${minmaxStyle}
       }
       #titleBar_${id} {
         position: relative;
@@ -595,31 +722,15 @@ class BarCard extends HTMLElement {
   // Check if min is defined otherwise check for min attribute
   _minCheck (entity, hass, index) {
     const config = this._configAttributeCheck(entity, index)
-    if (config.min == undefined) {
-      if (hass.states[entity] != undefined) {
-        if (hass.states[entity].attributes.min) return hass.states[entity].attributes.min
-        else return 0
-      } else {
-        return 0
-      }
-    } else {
-      return config.min
-    }
+    if (hass.states[entity].attributes.min && config.entity_config == true) return hass.states[entity].attributes.min
+    else return config.min
   }
 
   // Check if max is defined otherwise check for max attribute
   _maxCheck (entity, hass, index) {
     const config = this._configAttributeCheck(entity, index)
-    if (config.max == undefined) {
-      if (hass.states[entity] != undefined) {
-        if (hass.states[entity].attributes.max) return hass.states[entity].attributes.max
-        else return 100
-      } else {
-        return 100
-      }
-    } else {
-      return config.max
-    }
+    if (hass.states[entity].attributes.max && config.entity_config == true) return hass.states[entity].attributes.max
+    else return config.max 
   }
 
   _serviceCall (domain, service, data) {
@@ -862,7 +973,7 @@ class BarCard extends HTMLElement {
 
     if (config.title == false) config.title = entityObject.attributes.friendly_name
 
-    if (config.show_icon == true) {
+    if (config.icon_position != 'off') {
       if (config.icon == false) root.getElementById('icon_'+id).icon = entityObject.attributes.icon
       else root.getElementById('icon_'+id).icon = config.icon
     } else {
@@ -934,6 +1045,10 @@ class BarCard extends HTMLElement {
       this._updateTargetBar(entityState, configTarget, barColor, id, entity, index)
       this._entityTarget[id] = configTarget
       barElement.style.setProperty('--bar-color', barColor)
+      if (config.show_minmax == true) {
+        root.getElementById('min_value_'+id).textContent = `${configMin} ${measurement}`
+        root.getElementById('max_value_'+id).textContent = `${configMax} ${measurement}`
+      }
       if (config.show_value == true) root.getElementById('value_'+id).textContent = `${entityState} ${measurement}`
       if (config.animation !== 'off') root.getElementById('chargeBar_'+id).style.setProperty('--bar-color', barColor)
       if (entityState == 'N/A') root.getElementById('backgroundBar_'+id).style.setProperty('--bar-color', '#666')

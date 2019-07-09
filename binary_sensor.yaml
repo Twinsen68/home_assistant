@@ -5,6 +5,11 @@
   device_class: motion
 
 - platform: mqtt
+  name: dashboard_motion
+  state_topic: tablet/kiosk
+  device_class: motion
+
+- platform: mqtt
   state_topic: "mailbox-flag/reading"
   name: Mailbox Flag
   device_class: light
@@ -19,4 +24,64 @@
   name: Mailbox Red Light
   device_class: light
 
+#homecam motion
+- platform: mqtt
+  name: “HomeCam Motion Sensor”
+  state_topic: 'cameras/motion/homecam'
+
 - platform: huesensor
+
+- platform: template
+  sensors:
+    garden_sun:
+      friendly_name: "Garden Grow Lights"
+      device_class: light
+      icon_template: >-
+        {% if states('sensor.garden_monitor_light_level') | float > 20 %}
+          On
+        {% elif states('sensor.garden_monitor_light_level') | float < 20 %}
+          Off
+        {% else %}
+          Unknown
+        {% endif %}
+      value_template: >-
+        {% if states('sensor.garden_monitor_light_level') | float > 20 %}
+          mdi:lightbulb-on
+        {% elif states('sensor.garden_monitor_light_level') | float < 20 %}
+          mdi:lightbulb
+        {% else %}
+          mdi:close-circle-outline
+        {% endif %}
+    garden_reservoir:
+      friendly_name: "Garden Drain"
+      device_class: light
+      value_template: >-
+        {% if states('sensor.garden_reservoir') | float > 60 %}
+          On
+        {% elif states('sensor.garden_reservoir') | float < 60 %}
+          Off
+        {% else %}
+          Unknown
+        {% endif %}
+      icon_template: >-
+        {% if states('sensor.garden_reservoir') | float > 60 %}
+          mdi:cup-water
+        {% elif states('sensor.garden_reservoir') | float < 60 %}
+          mdi:flask-empty-outline
+        {% else %}
+          mdi:close-circle-outline
+        {% endif %}
+    people_home:
+      friendly_name: "People Home"
+      value_template: >-
+        {{ is_state('device_tracker.5re0217120001465_2', 'home')
+           or is_state('device_tracker.bernys_iphone', 'home')
+           or is_state('device_tracker.huawei_mate_992528f2b1a5', 'home') }}
+#      icon_template: >-
+#        {{% if is_state('device_tracker.5re0217120001465_2', 'home')
+#           or is_state('device_tracker.bernys_iphone', 'home')
+#           or is_state('device_tracker.huawei_mate_992528f2b1a5', 'home') %}}
+#          mdi:account-check
+#        {% else %}
+#          mdi:account-remove
+#        {% endif %}

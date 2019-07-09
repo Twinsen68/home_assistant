@@ -90,6 +90,15 @@ all_lightbulbs:
     - light.table
     - light.white_bulb
 
+all_rgb_lights:
+  name: All RGB Lights
+  entities:
+    - light.bedroom_desk
+    - light.bedside_table
+    - light.desk
+    - light.kitchen
+    - light.table
+
 reef_tides:
   name: Reef Tides
   entities:
@@ -456,15 +465,25 @@ alarmclock:
   - script.alarm_clock_loop
 
 gabe:
-#  - device_tracker.5re0217120001465
+  - device_tracker.5re0217120001465_2
   - device_tracker.gabe_mate_owntracks
 #  - device_tracker.gabes_mate
   - device_tracker.gabesmatehotspot
   - device_tracker.google_maps_114555423860561989456
   - device_tracker.hassio_gabesmatephone
-  - device_tracker.huawei_mate_992528f2b1a5
+  - device_tracker.huawei_mate_9_92528f2b1a5
   - device_tracker.ionic
   - device_tracker.phone
 
 berny:
   - device_tracker.bernys_iphone
+
+nanoo:
+  - device_tracker.gurchatnsiphone
+
+streaming_radio:
+  name: Streaming Radio
+  entities:
+    - input_select.radio_station
+    - input_select.speaker_radio
+    - script.radio_tune

@@ -72,7 +72,7 @@ reeftank_morning_fade_kessil:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'FastForward'
     - delay:
         seconds: 900
@@ -81,7 +81,7 @@ reeftank_morning_fade_kessil:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'FastForward'
     - delay:
         seconds: 5200
@@ -90,7 +90,7 @@ reeftank_morning_fade_kessil:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'FastForward'
     - delay:
         seconds: 12600
@@ -105,7 +105,7 @@ reeftank_morning_fade_kessil:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'Rewind'
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_9
@@ -114,14 +114,14 @@ reeftank_morning_fade_kessil:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'Rewind'
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_10
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'Rewind'
     - delay:
         seconds: 3600
@@ -140,12 +140,12 @@ reeftank_evening_fade_kessil:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: 'Stop'
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['1','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Stop']
     - delay:
         seconds: 3600
@@ -170,7 +170,7 @@ reeftank_moon_on:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['PowerToggle','1','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind','Rewind']
 
 reeftank_moon_up:  
@@ -181,49 +181,49 @@ reeftank_moon_up:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 10800
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
 
 reeftank_moon_up_stronger:  
@@ -234,63 +234,63 @@ reeftank_moon_up_stronger:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward','FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 7200
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind','Rewind']
 
 reeftank_full_moon:  
@@ -301,28 +301,28 @@ reeftank_full_moon:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['FastForward']
     - service: homeassistant.turn_on
       entity_id: switch.kessil_light_level_12
@@ -337,35 +337,35 @@ reeftank_full_moon:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
     - delay:
         seconds: 3600
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Rewind']
 
 reeftank_moon_off:  
@@ -374,7 +374,7 @@ reeftank_moon_off:
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
-        device: 43857787
+        device: 'Generic LED'
         command: ['Stop']
 
 # LED light
@@ -545,12 +545,12 @@ clear_notification_text:
         value: "No Message"
 
 # Alarm Clock
-alarm_clock_loop:
-  alias: Alarm Clock Loop
-  sequence:
-  - service: script.turn_on
-    data:
-      entity_id: script.sunrise_lights
+#alarm_clock_loop:
+#  alias: Alarm Clock Loop
+#  sequence:
+#  - service: script.turn_on
+#    data:
+#      entity_id: script.sunrise_lights
 
 #Alarm 2
 bedroom_wake_up:
@@ -559,6 +559,8 @@ bedroom_wake_up:
         {% if is_state('sensor.dark_sky_icon' , 'rain') %} script.early_wakeup
         {% elif is_state('sensor.dark_sky_icon' , 'snow') %} script.early_wakeup
         {% else %} script.on_time_wakeup {% endif %}
+    - service: automation.turn_on
+      entity_id: automation.morning_greeting_update
 
 early_wakeup:
   sequence:
@@ -649,30 +651,29 @@ kiosk_screen_value:
 
 kiosk_weather_report:
   sequence:
-    - service: notify.kiosk
+    - service: script.janet_speech_engine
       data:
-        message: "Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees faren height, inside the temperature is, {{ states('sensor.mqtt_topic_garden_temperature_template') }} degrees faren height. You can expect {{ states('sensor.dark_sky_daily_summary') }}"
+        call_greeting: 1
+        call_morning_weather: 1
 
 kiosk_good_morning:
   sequence:
     - delay:
-        seconds: 180
+        seconds: 360
     - service: rest_command.kiosk_sound_incomingtransmission
     - delay:
         seconds: 3.00
-    - service: notify.kiosk
+    - service: script.janet_speech_engine
       data:
-        message: "Good morning Gabe! The time is now, {{ states('sensor.time') }}. Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees fahrenheit and {{ states('sensor.dark_sky_minutely_summary') }}. You can expect {{ states('sensor.dark_sky_daily_summary') }}"
-    - delay:
-        seconds: 25.00
-    - service: notify.kiosk
-      data:
-        message: The leading reuters headline this morning is {{(states.sensor.news_top.attributes | string).split("'")[1].split("'")[-1]}}. In technology the top headline is {{(states.sensor.news_tech.attributes | string).split("'")[1].split("'")[-1]}}. The arts headline is {{(states.sensor.news_arts.attributes | string).split("'")[1].split("'")[-1]}}. And finally in news of the weird, {{(states.sensor.news_weird.attributes | string).split("'")[1].split("'")[-1]}}
-    - delay:
-        seconds: 35.00
-    - service: rest_command.kiosk_sound_spoken
-    - delay:
-        seconds: 3.00
+        call_morning_greeting: 1
+        call_morning_weather: 1
+#    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+#      timeout: 00:00:10
+#    - service: script.janet_speech_engine
+#      data:
+#        call_morning_news: 1
+    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+      timeout: 00:00:10
     - service: rest_command.kiosk_sound_startrek_computer2
     - delay:
         seconds: 15.00
@@ -687,13 +688,30 @@ kiosk_good_morning:
     - service: rest_command.kiosk_sound_npr_news
     - delay:
         seconds: 350.00
+    - service: automation.turn_off
+      entity_id: automation.morning_greeting_update
     - condition: template
       value_template: "{{ ((as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - as_timestamp(now())) < 64800) and ((as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) - as_timestamp(now())) > 0) }}"
     - service: rest_command.kiosk_sound_startrek_computer1
+    - service: script.janet_speech_engine
+      data:
+        call_inform: 1
+        call_morning_event: 1
+    - service: rest_command.kiosk_sound_startrek_computer2
+
+kiosk_play_the_news:
+  sequence:
+    - service: downloader.download_file
+      data_template:
+        url: "{{ states('sensor.npr_news_mp3_link') }}"
+        filename: "npr_news.mp3"
+        overwrite: true
     - service: notify.kiosk
       data:
-        message: "By the way, you have an event on your calendar today. At {{as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) | timestamp_custom('%-I:%M %P')}} is {{states.calendar.gabethisisgabescom.attributes.message}}. It will be located at {{states.calendar.gabethisisgabescom.attributes.location}}"
-    - service: rest_command.kiosk_sound_startrek_computer2
+        message: "Greetings Sir! Please wait while I download the news."
+    - delay:
+        seconds: 120.00
+    - service: rest_command.kiosk_sound_npr_news
 
 fart_machine:
   sequence:
@@ -766,43 +784,272 @@ welcome_lights_on:
   sequence:
     - service: switch.turn_on
       entity_id: switch.entry_light
-    - delay:
-        seconds: 60
     - service: light.turn_on
       data:
         entity_id: light.bedside_table
         brightness: 20
-        rgb_color: 255,132,26
         hs_color: 27.632,89.412
-        xy_color: 0.601,0.376
-        transition: 60
+        transition: 40
     - delay:
         seconds: 30
     - service: light.turn_on
       data:
         entity_id: light.table
-        rgb_color: 255,200,145
         hs_color: 30,43.137
-        xy_color: 0.443,0.379
         brightness: 221
-        transition: 60
+        transition: 30
     - delay:
         seconds: 20
     - service: light.turn_on
       data:
         entity_id: light.kitchen
         brightness: 254
-        rgb_color: 255,172,146
         hs_color: 13.889,42.353
-        xy_color: 0.466,0.345
-        transition: 60
+        transition: 30
     - delay:
-        seconds: 60
+        seconds: 20
     - service: light.turn_on
       data:
         entity_id: light.desk
-        rgb_color: 101,49,255
         hs_color: 255.146,80.784
-        xy_color: 0.188,0.078
         brightness: 50
+        transition: 30
+
+#Lighting Scripts
+lights_chill_blue:
+  sequence:
+    - service: homeassistant.turn_on
+      entity_id: group.all_rgb_lights
+      data_template:
+        rgb_color: [82,0,255]
+        brightness_pct: 20
+        transition: 10
+    - service: light.turn_on
+      data:
+        entity_id: light.table
+        rgb_color: [82,0,255]
+        brightness: 100
+        transition: 10
+    - service: light.turn_on
+      data:
+        entity_id: light.desk
+        rgb_color: [82,0,255]
+        brightness: 100
+        transition: 10
+    - service: light.turn_on
+      data:
+        entity_id: light.kitchen
+        rgb_color: [82,0,255]
+        brightness: 10
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom_desk
+        rgb_color: [82,0,255]
+        brightness: 100
+        transition: 10
+    - service: light.turn_on
+      data:
+        entity_id: light.bedside_table
+        rgb_color: [82,0,255]
+        brightness: 100
+        transition: 10
+    - service: switch.turn_off
+      entity_id: switch.entry_light
+
+#Lighting Scripts
+lights_random:
+  sequence:
+    - service: homeassistant.turn_on
+      entity_id: group.all_rgb_lights
+      data_template:
+        hs_color:
+          - "{{ range(360)|random }}"
+          - "{{ range(80,101)|random }}"
+        brightness_pct: 100
+        transition: 30
+    - delay: '00:00:02'
+    - service: light.turn_on
+      data:
+        entity_id: light.table
+        effect: random
+        transition: 30
+    - service: light.turn_on
+      data:
+        entity_id: light.desk
+        effect: random
+        transition: 30
+    - service: light.turn_on
+      data:
+        entity_id: light.kitchen
+        effect: random
+        transition: 30
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom_desk
+        effect: random
+        transition: 30
+    - service: light.turn_on
+      data:
+        entity_id: light.bedside_table
+        effect: random
+        transition: 30
+
+#Lighting Scripts
+lights_loop:
+  sequence:
+    - service: homeassistant.turn_on
+      entity_id: group.all_rgb_lights
+      data_template:
+        hs_color:
+          - "{{ range(360)|random }}"
+          - "{{ range(80,101)|random }}"
+        brightness_pct: 100
+        transition: 30
+    - service: light.turn_on
+      data:
+        entity_id: light.table
+        effect: colorloop
         transition: 60
+    - service: light.turn_on
+      data:
+        entity_id: light.desk
+        effect: colorloop
+        transition: 60
+    - service: light.turn_on
+      data:
+        entity_id: light.kitchen
+        effect: colorloop
+        transition: 60
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom_desk
+        effect: colorloop
+        transition: 60
+    - service: light.turn_on
+      data:
+        entity_id: light.bedside_table
+        effect: colorloop
+        transition: 60
+
+soundbar_power_off:
+  alias: Soundbar Power Off
+  sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - PowerToggle
+        device: 'Samsung Amp'
+
+soundbar_power_on:
+  alias: Soundbar Power On
+  sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - PowerToggle
+        device: 'Samsung Amp'
+
+soundbar_volume_up:
+  alias: Soundbar Volume Up
+  sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeUp
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeUp
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeUp
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeUp
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+
+soundbar_volume_down:
+  alias: Soundbar Volume Down
+  sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeDown
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeDown
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - VolumeDown
+        device: 'Samsung Amp'
+
+soundbar_input_select:
+  alias: Soundbar Input Select
+  sequence:
+    - service: remote.send_command
+      data:
+        entity_id: remote.gabes_harmony_hub
+        command:
+          - Source
+        device: 'Samsung Amp'
+    - delay: 00:00:02
+    - service: switch.turn_off 
+      entity_id: switch.samsung_soundbar_input
+
+radio_tune:
+  alias: Play Radio on Kiosk Speaker
+  sequence:
+#    - service: media_player.volume_set
+#      data:
+#        entity_id: media_player.entry
+#        volume_level: '0.35'
+#    -  service: media_player.volume_set
+#       data:
+#         entity_id: media_player.soundbar
+#         volume_level: '0.20'
+    -  service: media_player.play_media
+#       entity: media_player.kiosk_speaker
+       data_template:
+         entity_id: media_player.kiosk_speaker
+         media_content_type: music
+         media_content_id: >
+            {% if is_state("input_select.radio_station", "Radio 538") %} http://vip-icecast.538.lw.triple-it.nl:80/RADIO538_MP3
+            {% elif is_state("input_select.radio_station", "Q-Music") %} http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3
+            {% elif is_state("input_select.radio_station", "3FM") %} http://icecast.omroep.nl/3fm-bb-mp3
+            {% elif is_state("input_select.radio_station", "100% NL") %} http://stream.100p.nl/100pctnl.mp3
+            {% elif is_state("input_select.radio_station", "Veronica") %} http://8543.live.streamtheworld.com/VERONICACMP3
+            {% elif is_state("input_select.radio_station", "Sky Radio") %} http://8623.live.streamtheworld.com:80/SKYRADIOAAC_SC
+            {% elif is_state("input_select.radio_station", "Arrow Classic Rock") %} http://91.221.151.155/listen.mp3
+            {% elif is_state("input_select.radio_station", "Classic FM") %} http://19143.live.streamtheworld.com/CLASSICFM_SC
+            {% elif is_state("input_select.radio_station", "BNR Nieuwsradio") %} http://icecast-bnr.cdp.triple-it.nl/bnr_mp3_96_03
+            {% elif is_state("input_select.radio_station", "Sleep Radio") %} http://37.59.28.208:8722/stream
+            {% elif is_state("input_select.radio_station", "Ambient Sleeping Pill") %} http://perseus.shoutca.st:8447/h
+            {% elif is_state("input_select.radio_station", "Radio Art - Sleep") %} http://live.radioart.com/fSleep.mp3
+            {% elif is_state("input_select.radio_station", "Ambi Nature Radio") %} http://94.23.252.14:8067/stream
+            {% elif is_state("input_select.radio_station", "Calm Radio - Sleep") %} http://streams.calmradio.com/api/39/128/stream
+            {% elif is_state("input_select.radio_station", "Dinamo.FM Sleep") %} http://channels.dinamo.fm/sleep-aac
+            {% endif %}

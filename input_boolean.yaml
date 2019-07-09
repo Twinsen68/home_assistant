@@ -54,3 +54,6 @@ bedroom_alarm_clock_status:
 bedroom_alarm_clock_repeat:
   name: Repeat?
   icon: mdi:autorenew
+samsung_soundbar_power:
+  name: Soundbar Power
+  icon: mdi:power

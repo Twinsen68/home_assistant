@@ -103,9 +103,21 @@ sensor.stats_home:
 
 sensor.usps_mail:
   friendly_name: USPS Mail
+  templates:
+    icon: >
+      if (state > 1) return 'mdi:email-multiple-outline';
+      return 'mdi:email-outline';
+    icon_color: >
+      if (state > 0) return 'rgb(251, 210, 41)';
+      return 'rgb(54, 95, 140)';
 
 sensor.usps_packages:
   friendly_name: USPS Packages
+  icon: mdi:package-varient
+  templates:
+    icon_color: >
+      if (state > 0) return 'rgb(251, 210, 41)';
+      return 'rgb(54, 95, 140)';
 
 sensor.noaa_reef_temp_str:
   friendly_name: NOAA Reef Temp String
@@ -309,6 +321,12 @@ switch.pantilt_right:
   icon: mdi:arrow-right-box
 switch.pantilt_center:
   icon: mdi:image-filter-center-focus
+binary_sensor.homecam_motion_sensor:
+  icon: mdi:motion-sensor
+
+script.radio_tune:
+  friendly_name: Start Playing
+  icon: mdi:play
 
 #input_boolean.bedroom_alarm_clock_status:
 #  templates:
@@ -335,3 +353,90 @@ sensor.gabe_status:
 
 group.gabe:
   entity_picture: https://pbs.twimg.com/profile_images/729829958621773825/6tR5_2u-_400x400.jpg
+
+# Devices
+sensor.online_device_lorex_cam:
+  entity_picture: /local/images/device_lorexcam.jpg
+sensor.online_device_bluray_player:
+  entity_picture: /local/images/device_bluray.jpg
+sensor.online_device_asus_router:
+  entity_picture: /local/images/device_asus_router.jpeg
+sensor.online_device_amazon_echo:
+  entity_picture: /local/images/amazon_echo_dot.jpg
+sensor.online_device_samsung_soundbar:
+  entity_picture: /local/images/device_samsung_soundbar.jpg
+sensor.online_device_roku_dongle:
+  entity_picture: /local/images/device_roku_dongle.jpg
+sensor.online_device_mailbox:
+  entity_picture: /local/images/device_mailbox.jpg
+sensor.online_device_white_macbook:
+  entity_picture: /local/images/device_macbook.jpeg
+sensor.online_device_harmony_hub:
+  entity_picture: /local/images/device_harmony_hub.jpg
+sensor.online_device_homecam_pi:
+  entity_picture: /local/images/device_homecam_pi.jpg
+sensor.online_device_huawei_mate:
+  entity_picture: /local/images/device_huawei_mate.jpg
+sensor.online_device_octoprint:
+  entity_picture: /local/images/mpms_printer.jpg
+sensor.online_device_philipshue:
+  entity_picture: /local/images/device_philipshue.jpeg
+sensor.online_device_entry_pi:
+  entity_picture: /local/images/device_entry_pi.jpg
+sensor.online_device_reefcam_pantilt:
+  entity_picture: /local/images/device_reefcam_pantilt.jpg
+sensor.online_device_reef_pi:
+  entity_picture: /local/images/device_reef_pi.jpg
+sensor.online_device_entry_kiosk:
+  entity_picture: /local/images/device_entry_kiosk.jpg
+sensor.online_device_flux_capacitor:
+  entity_picture: /local/images/device_flux_capacitor.jpg
+sensor.online_device_garden_robot:
+  entity_picture: /local/images/device_garden_robot.jpg
+sensor.online_device_plant_monitor:
+  entity_picture: /local/images/device_plant_monitor.jpg
+device_tracker.001bc70517d8:
+  entity_picture: /local/images/device_lorexcam.jpg
+device_tracker.104fa8d6e235:
+  entity_picture: /local/images/device_bluray.jpg
+device_tracker.42a6774db0cd:
+  entity_picture: /local/images/device_asus_router.jpeg
+device_tracker.amazon_9dff0b9a7:
+  entity_picture: /local/images/amazon_echo_dot.jpg
+device_tracker.av_samsung_soundbar_k360_kseries:
+  entity_picture: /local/images/device_samsung_soundbar.jpg
+device_tracker.d04d2c107c33:
+  entity_picture: /local/images/device_roku_dongle.jpg
+device_tracker.esp_2fdf0d:
+  entity_picture: /local/images/device_mailbox.jpg
+device_tracker.harmonyhub:
+  entity_picture: /local/images/device_harmony_hub.jpg
+device_tracker.homecam:
+  entity_picture: /local/images/device_homecam_pi.jpg
+device_tracker.huawei_mate_9_92528f2b1a5:
+  entity_picture: /local/images/device_huawei_mate.jpg
+device_tracker.octopi_2:
+  entity_picture: /local/images/mpms_printer.jpg
+device_tracker.philipshue:
+  entity_picture: /local/images/device_philipshue.jpeg
+device_tracker.lightswitch_pi:
+  entity_picture: /local/images/device_entry_pi.jpg
+device_tracker.reefcam_pantilt:
+  entity_picture: /local/images/device_reefcam_pantilt.jpg
+device_tracker.reefcontrolpi:
+  entity_picture: /local/images/device_reef_pi.jpg
+device_tracker.android_ac43312d0683f1c6:
+  entity_picture: /local/images/device_entry_kiosk.jpg
+device_tracker.retropie:
+  entity_picture: /local/images/device_flux_capacitor.jpg
+device_tracker.octocam:
+  entity_picture: /local/images/device_garden_robot.jpg
+device_tracker.esp_55f7c6:
+  entity_picture: /local/images/device_plant_monitor_2.jpg
+device_tracker.esp_55f8c6:
+  entity_picture: /local/images/device_plant_monitor_2.jpg
+device_tracker.gabes_macbook:
+  entity_picture: /local/images/device_macbook.jpeg
+device_tracker.5re0217120001465_2:
+  entity_picture: /local/images/device_huawei_mate.jpg
+

@@ -11,6 +11,18 @@
         service: script.kiosk_screen_value
         data_template:
           brightness: "{{ brightness }}"
+
+    tablet_screen:
+      friendly_name: "Tablet Screen"
+      turn_on:
+        service: rest_command.tablet_screen_on
+      turn_off:
+        service: rest_command.tablet_screen_off
+      set_level:
+        service: script.tablet_screen_value
+        data_template:
+          brightness: "{{ brightness }}"
+
 #entry light
 - platform: switch
   name: "Entry Light"

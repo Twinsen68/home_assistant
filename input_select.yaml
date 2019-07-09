@@ -1,23 +1,41 @@
-#- radio_station:
-#    name: 'Select Radio Station:'
-#    options:
-#      - WKFU 1111
-#      - WK Some Station
-#    initial: WKFU 1111
-#    icon: mdi:radio 
+radio_station:
+  name: 'Select Radio Station'
+  options:
+    - Radio 538
+    - Q-Music
+    - 3FM
+    - 100% NL
+    - Veronica
+    - Sky Radio
+    - Arrow Classic Rock
+    - Classic FM
+    - BNR Nieuwsradio
+    - Sleep Radio
+    - Ambient Sleeping Pill
+    - Radio Art - Sleep
+    - Ambi Nature Radio
+    - Calm Radio - Sleep
+    - Dinamo.FM Sleep
+  initial: Classic FM
+  icon: mdi:radio 
+
+speaker_radio:
+  name: 'Select Speakers'
+  options:
+    - Entry
+    - Soundbar
+    - Tablet
+  initial: Entry
+  icon: mdi:speaker-wireless
 
 harmony:
   name: Harmony
   options:
     - Speaker
     - Fishtank Evening
-    - Lights Up
     - Watch Roku
     - Watch a Movie
-    - Morning News
-    - TV Lights
     - Fishtank Morning
-    - Vacuum
   icon: mdi:monitor
 
 gabe_status_dropdown:

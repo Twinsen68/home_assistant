@@ -7,6 +7,7 @@ homeassistant:
   time_zone: !secret config_tz
   customize: !include customize.yaml
   customize_glob: !include customize_glob.yaml
+  packages: !include_dir_named packages
   whitelist_external_dirs:
       - /home/homeassistant/.homeassistant/scripts
       - /home/homeassistant/.homeassistant/www/images/
@@ -15,17 +16,7 @@ homeassistant:
 # Enables the frontend
 frontend: 
   javascript_version: latest
-#  themes: !include configuration_themes.yaml
-#  extra_html_url:
-#    - /local/custom_ui/custom-weather-card.html
-#    - /local/custom_ui/state-card-floorplan.html
-#    - /local/custom_ui/state-card-tiles.html
-#    - /local/custom_ui/state-card-text.html
-#  extra_html_url_es5:
-#    - /local/custom_ui/custom-weather-card.html
-#    - /local/custom_ui/state-card-floorplan.html
-#    - /local/custom_ui/state-card-tiles_es5.html
-#    - /local/custom_ui/state-card-text.html
+  themes: !include configuration_themes.yaml
 
 # Enables configuration UI
 config:
@@ -33,7 +24,6 @@ config:
 api:
 
 http:
-  # Secrets are defined in the file secrets.yaml
   api_password: !secret http_password
   base_url: !secret config_base_url
   ssl_key: !secret config_ssl_key
@@ -84,329 +74,12 @@ logger:
     homeassistant.components.camera.generic: critical
     homeassistant.helpers.template: critical
     homeassistant.core: error
-
-# View all events in a logbook
-logbook:
-  include:
-    domains:
-      - switch
-      - automation
-      - script
-      - device_tracker
-      - light
-      - persistent_notification
-    entities:
-      - binary_sensor.octoprint_status_printing
-      - binary_sensor.octoprint_status_printing_error
-      - sensor.octoprint_current_state 
-      - sensor.octoprint_hotend
-      - sensor.octoprint_hotend_target
-      - sensor.octoprint_bed
-      - sensor.octoprint_bed_target
-      - sensor.usps_mail
-      - sensor.usps_packages
-      - sensor.nextcal_message
-      - sensor.new_nextcal_location
-      - sensor.nextcal_start_time
-      - sensor.nextcal_end_time
-      - sensor.speedtest_download
-      - sensor.speedtest_upload
-      - sensor.speedtest_ping 
-      - sensor.rt_acrh13_kbyte_sec_received
-      - sensor.rt_acrh13_kbyte_sec_sent
-      - sensor.rt_acrh13_bytes_received
-      - sensor.rt_acrh13_bytes_sent
-      - sensor.myipopendnscom
-      - sensor.ha_installed_version
-      - sensor.ha_uptime
-      - sensor.db_file_system_size
-      - sensor.mariadb_database_size
-      - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
-      - sensor.mqtt_topic_home_sysinfo_template_serverload
-      - sensor.mqtt_topic_home_sysinfo_template_serverspeed
-      - sensor.mqtt_topic_home_sysinfo_template_servertemp
-      - sensor.battery_gabes_mate
-      - sensor.ambient_temp_graph
-      - sensor.dark_sky_minutely_summary
-      - sensor.btc_exchange_rate
-      - sensor.coinbase_bch_wallet
-      - sensor.coinbase_eth_wallet
-      - sensor.coinbase_ltc_wallet
-      - sensor.coinbase_my_vault
-      - sensor.coinbase_my_wallet
-      - sensor.coinbase_usd_wallet
-      - sensor.eth_exchange_rate
-      - sensor.ltc_exchange_rate
-      - sensor.template_calendar_birthday_date
-      - sensor.template_calendar_birthday 
-      - sensor.empirestatelights 
-      - sensor.mqtt_topic_octo_sysinfo_template_serverload
-      - sensor.mqtt_topic_octo_sysinfo_template_serverspeed
-      - sensor.mqtt_topic_octo_sysinfo_template_servertemp
-      - sensor.mqtt_topic_octo_water_level_template_level
-      - sensor.amazonnexthightide
-      - sensor.amazonnextlowtide
-      - sensor.amazonsunrisetides
-      - sensor.amazonsunsettides
-      - sensor.mqtt_topic_octo_sysinfo_template_watertemp
-      - sensor.monthly_amazon_temp_min
-      - sensor.monthly_amazon_temp_lowmed
-      - sensor.monthly_amazon_temp_med
-      - sensor.monthly_amazon_temp_highmed
-      - sensor.monthly_amazon_temp_max
-#      - sensor.monthly_amazon_temp
-      - sensor.monthly_amazon_ph
-      - sensor.reefsysinfo_template_name
-      - sensor.reefsysinfo_template_ip
-      - sensor.reefsysinfo_template_version
-      - sensor.reefsysinfo_template_uptime
-      - sensor.onlyreefcontrolcpumemory
-      - sensor.onlyreefcontrolpitemp
-      - sensor.mqtt_topic_reef_water_level_template_level
-      - sensor.reefsunrisetides
-      - sensor.reefsunsettides
-      - sensor.reefcontrolpilightbrightness
-      - sensor.reefcontrolpilightcolor
-      - sensor.reefcontrolpipump1status
-      - sensor.reefcontrolpipump1statusreverse
-      - sensor.reefcontrolpipump2power
-      - sensor.noaa_daily_max_reef_temp
-      - sensor.reef_high_avg_daily_temp
-      - sensor.reef_avg_daily_temp
-      - sensor.reef_low_avg_daily_temp
-      - sensor.noaa_daily_min_reef_temp
-      - input_boolean.reef_temp_daytime_state
-      - input_boolean.reef_temp_nightime_state
-      - sensor.bali_reef_tides 
-      - sensor.dark_sky_daily_high_temperature
-      - sensor.dark_sky_daily_low_temperature
-      - sensor.dark_sky_temperature
-      - sensor.mqtt_topic_garden_moisture_level_template_time
-      - sensor.mqtt_topic_garden_moisture_level_template_level
-      - sensor.mqtt_topic_garden_humidity_template
-      - sensor.mqtt_topic_garden_temperature_template
-      - sensor.mqtt_topic_garden_humidity_template_time
-      - switch.garden_light
-      - switch.garden_waterbot
-      - sensor.mqtt_topic_garden_water_state_template
-      - sensor.mqtt_topic_garden_water_state_time
-      - sensor.mqtt_topic_garden_light_state_template
-      - sensor.mqtt_topic_garden_light_state_time
-      - sensor.tracker_steps
-      - sensor.tracker_floors
-      - sensor.tracker_distance
-      - sensor.tracker_minutes_sedentary
-      - sensor.tracker_minutes_lightly_active
-      - sensor.tracker_minutes_fairly_active
-      - sensor.tracker_minutes_very_active
-      - sensor.resting_heart_rate
-      - sensor.sleep_efficiency
-      - sensor.sleep_start_time
-      - sensor.sleep_time_in_bed
-      - sensor.sleep_minutes_to_fall_asleep
-      - sensor.sleep_minutes_awake
-      - sensor.sleep_minutes_asleep
-      - binary_sensor.dashboard_motion
-      - sensor.mqtt_topic_octoprint_humidity_template
-      - sensor.mqtt_topic_octoprint_temperature_template
-      - sensor.asuswrt_download
-      - sensor.asuswrt_upload
-      - sensor.asuswrt_download_speed
-      - sensor.asuswrt_upload_speed
-      - sensor.latest_amazon_stats_date
-      - sensor.latest_amazon_stats_ph
-      - sensor.latest_amazon_stats_nitrate
-      - sensor.latest_amazon_stats_nitrite
-      - sensor.latest_amazon_stats_ammonia
-      - sensor.latest_amazon_stats_water_change
-      - sensor.latest_reef_stats_date
-      - sensor.latest_reef_stats_salinity
-      - sensor.latest_reef_stats_ph
-      - sensor.latest_reef_stats_nitrate
-      - sensor.latest_reef_stats_nitrite
-      - sensor.latest_reef_stats_ammonia
-      - sensor.latest_reef_stats_calcium
-      - sensor.latest_reef_stats_kh
-      - sensor.latest_reef_stats_water_change
-      - sensor.mailbox_temp_f
-      - sensor.mailbox_temp_h
-      - binary_sensor.mailbox_flag
-      - switch.sonoff_10006b7f44
-      - sensor.disk_use_percent
-      - sensor.memory_use_percent
-      - sensor.swap_use_percent
-
-recorder:
-  purge_keep_days: 3
-  db_url: !secret config_recorder_url
-  include:
-    domains:
-      - switch
-      - automation
-      - script
-      - device_tracker
-      - light
-      - persistent_notification
-    entities:
-      - binary_sensor.octoprint_status_printing
-      - binary_sensor.octoprint_status_printing_error
-      - sensor.octoprint_current_state 
-      - sensor.octoprint_hotend
-      - sensor.octoprint_hotend_target
-      - sensor.octoprint_bed
-      - sensor.octoprint_bed_target
-      - sensor.usps_mail
-      - sensor.usps_packages
-      - sensor.nextcal_message
-      - sensor.new_nextcal_location
-      - sensor.nextcal_start_time
-      - sensor.nextcal_end_time
-      - sensor.speedtest_download
-      - sensor.speedtest_upload
-      - sensor.speedtest_ping 
-      - sensor.rt_acrh13_kbyte_sec_received
-      - sensor.rt_acrh13_kbyte_sec_sent
-      - sensor.rt_acrh13_bytes_received
-      - sensor.rt_acrh13_bytes_sent
-      - sensor.myipopendnscom
-      - sensor.ha_installed_version
-      - sensor.ha_uptime
-      - sensor.db_file_system_size
-      - sensor.mariadb_database_size
-      - sensor.mqtt_topic_home_sysinfo_template_ambient_temperature
-      - sensor.mqtt_topic_home_sysinfo_template_serverload
-      - sensor.mqtt_topic_home_sysinfo_template_serverspeed
-      - sensor.mqtt_topic_home_sysinfo_template_servertemp
-      - sensor.battery_gabes_mate
-      - sensor.ambient_temp_graph
-      - sensor.dark_sky_minutely_summary
-      - sensor.btc_exchange_rate
-      - sensor.coinbase_bch_wallet
-      - sensor.coinbase_eth_wallet
-      - sensor.coinbase_ltc_wallet
-      - sensor.coinbase_my_vault
-      - sensor.coinbase_my_wallet
-      - sensor.coinbase_usd_wallet
-      - sensor.eth_exchange_rate
-      - sensor.ltc_exchange_rate
-      - sensor.template_calendar_birthday_date
-      - sensor.template_calendar_birthday 
-      - sensor.empirestatelights 
-      - sensor.mqtt_topic_octo_sysinfo_template_serverload
-      - sensor.mqtt_topic_octo_sysinfo_template_serverspeed
-      - sensor.mqtt_topic_octo_sysinfo_template_servertemp
-      - sensor.mqtt_topic_octo_water_level_template_level
-      - sensor.amazonnexthightide
-      - sensor.amazonnextlowtide
-      - sensor.amazonsunrisetides
-      - sensor.amazonsunsettides
-      - sensor.mqtt_topic_octo_sysinfo_template_watertemp
-      - sensor.filtered_amazon_tank_water_temperature
-      - sensor.monthly_amazon_temp_min
-      - sensor.monthly_amazon_temp_lowmed
-      - sensor.monthly_amazon_temp_med
-      - sensor.monthly_amazon_temp_highmed
-      - sensor.monthly_amazon_temp_max
-#      - sensor.monthly_amazon_temp
-      - sensor.monthly_amazon_ph
-      - sensor.reefsysinfo_template_name
-      - sensor.reefsysinfo_template_ip
-      - sensor.reefsysinfo_template_version
-      - sensor.reefsysinfo_template_uptime
-      - sensor.onlyreefcontrolcpumemory
-      - sensor.onlyreefcontrolpitemp
-      - sensor.mqtt_topic_reef_water_level_template_level
-      - sensor.reefsunrisetides
-      - sensor.reefsunsettides
-      - sensor.reefcontrolpilightbrightness
-      - sensor.reefcontrolpilightcolor
-      - sensor.reefcontrolpipump1status
-      - sensor.reefcontrolpipump1statusreverse
-      - sensor.reefcontrolpipump2power
-      - sensor.noaa_daily_max_reef_temp
-      - sensor.reef_high_avg_daily_temp
-      - sensor.reef_avg_daily_temp
-      - sensor.reef_low_avg_daily_temp
-      - sensor.noaa_daily_min_reef_temp
-      - input_boolean.reef_temp_daytime_state
-      - input_boolean.reef_temp_nightime_state
-      - sensor.bali_reef_tides
-      - sensor.dark_sky_daily_high_temperature
-      - sensor.dark_sky_daily_low_temperature
-      - sensor.dark_sky_temperature
-      - sensor.mqtt_topic_garden_moisture_level_template_time
-      - sensor.mqtt_topic_garden_moisture_level_template_level
-      - sensor.mqtt_topic_garden_humidity_template
-      - sensor.mqtt_topic_garden_temperature_template
-      - sensor.mqtt_topic_garden_humidity_template_time
-      - sensor.filtered_garden_temperature
-      - sensor.filtered_garden_humidity
-      - switch.garden_light
-      - switch.garden_waterbot
-      - sensor.mqtt_topic_garden_water_state_template
-      - sensor.mqtt_topic_garden_water_state_time
-      - sensor.mqtt_topic_garden_light_state_template
-      - sensor.mqtt_topic_garden_light_state_time
-      - sensor.tracker_steps
-      - sensor.tracker_floors
-      - sensor.tracker_distance
-      - sensor.tracker_minutes_sedentary
-      - sensor.tracker_minutes_lightly_active
-      - sensor.tracker_minutes_fairly_active
-      - sensor.tracker_minutes_very_active
-      - sensor.resting_heart_rate
-      - sensor.sleep_efficiency
-      - sensor.sleep_start_time
-      - sensor.sleep_time_in_bed
-      - sensor.sleep_minutes_to_fall_asleep
-      - sensor.sleep_minutes_awake
-      - sensor.sleep_minutes_asleep
-      - binary_sensor.dashboard_motion
-      - sensor.mqtt_topic_octoprint_humidity_template
-      - sensor.mqtt_topic_octoprint_temperature_template
-      - sensor.asuswrt_download
-      - sensor.asuswrt_upload
-      - sensor.asuswrt_download_speed
-      - sensor.asuswrt_upload_speed
-      - sensor.latest_amazon_stats_date
-      - sensor.latest_amazon_stats_ph
-      - sensor.latest_amazon_stats_nitrate
-      - sensor.latest_amazon_stats_nitrite
-      - sensor.latest_amazon_stats_ammonia
-      - sensor.latest_amazon_stats_water_change
-      - sensor.latest_reef_stats_date
-      - sensor.latest_reef_stats_salinity
-      - sensor.latest_reef_stats_ph
-      - sensor.latest_reef_stats_nitrate
-      - sensor.latest_reef_stats_nitrite
-      - sensor.latest_reef_stats_ammonia
-      - sensor.latest_reef_stats_calcium
-      - sensor.latest_reef_stats_kh
-      - sensor.latest_reef_stats_water_change
-      - sensor.mailbox_temp_f
-      - sensor.mailbox_temp_h
-      - binary_sensor.mailbox_flag
-      - switch.sonoff_10006b7f44
-      - sensor.disk_use_percent
-      - sensor.memory_use_percent
-      - sensor.swap_use_percent
-
-#Panels
-#panel_custom:
-#  - name: floorplan
-#    sidebar_title: Floorplan
-#    sidebar_icon: mdi:home
-#    url_path: floorplan
-#    config: !include floorplan.yaml
+    homeassistant.components.websocket_api: debug
 
 weather: 
   - platform: darksky
     api_key: !secret darksky_api_key
     mode: daily
-
-# Pandora through Pianobar
-media_player 2:
-  - platform: pandora
 
 # Enables a map showing the location of tracked devices
 map:
@@ -471,24 +144,6 @@ coinbase:
     - ETH
     - LTC
 
-notify:
-  - name: octo_cam_bot_notifier
-    platform: twitter
-    consumer_key: !secret twitter_consumer_key
-    consumer_secret: !secret twitter_consumer_secret
-    access_token: !secret twitter_access_token
-    access_token_secret: !secret twitter_access_token_secret
-
-notify 2:
-  - platform: command_line
-    name: gabes_alexa
-    command: /home/homeassistant/.homeassistant/scripts/alexa_wrapper.sh -d "Gabe's Alexa"
-
-notify 3:
-  - name: kiosk
-    platform: command_line
-    command: "/home/homeassistant/.homeassistant/tts/kiosk_tts.py"
-
 # lovelace theme notification
 input_text:
   notification_text:
@@ -505,94 +160,7 @@ hue:
       allow_hue_groups: true
 
 # alexa integration
-emulated_hue:
-  host_ip: 192.168.50.111
-  expose_by_default: false
-#  exposed_domains:
-#  - scene
-#  - script
-  entities:
-    scene.every_light_in_the_house:
-      name: "Every Light In The House"
-      hidden: false
-    script.tv_lights_off:
-      name: "TV Lights Off"
-      hidden: false
-    script.tv_lights_on:
-      name: "TV Lights On"
-      hidden: false
-    script.sunrise_lights:
-      name: "Bedroom Lights Alarm"
-      hidden: false
-    switch.06200940dc4f22cbb94b_4:
-      name: "Reef Light"
-      hidden: false
-    switch.harmony_watch_roku:
-      name: "Tee Vee" 
-      hidden: false
-    switch.kessil_light_level_11:
-      name: "Reef Blue Lights" 
-      hidden: false
-    switch.kessil_light_level_5:
-      name: "Reef Bright Lights"
-      hidden: false
-    switch.2437254184f3eb695327:
-      name: "Printer"
-      hidden: false
-    switch.octofishfeeder:
-      name: "Fish Feeder"
-      hidden: false
-    switch.2437254184f3eb695715:
-      name: "Home Assistant"
-      hidden: false
-    switch.06200940dc4f22cbb94b_7:
-      name: "Reef Pie"
-      hidden: false
-    switch.reef_pump_1:
-      name: "Reef Top Up" 
-      hidden: false
-    switch.reef_pump_1_reverse:
-      name: "Reef Reverse Pump" 
-      hidden: false
-    switch.reef_pump_2:
-      name: "Reef Doser"
-      hidden: false 
-    switch.2437254184f3eb695276:
-      name: "Reef Sump" 
-      hidden: false
-    switch.sonoff_10006b7f44:
-      name: "Humidifier"
-      hidden: false 
-    light.table:
-      name: "Table Light" 
-      hidden: false
-    light.bedroom:
-      name: "Bedroom" 
-      hidden: false
-    light.bedroom_desk:
-      name: "Bedroom Desk"
-      hidden: false 
-    light.bedside_table:
-      name: "Bedside Table"
-      hidden: false 
-    light.dashboard_screen:
-      name: "Kiosk Screen"
-      hidden: false 
-    light.desk:
-      name: "Desk" 
-      hidden: false
-    light.entry_light:
-      name: "Entry Light"
-      hidden: false 
-    light.kitchen:
-      name: "Kitchen"
-      hidden: false 
-    light.living_room:
-      name: "Living room"
-      hidden: false 
-    light.office:
-      name: "Office"
-      hidden: false
+emulated_hue: !include emulated_hue.yaml
 
 asuswrt:
   host: !secret asuswrt_host
@@ -663,10 +231,28 @@ system_health:
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
 
-esphome:
-  name: bedroom
-  platform: ESP8266
-  board: nodemcuv2
+#esphome:
+#  name: bedroom
+#  platform: ESP8266
+#  board: nodemcuv2
+
+person:
+  - name: Gabe
+    id: gabe
+    user_id: 152003d68d7646c396665d9da58122d5
+    device_trackers:
+      - device_tracker.5re0217120001465_2
+      - device_tracker.gabesmatehotspot
+      - device_tracker.google_maps_114555423860561989456
+      - device_tracker.hassio_gabesmatephone
+      - device_tracker.huawei_mate_9_92528f2b1a5
+#  old    - device_tracker.huawei_mate_992528f2b1a5
+#  tablet?    - device_tracker.android_c42e1d9b846bb1c6
+      - device_tracker.phone
+  - name: Berny
+    id: berny
+    device_trackers:
+      - device_tracker.bernys_iphone
 
 sonoff:
   username: !secret sonoff_username
@@ -699,6 +285,10 @@ sonoff:
 #    minutes: 20
 #  max_entries: 1
 
+media_player: !include media_player.yaml
+notify: !include notify.yaml
+logbook: !include logbook.yaml
+recorder: !include recorder.yaml
 plant: !include plants.yaml
 scene: !include scenes.yaml
 zone: !include zone.yaml
