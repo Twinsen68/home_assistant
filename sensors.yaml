@@ -508,6 +508,11 @@
 #      Connection: keep-alive
 #      content-type: application/json
 
+- platform: mqtt
+  state_topic: 'temp-home/reading'
+  name: HomeCam Info Raw
+  value_template: "{{ value }}"
+
 - platform: template
   sensors:
     mqtt_topic_home_sysinfo_template:
@@ -525,6 +530,22 @@
       friendly_name: "HomeCam Ambient Temperature"
       value_template: '{{ states.sensor.homecam_info_raw.state.split(",")[3] | multiply(0.001) | round(1) }}'
       unit_of_measurement: '°C'
+    last_homecam_motion:
+      friendly_name: "Last Homecam Motion"
+      value_template:   >-
+        {% set today = now().day | int %}
+        {% set motion_date = ((as_timestamp(states.binary_sensor.homecam_motion.last_changed) | timestamp_custom("%d")) | int) %}
+        {% if today == motion_date %}
+          {% set day = "Today" %}
+        {% elif (today - 1) == motion_date %}
+          {% set day = "Yesterday" %}
+        {% elif today == 1 and motion_date > 27 %}
+          {% set day = "Yesterday" %}
+        {% else %}
+          {% set day = as_timestamp(states.binary_sensor.homecam_motion.last_changed) | timestamp_custom("%A")%}
+        {% endif %}
+        {% set time = as_timestamp(states.binary_sensor.homecam_motion.last_changed) | timestamp_custom("%l:%M %p")%}
+        {{[day,time]|join(" at ")}} 
 
 - platform: mqtt
   state_topic: 'water-level-octo/reading'
@@ -739,10 +760,6 @@
       value_template: >
         {%- set date = as_timestamp(states.sensor.octoprint_humidity_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
-
-#- platform: date_countdown
-#  name: Renew SSL
-#  date: "02-03-2019 12:00"
 
 - platform: mqtt
   state_topic: 'temp-octo/reading'
