@@ -497,7 +497,7 @@ views:
           entity: sensor.last_homecam_motion
           title: null
           style:
-            left: 10%
+            left: 30%
             top: 90%
 #        - type: state-label
 #          entity: sensor.mqtt_topic_home_sysinfo_template_serverload
@@ -1403,7 +1403,7 @@ views:
           entity: sensor.last_homecam_motion
           title: null
           style:
-            left: 10%
+            left: 30%
             top: 90%
 #        - type: state-label
 #          entity: sensor.mqtt_topic_home_sysinfo_template_serverload
