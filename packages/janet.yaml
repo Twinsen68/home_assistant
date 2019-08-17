@@ -80,6 +80,7 @@ input_select:
     options:
       - "Kiosk Speaker"
       - "Tablet Speaker"
+      - "Gabe's Alexa"
       - "TTS Bluetooth Speaker"
     initial: "Kiosk Speaker"
 
@@ -127,7 +128,7 @@ script:
 
             {%- macro introduction() -%}
               {% set introduction = [
-                "I'm an informational delivery system, I literraly know everything. ",
+                "I'm an informational delivery system, I liter-raly know everything. ",
                 "I'm sort of the janitor around here. ",
                 "I'm like a walking database. You can ask me about the creation of the universe... or history. ",
                 "Every time a Janet is rebooted, she increases her social awareness and abilities. I might be the most advanced Janet in the universe. ",
@@ -223,6 +224,10 @@ script:
               {{ rain | random }}{{ bad_weather }}
             {%- endmacro -%}
             
+            {%- macro weather_alert_warning()-%}
+                The National Weather Service has issued a {{ states.sensor.weatheralerts.attributes.Description }} for your area. It expires at {{ states.sensor.weatheralerts.attributes.Expires }}.
+            {%- endmacro -%}
+
             {%- macro okay()-%}
               {% set okay = [
                 "Done! I love you guys. ",
@@ -313,34 +318,21 @@ script:
               {{ morning_greeting | random }}
             {%- endmacro -%}  
 
-            {% if call_morning_greeting == 1 %}
-              {{  morning_greeting() }}
-            {% endif %}
-
              {%- macro morning_weather() -%}
                 The time is now, {{ states('sensor.time') }}. Outside the temperature is, {{ states('sensor.dark_sky_temperature') }} degrees fahrenheit and {{ states('sensor.dark_sky_minutely_summary') }}. You can expect {{ states('sensor.dark_sky_daily_summary') }}
              {%- endmacro -%}  
-
-            {% if call_morning_weather == 1 %}
-              {{  morning_weather() }}
-            {% endif %}
 
             {%- macro morning_news() -%}
               The leading reuters headline this morning is {{(states.sensor.news_top.attributes | string).split("'")[1].split("'")[-1]}}. In technology the top headline is {{(states.sensor.news_tech.attributes | string).split("'")[1].split("'")[-1]}}. The arts headline is {{(states.sensor.news_arts.attributes | string).split("'")[1].split("'")[-1]}}. And finally in news of the weird, {{(states.sensor.news_weird.attributes | string).split("'")[1].split("'")[-1]}}
             {%- endmacro -%}  
 
-            {% if call_morning_news == 1 %}
-              {{  morning_news() }}
-            {% endif %}
-
-
              {%- macro morning_event() -%}
                 You have an event on your calendar today. At {{as_timestamp(states.calendar.gabethisisgabescom.attributes.start_time) | timestamp_custom('%-I:%M %P')}} is {{states.calendar.gabethisisgabescom.attributes.message}}. It will be located at {{states.calendar.gabethisisgabescom.attributes.location}}
              {%- endmacro -%}  
 
-            {% if call_morning_event == 1 %}
-              {{  morning_event() }}
-            {% endif %}
+             {%- macro morning_work_event() -%}
+                You have an event on your calendar today. At {{as_timestamp(states.calendar.work.attributes.start_time) | timestamp_custom('%-I:%M %P')}} is {{states.calendar.work.attributes.message}}. It will be located at {{states.calendar.work.attributes.location}}
+             {%- endmacro -%}  
 
              {%- macro greeting_berny() -%}
               {% set person = "Berny" %} 
@@ -488,11 +480,19 @@ script:
               {{ morning_weather() }}
             {% endif %}
 
+            {% if call_weather_alert == 1 %}
+              {{ weather_alert() }}
+            {% endif %}
+
             {% if call_morning_greeting == 1 %}
               {{ witty( morning_greeting(), chance) }}
             {% endif %}
 
             {% if call_morning_event == 1 %}
+              {{ morning_event() }}
+            {% endif %}
+
+            {% if call_morning_work_event == 1 %}
               {{ morning_event() }}
             {% endif %}
 
@@ -540,9 +540,9 @@ script:
         conditions:
           - condition: or
             conditions:
-#              - condition: time
-#                after: '08:00:00'
-#                before: '22:00:00'
+              - condition: time
+                after: '02:00:00'
+                before: '23:00:00'
               - condition: state
                 entity_id: input_boolean.janet_alert_mode
                 state: 'on'
@@ -570,7 +570,7 @@ script:
 
       - service: rest_command.kiosk_sound_janet_boop
 
-      - service: tts.google_say
+      - service: tts.google_cloud_say
         data_template:
           entity_id: media_player.kiosk_speaker
           message: >-
@@ -585,13 +585,13 @@ script:
       - condition: state
         entity_id: input_boolean.janet_text_notifications
         state: 'on'
-#      - service: tts.google_say
-#        data_template:
+      - service: tts.google_cloud_say
+        data_template:
 #          title: "Janet:"
-#          entity_id: media_player.kiosk_speaker
-#          message: >-
-#            {{ speech_message | replace("\n","") | replace("   ","") |
-#               replace("eight hundred and sixty one thousand","861.000") }}
+          entity_id: media_player.kiosk_speaker
+          message: >-
+            {{ speech_message | replace("\n","") | replace("   ","") |
+               replace("eight hundred and sixty one thousand","861.000") }}
       - service: persistent_notification.create
         data_template:
           message: >-

@@ -8,9 +8,20 @@ homeassistant:
   customize: !include customize.yaml
   customize_glob: !include customize_glob.yaml
   packages: !include_dir_named packages
+#  auth_providers:
+#      - type: homeassistant
+#      - type: legacy_api_password
+#        api_password: !secret http_password
+#      - type: trusted_networks
+#        trusted_networks:
+#          - 192.168.50.0/24
   whitelist_external_dirs:
       - /home/homeassistant/.homeassistant/scripts
       - /home/homeassistant/.homeassistant/www/images/
+      - /home/homeassistant/.homeassistant/www/images/icons/
+      - /home/homeassistant/.homeassistant/www/mail_images/
+      - /home/homeassistant/.homeassistant/www/sounds/
+      - /home/homeassistant/.homeassistant/www/sounds/farts/
       - /home/homeassistant/.homeassistant/downloads/
 
 # Enables the frontend
@@ -21,10 +32,10 @@ frontend:
 # Enables configuration UI
 config:
 
-api:
+#api:
 
 http:
-  api_password: !secret http_password
+#  api_password: !secret http_password
   base_url: !secret config_base_url
   ssl_key: !secret config_ssl_key
   ssl_certificate: !secret config_ssl_cert
@@ -32,12 +43,15 @@ http:
 lovelace:
   mode: yaml
 
+hacs:
+  token: !secret hacs_token
+
 mqtt:
   broker: localhost
   port: 1883
   username: !secret mqtt_username
   password: !secret mqtt_password
-  discovery: true
+  discovery: false
 
 speedtestdotnet:
   scan_interval:
@@ -48,13 +62,6 @@ speedtestdotnet:
     - upload
 
 updater:
-
-custom_updater:
-  card_urls:
-    - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-google-calendar-card/master/custom_updater.json
-    - https://raw.githubusercontent.com/kalkih/mini-graph-card/master/tracker.json
-    - https://raw.githubusercontent.com/nervetattoo/simple-thermostat/master/tracker.json
-    - https://raw.githubusercontent.com/robmarkcole/Hue-sensors-HASS/master/custom_updater.json
 
 # Discover some devices automatically
 discovery:
@@ -69,7 +76,7 @@ history:
 logger:
   default: error
   logs:
-    homeassistant.components: info
+#    homeassistant.components: info
     homeassistant.components.sensor.rest: warning
     homeassistant.components.camera.generic: critical
     homeassistant.helpers.template: critical
@@ -89,15 +96,32 @@ sun:
 
 # Text to speech
 tts:
-  - platform: google_translate
-    service_name: google_say
-    language: 'en'
+  - platform: google_cloud
+    key_file: !secret tts_keyfile
+    language: en-US
+    gender: female
+    voice: en-US-Wavenet-F
+    encoding: mp3
+    speed: 1.2
+    pitch: -2.0
+    gain: 0.0
+    profiles:
+      - handset-class-device
+      - small-bluetooth-speaker-class-device
 
 # Cloud
 cloud:
 
 #Alexa
 alexa:
+
+alexa_media:
+  accounts:
+    - email: !secret alexa_email
+      password: !secret alexa_password
+      url: amazon.com
+      include_devices:
+        - "Gabe's Alexa"
 
 #IFTTT
 ifttt:
@@ -107,6 +131,8 @@ ifttt:
 mysensors:
   gateways:
     - device: '192.168.50.111'
+  optimistic: true
+  persistence: false
 
 #Pilight 433mhz receiver
 pilight:
@@ -238,27 +264,35 @@ ffmpeg:
 
 person:
   - name: Gabe
-    id: gabe
-    user_id: 152003d68d7646c396665d9da58122d5
+    id: Gabe
+    user_id: 7422ade9504f4776bedd6e9d3b64eb31
     device_trackers:
-      - device_tracker.5re0217120001465_2
+      - device_tracker.5re0217120001465
       - device_tracker.gabesmatehotspot
       - device_tracker.google_maps_114555423860561989456
-      - device_tracker.hassio_gabesmatephone
       - device_tracker.huawei_mate_9_92528f2b1a5
-#  old    - device_tracker.huawei_mate_992528f2b1a5
-#  tablet?    - device_tracker.android_c42e1d9b846bb1c6
-      - device_tracker.phone
   - name: Berny
-    id: berny
+    id: Berny
     device_trackers:
       - device_tracker.bernys_iphone
+#  - name: Janet
+#    id: Note3
+#    user_id: 64c2fc466cb843f6a6a3454d926e2c22
+#    device_trackers:
+#      - device_tracker.android-c42e1d9b846bb1c6
 
-sonoff:
-  username: !secret sonoff_username
-  password: !secret sonoff_password
-  scan_interval: 60
-  grace_period: 600
+# Lightning
+#wwlln:
+#  window: 3600
+#  radius: 300
+#  latitude: !secret config_lat
+#  longitude: !secret config_long
+
+#sonoff:
+#  username: !secret sonoff_username
+#  password: !secret sonoff_password
+#  scan_interval: 60
+#  grace_period: 600
 #  debug: true
 
 #gpodder:
@@ -269,14 +303,6 @@ sonoff:
 #      name: homeassistant
 #      device: kiosk
 
-# This crashes the pi
-#image_processing:
-#  - platform: tensorflow
-#    source:
-#      - entity_id: camera.housecam
-#    model:
-#      graph: /home/homeassistant/.homeassistant/tensorflow/frozen_inference_graph.pb
-
 #feedreader:
 #  urls:
 #    - https://twitrss.me/twitter_user_to_rss/?user=octo_cam_bot
@@ -285,6 +311,7 @@ sonoff:
 #    minutes: 20
 #  max_entries: 1
 
+geo_location: !include geolocation.yaml
 media_player: !include media_player.yaml
 notify: !include notify.yaml
 logbook: !include logbook.yaml
@@ -299,7 +326,7 @@ input_select: !include input_select.yaml
 history_graph: !include history_graph.yaml
 climate: !include climate.yaml
 rest_command: !include rest_command.yaml
-device_tracker: !include device_tracker.yaml
+#device_tracker: !include device_tracker.yaml
 switch: !include switches.yaml
 camera: !include cameras.yaml
 sensor: !include sensors.yaml
@@ -310,4 +337,3 @@ shell_command: !include shell_commands.yaml
 intent_script: !include intent_script.yaml
 binary_sensor: !include binary_sensor.yaml
 light: !include light.yaml
-

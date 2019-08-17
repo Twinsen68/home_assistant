@@ -487,9 +487,26 @@
   value_template: '{{ value | multiply(0.001) | int | round(1) }}'
 
 - platform: mqtt
-  state_topic: 'temp-home/reading'
-  name: HomeCam Info Raw
-  value_template: "{{ value }}"
+  name: "HomeCam Motion Raw JSON"
+  state_topic: "homecam/motion/reading"
+  value_template: '{{ value_json.payload }}'
+
+#- platform: rest
+#  name: HomeCam Direct API
+#  username: !secret homecam_username
+#  password: !secret homecam_password
+#  authentication: basic
+#  json_attributes:
+#    - width
+#    - height
+#    - framerate
+#    - text_left
+#    - text_right
+#    - pixels
+#  resource: http://homecam.local:7999/1/config/list
+#  headers:
+#      Connection: keep-alive
+#      content-type: application/json
 
 - platform: template
   sensors:
@@ -991,6 +1008,23 @@
       friendly_name: "Monthly Amazon Temp Min"
       value_template: '{{ states.sensor.monthly_amazon_temp_minmax_raw_this_month.state.split(";")[5] }}'
       unit_of_measurement: '°C'
+#Reef time adjustment of 2 hours
+    reeftime_sunrise_adjustment:
+      friendly_name: "Reeftime Sunrise Adjustment"
+      value_template: >
+        {% set time_string = now().strftime("%Y-%m-%d ")+states('sensor.reefsunrisetides') %}
+        {% set rise_time = strptime(time_string,"%Y-%m-%d %H:%M").timestamp() %}
+        {% set adj_time = (120 * 60) %}       
+        {{ ( rise_time + adj_time ) | timestamp_custom("%H:%M") }}
+    reeftime_sunset_adjustment:
+      friendly_name: "Reeftime Sunset Adjustment"
+      value_template: >
+        {% set time_string = now().strftime("%Y-%m-%d ")+states('sensor.reefsunsettides') %}
+        {% set rise_time = strptime(time_string,"%Y-%m-%d %H:%M").timestamp() %}
+        {% set adj_time = (120 * 60) %}       
+        {{ ( rise_time + adj_time ) | timestamp_custom("%H:%M") }}
+
+
 #    octocam_tweet_img:
 #      friendly_name: "Latest OctoCam Tweet Image"
 #      value_template: >
@@ -1085,7 +1119,6 @@
 
 - platform: file
   name: 'Monthly Amazon pH'
-#  entity_id: sensor.monthly_amazon_ph
   file_path: /home/homeassistant/.homeassistant/scripts/amazon-temp-by-month.txt
   unit_of_measurement: 'pH'
   value_template: '{{ (value.split(",")[2]) | round(1) }}'
@@ -1093,9 +1126,8 @@
 #Google Sheets Amazon Stats
 - platform: file
   name: 'Amazon Stats Raw'
-#  entity_id: sensor.amazon_stats_raw
   file_path: /home/homeassistant/.homeassistant/downloads/amazon_stats.csv
-
+  scan_interval: 3600
 - platform: template
   sensors:
     latest_amazon_stats_date:
@@ -1122,14 +1154,13 @@
   resource: http://www.surf-forecast.com/breaks/Kuta-Beach/seatemp
   select: "div#contdiv span.temp"
   name: ReefOceanTemp
-#  force_update: true
   scan_interval: 3600
 
 #Google Sheets Reef Stats
 - platform: file
   name: 'Reef Stats Raw'
-#  entity_id: sensor.reef_stats_raw
   file_path: /home/homeassistant/.homeassistant/downloads/reef_stats.csv
+  scan_interval: 3600
 - platform: template
   sensors:
     latest_reef_stats_date:
@@ -1255,7 +1286,7 @@
   db_url: !secret config_db_fs_url
   queries:
     - name: "MariaDB Database Size"
-      query: 'SELECT table_schema "database", Round(Sum(data_length + index_length)/1024/1024, 1) "value" FROM information_schema.tables WHERE table_schema="hass_db" GROUP BY table_schema;'
+      query: 'SELECT table_schema "database", Round(Sum(data_length + index_length)/1024/1024, 1) "value" FROM information_schema.tables WHERE table_schema="hass_db_2019" GROUP BY table_schema;'
       column: 'value'
       unit_of_measurement: MB
 
@@ -1475,11 +1506,11 @@
 #  sensors:
 #    battery_gabes_mate:
 #      friendly_name: "Battery Status"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.battery | default(0) |int() }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.battery | default(0) |int() }}'
 #      entity_id: sensor.battery_gabes_mate
 #      unit_of_measurement: "%"
 #      icon_template: >
-#        {% set battery_level = states.device_tracker.5re0217120001465_2.attributes.battery|default(0)|int %}
+#        {% set battery_level = states.device_tracker.5re0217120001465.attributes.battery|default(0)|int %}
 #        {% set battery_round = (battery_level / 10) |int * 10 %}
 #        {% if battery_round >= 100 %}
 #          mdi:battery
@@ -1490,38 +1521,38 @@
 #        {% endif %}
 #    altitude_gabes_mate:
 #      friendly_name: "Altitude"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.altitude | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.altitude | round(1) }}'
 #      entity_id: sensor.gps_altitude_gabes_mate
 #      unit_of_measurement: "m"
 #    activity_gabes_mate:
 #      friendly_name: "Activity"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.activity }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.activity }}'
 #      entity_id: sensor.activity_gabes_mate
 #    direction_gabes_mate:
 #      friendly_name: "Direction"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.direction }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.direction }}'
 #      entity_id: sensor.direction_gabes_mate
 #    speed_gabes_mate:
 #      friendly_name: "Speed"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.speed | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.speed | round(1) }}'
 #      entity_id: sensor.speed_gabes_mate
 #      unit_of_measurement: "mph"
 #    accuracy_gabes_mate:
 #      friendly_name: "Accuracy"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.gps_accuracy | round(1) }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.gps_accuracy | round(1) }}'
 #      entity_id: sensor.gps_accuracy_gabes_mate
 #      unit_of_measurement: "m"
 #    provider_gabes_mate:
 #      friendly_name: "Provider"
-#      value_template: {{ states("device_tracker.5re0217120001465_2.attributes.provider") }}
+#      value_template: {{ states("device_tracker.5re0217120001465.attributes.provider") }}
 #      entity_id: sensor.net_provider_gabes_mate
 #    source_type_gabes_mate:
 #      friendly_name: "Source Type"
-#      value_template: '{{ states.device_tracker.5re0217120001465_2.attributes.source_type }}'
+#      value_template: '{{ states.device_tracker.5re0217120001465.attributes.source_type }}'
 #      entity_id: sensor.source_type_gabes_mate
 #    last_seen_gabes_mate:
 #      friendly_name: "Last Seen"
-#      value_template: '{{ relative_time (states.device_tracker.5re0217120001465_.last_updated) + " ago"}}'
+#      value_template: '{{ relative_time (states.device_tracker.5re0217120001465.last_updated) + " ago"}}'
 #      entity_id: sensor.last_seen_gabes_mate
 
 - platform: template
@@ -1708,7 +1739,7 @@
 
 - platform: history_stats
   name: stats_work
-  entity_id: device_tracker.5re0217120001465_2
+  entity_id: device_tracker.5re0217120001465
   state: 'Work'
   type: time
   end: '{{ now() }}'
@@ -1717,7 +1748,7 @@
 
 - platform: history_stats
   name: stats_home
-  entity_id: device_tracker.5re0217120001465_2
+  entity_id: device_tracker.5re0217120001465
   state: 'home'
   type: time
   end: '{{ now() }}'
@@ -1978,7 +2009,7 @@
     {% else %}n/a
     {% endif %}
 #  icon_color: >
-#    if (state === '99') return 'hs[98,158,81]'; 
+#    if (state == '99') return 'hs[98,158,81]'; 
 #    return 'hs[191,27,0]';
 
 - platform: rest
@@ -2040,7 +2071,7 @@
     {% else %}n/a
     {% endif %}
 #  icon_color: >
-#    if (state === '99') return 'hs[98,158,81]'; 
+#    if (state == '99') return 'hs[98,158,81]'; 
 #    return 'hs[191,27,0]';
 
 - platform: rest
@@ -2139,24 +2170,43 @@
 
 - platform: template
   sensors:
+    weather_alert_active_nyc:
+      value_template: >-
+        {% if states.sensor.weatheralerts.state == "unknown" %}Off
+        {% elif states.sensor.weatheralerts.state != "unknown" %}On
+        {% else %}n/a
+        {% endif %}
+    weather_alert_active_hbg:
+      value_template: >-
+        {% if states.sensor.weatheralerts_2.state == "unknown" %}Off
+        {% elif states.sensor.weatheralerts_2.state != "unknown" %}On
+        {% else %}n/a
+        {% endif %}
     outside_alerts:
       value_template: >
-        Current Location: {{ states('device_tracker.5re0217120001465_2') }}
+        Current Location: {{ states('device_tracker.5re0217120001465') }}
         ({{ (as_timestamp (now()) -as_timestamp (states.device_tracker.gabes_mate.last_changed)) }})
+    gps_occupancy_chance:
+      value_template: >-
+        {%- if is_state("device_tracker.5re0217120001465", "home") %}
+            100
+        {% elif is_state("device_tracker.5re0217120001465", "work") %}
+            0
+        {% elif is_state("device_tracker.5re0217120001465", "away") %}
+            0
+        {% else %}
+            0
+        {% endif -%}
+    gps_occupancy_float:
+      unit_of_measurement: '%'
+      value_template: >-
+        {{ (states.sensor.gps_occupancy_chance.state | float | round(0)) }}
 
-#- platform: command_line
-#  name: "Outside: Alerts"
-#  icon: alert-outline
-#  command: "/home/homeassistant/.homeassistant/scripts/check-weather.sh"
-#  scan_interval: 180 
+- platform: weatheralerts
+  sameid: '036061'
 
-#- platform: scrape
-#  resource: "https://www.accuweather.com/en/us/new-york-ny/10007/minute-weather-forecast/349727"
-#  select: "div.mc-summary > p"
-#  name: "Outside: Alerts"
-#  icon: alert-outline
-#  entity_id: sensor.outside_alerts
-#  scan_interval: 180
+- platform: weatheralerts
+  sameid: '042043'
 
 - platform: cert_expiry
   host: !secret cert_expiry_host
@@ -2182,10 +2232,28 @@
     protocol: arctech_screen_old
 
 - platform: pilight
+  name: 'Some Daycom Sensor'
+  variable: 'state'
+  payload:
+    protocol: daycom
+
+- platform: pilight
   name: 'Some Gas Detector'
   variable: 'state'
   payload:
     protocol: mumbi
+
+- platform: pilight
+  name: 'Maybe Hallway Motion Detector'
+  variable: 'state'
+  payload:
+    protocol: rc101
+
+- platform: pilight
+  name: 'Maybe Closet Motion Detector'
+  variable: 'state'
+  payload:
+    protocol: heitech
 
 - platform: pilight
   name: 'Some Energy Sensor'
@@ -2198,6 +2266,13 @@
   variable: 'temperature'
   payload:
     protocol: tfa
+  unit_of_measurement: '°C'
+
+- platform: pilight
+  name: 'Some Freezer Temp Sensor'
+  variable: 'temperature'
+  payload:
+    protocol: auriol
   unit_of_measurement: '°C'
 
 - platform: template
@@ -2359,6 +2434,11 @@
 - platform: mqtt
   state_topic: "/flux-capacitor/reading"
   name: Flux Capacitor
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "et/reading"
+  name: ET
   value_template: "{{ value }}"
 
 - platform: mqtt
@@ -2608,3 +2688,83 @@
         {% else %}
           PowerOff
         {% endif %}
+
+# Alexa
+- platform: template
+  sensors:
+    last_alexa:
+      entity_id:
+        - media_player.gabe_s_alexa
+      value_template: >
+        {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+
+# Presence Monitor
+- platform: mqtt
+  state_topic: 'monitor/home-assistant/ionic'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Ionic BT Hass'
+
+- platform: mqtt
+  state_topic: 'monitor/home-assistant/gabes_macbook'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Gabes Macbook BT Hass'
+
+- platform: mqtt
+  state_topic: 'monitor/home-assistant/gabes_mate_hotspot'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Gabes Mate Hotspot BT Hass'
+
+- platform: mqtt
+  state_topic: 'monitor/octocam/ionic'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Ionic BT OctoCam'
+
+- platform: mqtt
+  state_topic: 'monitor/octocam/gabes_macbook'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Gabes Macbook BT OctoCam'
+
+- platform: mqtt
+  state_topic: 'monitor/octocam/gabes_mate_hotspot'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Gabes Mate Hotspot BT OctoCam'
+
+- platform: mqtt
+  state_topic: 'monitor/reefcontrolpi/ionic'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Ionic BT ReefPi'
+
+- platform: mqtt
+  state_topic: 'monitor/reefcontrolpi/gabes_macbook'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Gabes Macbook BT ReefPi'
+
+- platform: mqtt
+  state_topic: 'monitor/reefcontrolpi/gabes_mate_hotspot'
+  value_template: '{{ value_json.confidence }}'
+  unit_of_measurement: '%'
+  name: 'Gabes Mate Hotspot BT ReefPi'
+
+- platform: min_max
+  name: "Home Occupancy Confidence"
+  type: max
+  round_digits: 0
+  entity_ids:
+    - sensor.gps_occupancy_float
+    - sensor.gabes_macbook_bt_reefpi
+    - sensor.ionic_bt_reefpi
+    - sensor.gabes_mate_hotspot_bt_reefpi
+    - sensor.gabes_macbook_bt_octocam
+    - sensor.ionic_bt_octocam
+    - sensor.gabes_mate_hotspot_bt_octocam
+    - sensor.gabes_macbook_bt_hass
+    - sensor.ionic_bt_hass
+    - sensor.gabes_mate_hotspot_bt_hass

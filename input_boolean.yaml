@@ -17,6 +17,7 @@ watch_roku_switch_boolean:
 turn_on_roomba_switch_boolean:
   initial: on 
   icon: mdi:robot-vacuum
+
 # Switches for setting day reef night temp
 reef_temp_daytime_state:
   name: Set Reef State to Daytime
@@ -46,6 +47,8 @@ start_alarm_clock_off_day:
   name: Start Alarm Clock Off Day
   initial: off
   icon: mdi:alarm
+
+#Home Stuff
 work_day:
   name: Work Day
   icon: mdi:briefcase
@@ -57,3 +60,20 @@ bedroom_alarm_clock_repeat:
 samsung_soundbar_power:
   name: Soundbar Power
   icon: mdi:power
+humidifier_toggle:
+  name: Humidifier Toggle
+  icon: mdi:power
+  initial: off
+homecam_snapshot:
+  name: Homecam Snapshot Toggle
+  icon: mdi:camera
+  initial: off
+
+#BT occupancy Sensor
+occupancy:
+  name: Occupancy
+  icon: mdi:account-check
+alarm_went_off:
+  name: Alarm Went Off
+  icon: mdi:alarm
+  initial: off

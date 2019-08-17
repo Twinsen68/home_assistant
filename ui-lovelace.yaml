@@ -3,25 +3,41 @@ resources:
     type: module
   - url: /local/custom_ui/monster-card.js?v=5
     type: module
-  - url: /local/custom_ui/card-modder.js?v=5
-    type: module
   - url: /local/custom_ui/color-glance-card.js?v=5
     type: module
   - url: /local/custom_ui/column-card.js?v=5
     type: module
-  - url: /local/custom_ui/fold-entity-row.js?v=5.1
+  - url: /local/community/lovelace-fold-entity-row/fold-entity-row.js
+    type: module
+  - url: /local/community/lovelace-multiple-entity-row/multiple-entity-row.js
+    type: module
+  - url: /local/community/entities-attribute-card/entities-attribute-card.js
     type: module
   - url: /local/custom_ui/markdown-mod.js?v=1.2
     type: module
-  - url: /local/custom_ui/card-mod.js?v=1.2
+  - url: /local/custom_ui/card-modder.js?v=1.2
+    type: module
+  - url: /local/community/lovelace-card-mod/card-mod.js
+    type: module
+  - url: /local/community/lovelace-card-templater/card-templater.js
     type: module
   - url: /local/custom_ui/auto-entities.js?v=1.0
     type: module
-  - url: /local/custom_ui/button-card.js?v=5
+  - url: /local/community/atomic_calendar/atomic_calendar.js
+    type: module
+  - url: /local/community/light-entity-card/light-entity-card.js
+    type: module
+  - url: /local/community/light-entity-row/light-entity-row.js
+    type: module
+  - url: /local/community/button-card/button-card.js
+    type: module
+  - url: /local/community/button-entity-row/button-entity-row.js
     type: module
   - url: /local/custom_ui/light-card.js?v=5
     type: module
-  - url: /local/custom_ui/dual-gauge-card.js?v=5
+  - url: /local/community/dual-gauge-card/dual-gauge-card.js
+    type: module
+  - url: /local/community/gauge-card/gauge-card.js
     type: module
   - url: /local/custom_ui/slider-entity-row.js?v=5.1
     type: module
@@ -29,29 +45,32 @@ resources:
     type: module
   - url: https://unpkg.com/moment@2.22.2/moment.js
     type: js
-  - url: /customcards/github/maykar/compact-custom-header.js?track=true
+  - url: /local/community/compact-custom-header/compact-custom-header.js
     type: module
   - url: /local/custom_ui/calendar-card.js?v=5
     type: module
-  - url: /local/custom_ui/state-element.js?v=1
+  - url: /local/custom_ui/state-element.js
+    type: js
+  - url: /local/community/text-element/text-element.js
     type: module
-  - url: /local/custom_ui/text-element.js?v=0.1
+  - url: /local/community/travel-time-card/travel-time-card.js
     type: module
   - url: /local/custom_ui/tracker-card.js?v=0.1
     type: module
-  - url: /local/custom_ui/state-attribute-element.js?v=0.1
+  - url: /local/community/state-attribute-element/state-attribute-element.js
     type: module
   - url: /local/custom_ui/flower-card.js?v=0.1
     type: module
   - url: /local/custom_ui/canvas-gauge-card.js?v=0.1
     type: module
-  - url: /local/custom_ui/lovelace-player.js?v=6.s&media_player.kiosk_speaker=fb4e04e9-2f0affc3&media_player.tablet_speaker=5c2aa88a-e7e0a9be        
+  - url: /local/custom_ui/lovelace-player.js?v=6.s&media_player.kiosk_speaker=fb4e04e9-2f0affc3
+#&media_player.tablet_speaker=5c2aa88a-e7e0a9be        
     type: js
-  - url: /local/custom_ui/list-card.js?v=0.4
+  - url: /local/community/list-card/list-card.js
     type: module
-  - url: /local/custom_ui/vertical-stack-in-card.js
+  - url: /local/community/vertical-stack-in-card/vertical-stack-in-card.js
     type: module
-  - url: /local/custom_ui/roku-card.js?v=0
+  - url: /local/community/roku-card/roku-card.js
     type: module
   - url: /local/custom_ui/circle-sensor-card.js?v=1
     type: module
@@ -65,13 +84,13 @@ resources:
     type: js
   - url: https://cdn.jsdelivr.net/gh/bramkragten/custom-ui@master/swipe-card/swipe-card.min.js
     type: module
-  - url: /local/custom_ui/mini-graph-card-bundle.js?v=0.3.0
+  - url: /local/community/mini-graph-card/mini-graph-card.js
     type: module
   - url: /local/custom_ui/simple-thermostat.js?v=1
     type: module
-  - url: /local/custom_ui/bar-card.js?v=0.1.9
+  - url: /local/community/bar-card/bar-card.js
     type: js
-  - url: /local/custom_ui/radial-menu.js?v=0.1.0
+  - url: /local/community/radial-menu/radial-menu.js
     type: module
   - url: /local/custom_ui/camera-card.js?v=0.1.0
     type: module
@@ -88,36 +107,102 @@ cch:
   clock_date: true
   date_locale: en-us
   disable: false
-  hide_tabs: 11,12,13,14,15,16
+  hide_tabs: 1,2,3,14,15,16,17,18,19
   conditional_styles:
-#        - entity: binary_sensor.garden_reservoir
-#          condition:          # When moisture is under 15...
-#            state: on
-#          tab:                # change color and icon of tab 0.
-#            6:
-#              color: blue
     - entity: notifications
       condition:
         state: false      # When there are no notifications...
       button:             # hide notifications button.
         notifications:
           hide: true
+    - template:
+        tab:
+          4:
+            - icon: >
+                if (states["binary_sensor.people_home"].state == "on") "mdi:account-heart";
+                else "mdi:account-remove";
+            - color: > 
+                if (states["binary_sensor.people_home"].state == "on") "#bbd2fa";
+                else "#ffffff";
+    - template:
+        tab:
+          5:
+            - icon: >
+                if (states["light.bedside_table"].state == 'on') "mdi:lightbulb-on";
+                else if (states["light.bedroom_desk"].state == 'on') "mdi:lightbulb-on";
+                else if (states["light.desk"].state == 'on') "mdi:lightbulb-on";
+                else if (states["light.entry_light"].state == 'on') "mdi:lightbulb-on";
+                else if (states["light.kitchen"].state == 'on') "mdi:lightbulb-on";
+                else if (states["light.table"].state == 'on') "mdi:lightbulb-on";
+                else "mdi:domain";
+            - color:  >
+                if (states["light.bedside_table"].state == 'on') "#fcf9a7";
+                else if (states["light.bedroom_desk"].state == 'on') "#fcf9a7";
+                else if (states["light.desk"].state == 'on') "#fcf9a7";
+                else if (states["light.entry_light"].state == 'on') "#fcf9a7";
+                else if (states["light.kitchen"].state == 'on') "#fcf9a7";
+                else if (states["light.table"].state == 'on') "#fcf9a7";
+                else "#ffffff";
+    - template:
+        tab:
+          9:
+            - icon: >
+                if (states["sensor.plant_monitor_soil_moisture"].state <= '20') "mdi:water-off";
+                else "mdi:flower";
+            - color:  >
+                if (states["sensor.plant_monitor_soil_moisture"].state <= '20') "#acd6fa";
+                else "#ffffff";
+    - template:
+        tab:
+          10:
+            - icon: >
+                if (states["sensor.weather_alert_active_nyc"].state == 'on') "mdi:flash-alert";
+                else "mdi:weather-sunny";
+            - color:  >
+                if (states["sensor.weather_alert_active_nyc"].state == 'on') "#f77f57";
+                else "#ffffff";
+    - template:
+        tab:
+          18:
+            - icon: >
+                if (states["sensor.weather_alert_active_nyc"].state == 'on') "mdi:flash-alert";
+                else "mdi:weather-sunny";
+            - color:  >
+                if (states["sensor.weather_alert_active_nyc"].state == 'on') "#f77f57";
+                else "#ffffff";
   exceptions:
       - conditions:
-          user: note3
+          user_agent: Mobile Safari
+        config:
+          background: 'rgba(150, 150, 150, 0.4)'
+          options: hide
+          voice: hide
+          default_tab: 1
+          notifications: clock
+          clock_date: true
+          date_locale: en-us
+          hide_tabs: 0,14,15,16,17,18,19
+          kiosk_mode: true
+          swipe: true
+          swipe_animate: swipe
+          swipe_wrap: true
+      - conditions:
+          user: note_kiosk
         config:
           background: 'rgba(150, 150, 150, 0.4)'
           menu: hide
           options: hide
-          voice: show
+          voice: hide
+          default_tab: 11
           notifications: clock
-          clock_format: '12'
           clock_date: true
           date_locale: en-us
-          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10
+          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10,11,12,13
           kiosk_mode: true
           swipe: true
-          swipe_animate: flip
+          swipe_animate: swipe
+          swipe_wrap: true
+#          swipe_prevent_default: true
       - conditions:
           user: samsungtab
         config:
@@ -125,16 +210,18 @@ cch:
           menu: hide
           options: hide
           voice: show
+          default_tab: 12
           notifications: clock
-          clock_format: '12'
           clock_date: true
           date_locale: en-us
-          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10,11
+          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
           kiosk_mode: true
           swipe: true
           swipe_animate: flip
+          swipe_wrap: true
+          swipe_prevent_default: true
 
-background: url("/local/images/bg/bg-stars-dark-loop.gif")
+background: url("/local/images/bg/bg-tile-stars.gif")
 name: Apartment 10R
 views:
 - name: Welcome
@@ -145,7 +232,7 @@ views:
   - type: vertical-stack            
     cards:
     - type: picture-elements
-      image: /local/images/kleftiko.jpg
+      image: /local/images/bg_beach_2.gif
       elements:
         - type: state-label
           entity: sensor.time
@@ -255,10 +342,6 @@ views:
 
 #  - type: picture-elements
 #    image: /local/images/direction.jpg
-#    style:                 
-#      border-radius: 20px
-#      border: solid 1px rgba(100,100,100,0.3)
-#      box-shadow: 3px 3px rgba(0,0,0,0.4)
 #    elements:
 #      - type: state-label
 #        entity: sensor.activity_gabes_mate
@@ -354,6 +437,708 @@ views:
 #    title: Phone Battery
 #    unit: "%"
 
+- name: Quick Info
+  title: Quick Info
+  icon: mdi:cellphone
+  cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:card-modder
+        card:
+          type: glance
+          column_width: 33%
+          show_name: false
+          entities:
+            - entity: sensor.gabe_status
+            - entity: binary_sensor.people_home
+            - entity: sensor.rpi_power_status
+            - entity: sensor.garden_monitor_temp_f
+      - type: picture-elements
+        image: "/local/images/bg/ph-homecam.png"
+        elements:
+        - type: image
+          entity: camera.housecam
+          camera_image: camera.housecam
+          style:
+            left: 50%
+            top: 50%
+            width: 100%
+            height: 100%
+        - type: state-icon
+          entity: switch.entry_light
+          title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          style:
+            left: 90%
+            top: 10%
+        - type: state-icon
+          entity: binary_sensor.homecam_motion
+          title: null
+          style:
+            left: 80%
+            top: 10%
+        - type: state-icon
+          entity: input_boolean.homecam_snapshot
+          title: null
+          tap_action:
+            action: call-service
+            service: automation.trigger
+            service_data:
+              entity_id: automation.homecam_snapshot_momentary
+          hold_action:
+            action: more-info
+          style:
+            left: 70%
+            top: 10%
+        - type: state-label
+          entity: sensor.mqtt_topic_home_sysinfo_template_serverload
+          title: null
+          style:
+            left: 40%
+            top: 90%
+        - type: state-label
+          entity: sensor.mqtt_topic_home_sysinfo_template_serverspeed
+          title: null
+          style:
+            left: 50%
+            top: 90%
+
+      - type: picture-elements
+        image: "/local/images/bg/ph-kioskcam.png"
+        show_name: false
+        show_state: false
+        elements:
+        - type: image
+          entity: camera.kioskcam
+          camera_image: camera.kioskcam
+          style:
+            left: 50%
+            top: 50%
+            width: 100%
+            height: 100%
+        - type: state-icon
+          entity: switch.call_the_hounds
+          title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          style:
+            left: 80%
+            top: 10%
+        - type: state-icon
+          entity: binary_sensor.dashboard_motion
+          title: null
+          style:
+            left: 70%
+            top: 10%
+        - type: state-icon
+          entity: switch.2437254184f3eb69e784
+          title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          style:
+            left: 90%
+            top: 10%
+  - type: vertical-stack
+    cards:
+    - type: entities
+      show_header_toggle: off
+      entities:
+        - type: custom:vertical-stack-in-card
+          style:
+            border-radius: 0
+            box-shadow: 1px 1px rgba(0,0,0,0)
+            background-color: rgba(0,0,0,0)
+          cards:
+            - type: vertical-stack
+              cards:
+                - type: horizontal-stack
+                  cards:
+                    - type: custom:card-modder
+                      style:
+                        border-radius: 0
+                        box-shadow: 1px 1px rgba(0,0,0,0)
+                      card:
+                        type: entity-button
+                        entity: group.all_lightbulbs
+                        size: 30%
+                        icon: mdi:lightbulb-on
+                        color: auto
+                        name: All
+                        tap_action:
+                          action: toggle
+                        hold_action:
+                          action: more-info
+                        style:
+                          - font-size: 12px
+                          - font-weight: bold
+                    - type: custom:card-modder
+                      style:
+                        border-radius: 0
+                        box-shadow: 1px 1px rgba(0,0,0,0)
+                      card:
+                        type: entity-button
+                        entity: light.kitchen
+                        size: 30%
+                        icon: mdi:lightbulb-on
+                        color: auto
+                        name: Kitchen
+                        tap_action:
+                          action: toggle
+                        hold_action:
+                          action: more-info
+                        style:
+                          - font-size: 12px
+                          - font-weight: bold
+                    - type: custom:card-modder
+                      style:
+                        border-radius: 0
+                        box-shadow: 1px 1px rgba(0,0,0,0)
+                      card:
+                        type: entity-button
+                        entity: light.table
+                        size: 30%
+                        icon: mdi:ceiling-light
+                        color: auto
+                        name: Table
+                        tap_action:
+                          action: toggle
+                        hold_action:
+                          action: more-info
+                        style:
+                          - font-size: 12px
+                          - font-weight: bold
+                - type: horizontal-stack
+                  cards:
+                    - type: custom:card-modder
+                      style:
+                        border-radius: 0
+                        box-shadow: 1px 1px rgba(0,0,0,0)
+                      card:
+                        type: entity-button
+                        entity: light.desk
+                        icon: mdi:desk-lamp
+                        size: 30%
+                        color: auto
+                        name: Desk
+                        tap_action:
+                          action: toggle
+                        hold_action:
+                          action: more-info
+                        style:
+                          - font-size: 12px
+                          - font-weight: bold
+                    - type: custom:card-modder
+                      style:
+                        border-radius: 0
+                        box-shadow: 1px 1px rgba(0,0,0,0)
+                      card:
+                        type: entity-button
+                        entity: light.bedside_table
+                        size: 30%
+                        icon: mdi:bed-empty
+                        color: auto
+                        name: Bed
+                        tap_action:
+                          action: toggle
+                        hold_action:
+                          action: more-info
+                        style:
+                          - font-size: 12px
+                          - font-weight: bold
+                    - type: custom:card-modder
+                      style:
+                        border-radius: 0
+                        box-shadow: 1px 1px rgba(0,0,0,0)
+                      card:
+                        type: entity-button
+                        entity: light.bedroom_desk
+                        size: 30%
+                        icon: mdi:desk-lamp
+                        color: auto
+                        name: Bedroom
+                        tap_action:
+                          action: toggle
+                        hold_action:
+                          action: more-info
+                        style:
+                          - font-size: 12px
+                          - font-weight: bold
+
+- name: Quick Fish Info
+  title: Quick Fish Info
+  icon: mdi:waves
+  cards:   
+##Fish Glance
+  - type: vertical-stack
+    cards:
+      - type: picture-elements
+        image: "/local/images/bg/ph-octocam.jpg"
+        show_name: false
+        show_state: false
+        elements:
+          - type: image
+            entity: camera.octocam
+            camera_image: camera.octocam
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              height: 100%
+          - type: state-label
+            entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+            icon: mdi:thermometer
+            style:
+              top: 90%
+              left: 84%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: state-label
+            entity: sensor.mqtt_topic_octo_water_level_template_level
+            icon: mdi:waves
+            style:
+              top: 90%
+              left: 54%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: state-label
+            entity: sensor.monthly_amazon_ph
+            icon: mdi:test-tube
+            style:
+              top: 90%
+              left: 14%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: icon
+            entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+            title: Water Temperature
+            icon: mdi:thermometer
+            style:
+              top: 90%
+              left: 72%
+              color: rgba(255, 255, 255, 1)
+          - type: icon
+            entity: sensor.mqtt_topic_octo_water_level_template_level
+            title: Water Level
+            icon: mdi:waves
+            style:
+              top: 90%
+              left: 44%
+              color: rgba(255, 255, 255, 1)
+
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.06200940dc4f22cbb432_3
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: more-info
+            size: 25%
+            icon: mdi:chart-bubble
+            color: rgba(61, 171, 255, 0.85)
+            name: CO2
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: switch.06200940dc4f22cbb432_1
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: more-info
+            size: 25%
+            icon: mdi:waves
+            color: rgba(61, 171, 255, 0.85)
+            name: Waves
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: switch.06200940dc4f22cbb432_2
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: more-info
+            size: 25%
+            icon: mdi:thermometer
+            color: rgba(255, 94, 61, 0.85)
+            name: Heater
+            style:
+              - font-size: 12px
+              - font-weight: bold
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.06200940dc4f22cbb432_4
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: more-info
+            size: 25%
+            icon: mdi:lightbulb-on
+            color: rgba(255, 226, 61, 0.85)
+            name: Light
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: switch.06200940dc4f22cbb432_7
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: more-info
+            size: 25%
+            icon: mdi:raspberry-pi
+            color: rgba(61, 255, 145, 0.85)
+            name: Server
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: script.freshwater_feeder_script
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: more-info
+            size: 25%
+            icon: mdi:track-light
+            color: rgba(219, 106, 0, 0.85)
+            name: Feeder
+            style:
+              - font-size: 12px
+              - font-weight: bold
+  - type: vertical-stack
+    cards:
+      - type: picture-elements
+        image: "/local/images/bg/ph-pantiltcam.png"
+        show_name: false
+        show_state: false
+        elements:
+          - type: image
+            entity: camera.pantiltcam
+            camera_image: camera.pantiltcam
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              height: 100%
+          - type: state-icon
+            entity: switch.pantilt_right
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            title: null
+            style:
+              left: 90%
+              top: 20%
+          - type: state-icon
+            entity: switch.pantilt_left
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            title: null
+            style:
+              left: 70%
+              top: 20%
+          - type: state-icon
+            entity: switch.pantilt_up
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            title: null
+            style:
+              left: 80%
+              top: 10%
+          - type: state-icon
+            entity: switch.pantilt_down
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            title: null
+            style:
+              left: 80%
+              top: 30%
+          - type: state-icon
+            entity: switch.pantilt_center
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            title: null
+            style:
+              left: 80%
+              top: 20%
+          - type: state-icon
+            entity: switch.pantilt_snap
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            title: null
+            style:
+              left: 80%
+              top: 40%
+          - type: icon
+            entity: sensor.onlyreefcontrolpitemp
+            title: Water Temperature
+            icon: mdi:thermometer
+            style:
+              top: 90%
+              left: 60%
+              color: rgba(255, 255, 255, 1)
+          - type: icon
+            entity: sensor.reefcontrolpifloat
+            title: Water Level
+            icon: mdi:waves
+            style:
+              top: 90%
+              left: 14%
+              color: rgba(255, 255, 255, 1)
+          - type: state-label
+            entity: sensor.onlyreefcontrolpitemp
+            icon: mdi:thermometer
+            style:
+              top: 90%
+              left: 74%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: state-label
+            entity: sensor.reefcontrolpifloat
+            icon: mdi:waves
+            style:
+              top: 90%
+              left: 24%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+      - type: entities
+        show_header_toggle: off
+        entities:
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.06200940dc4f22cbb94b_1
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:chart-bubble
+                          color: rgba(61, 171, 255, 0.85)
+                          name: Skimmer
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.06200940dc4f22cbb94b_2
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:waves
+                          color: rgba(61, 171, 255, 0.85)
+                          name: Waves
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.06200940dc4f22cbb94b_3
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:thermometer
+                          color: rgba(255, 94, 61, 0.85)
+                          name: Heater
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.06200940dc4f22cbb94b_4
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:lightbulb-on
+                          color: rgba(255, 226, 61, 0.85)
+                          name: Light
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.06200940dc4f22cbb94b_7
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:raspberry-pi
+                          color: rgba(61, 255, 145, 0.85)
+                          name: Server
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.2437254184f3eb695276
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:water-pump
+                          color: rgba(61, 171, 255, 0.85)
+                          name: Sump
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.reef_pump_1
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:pipe
+                          color: rgba(61, 171, 255, 0.85)
+                          name: Top Off
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+                      - type: custom:card-modder
+                        style:
+                          background-color: rgba(50,50,50,0)
+                          box-shadow: 1px 1px rgba(0,0,0,0)
+                          padding-bottom: 15px
+                        card:
+                          type: entity-button
+                          entity: switch.reef_pump_2
+                          tap_action:
+                            action: toggle
+                          hold_action:
+                            action: more-info
+                          size: 25%
+                          icon: mdi:eyedropper
+                          color: rgba(61, 171, 255, 0.85)
+                          name: Doser
+                          style:
+                            - font-size: 12px
+                            - font-weight: bold
+
+- name: Quick Event Info
+  title: Quick Event Info
+  icon: mdi:calendar
+  cards:   
+##Calendar Glance
+  - type: vertical-stack
+    cards:
+    - type: custom:atomic-calendar
+      title: "Events"
+      entities:
+      - entity: calendar.gabethisisgabescom
+      - entity: calendar.work
+      fullDayEventText: 'All day'
+      untilText: 'Until'
+      showColors: true
+      maxDaysToShow: 7
+      showLocation: true
+      showMonth: false
+      showCurrentEventLine: false
+      dateColor: white
+      dateSize: 90
+      timeColor: blue
+      timeSize: 90
+      titleColor: white
+      titleSize: 100
+      locationIconColor: 'rgb(230, 124, 115)'
+      locationLinkColor: white
+      locationTextSize: 90
+      dimFinishedEvents: true
+      finishedEventOpacity: 0.6
+      finishedEventFilter: 'grayscale(100%)'
+      dayWrapperLineColor: white
+      eventBarColor: blue
+      showProgressBar: true
+      progressBarColor: blue
+    - type: custom:card-modder
+      card:
+        type: weather-forecast
+        entity: weather.dark_sky
+    - type: custom:card-modder
+      card:
+        type: map
+        aspect_ratio: 100%
+        default_zoom: 15
+        dark_mode: true
+        entities:
+          - device_tracker.5re0217120001465
+          - sensor.gabe_status
+
 - name: People
   title: People
   icon: mdi:account-box
@@ -425,318 +1210,28 @@ views:
             name: null
     - type: custom:card-modder
       card:
-        type: picture-elements
-        image: /local/images/icons/fitbit.png
-        elements:
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_steps
-          max: 10000
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(255, 255, 255, .5)
-          name: steps
-          units: ' '
-          font_style:
-            font-size: 1em
-            font-color: white
-          color_stops:
-            1: '#09C7E8'
-            10000: '#0BDF0E'
-          style:
-            top: 70%
-            left: 34%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_floors
-          max: 10
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(255, 255, 255, .5)
-          name: floors
-          units: ' '
-          font_style:
-            font-size: 1em
-            font-color: white
-          color_stops:
-            1: '#09C7E8'
-            10: '#0BDF0E'
-          style:
-            top: 70%
-            left: 52%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_distance
-          max: 10
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(255, 255, 255, .5)
-          name: miles
-          units: ' '
-          font_style:
-            font-size: 1em
-            font-color: white
-          color_stops:
-            1: '#09C7E8'
-            10: '#0BDF0E'
-          style:
-            top: 70%
-            left: 70%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_minutes_sedentary
-          max: 500
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(252, 227, 224, .5)
-          name: loaf
-          shadow: true
-          units: ' '
-          font_style:
-            font-size: 1em
-          color_stops:
-            1: '#f2dada'
-            500: '#f7230c'
-          style:
-            top: 6%
-            left: 16%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_minutes_lightly_active
-          max: 500
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(249, 242, 212, .5)
-          name: light
-          units: ' '
-          font_style:
-            font-size: 1em
-            font-color: white
-          color_stops:
-            1: '#f7f5cd'
-            500: '#f9f227'
-          style:
-            top: 6%
-            left: 34%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_minutes_fairly_active
-          max: 60
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(212, 249, 214, .5)
-          name: active
-          units: ' '
-          font_style:
-            font-size: 1em
-          color_stops:
-            1: '#d6fce0'
-            60: '#18f954'
-          style:
-            top: 6%
-            left: 52%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: custom:circle-sensor-card
-          entity: sensor.tracker_minutes_very_active
-          max: 30
-          min: 0
-          stroke_width: 15
-          gradient: true
-          fill: rgba(212, 214, 249, .5)
-          name: very
-          units: ' '
-          font_style:
-            font-size: 1em
-          color_stops:
-            1: '#c7d2fc'
-            30: '#2954f2'
-          style:
-            top: 6%
-            left: 70%
-            width: 3.5em
-            height: 3.5em
-            transform: none
-        - type: image
-          entity: sensor.ionic_battery
-          title: Ionic Battery
-          image: /local/images/icons/battery_high.png
-          state_image:
-            "High": /local/images/icons/battery_high.png
-            "Medium": /local/images/icons/battery_medium.png
-            "Low": /local/images/icons/battery_low.png
-          style:
-            left: 88%
-            top: 82%
-            transform: none
-            width: 24px
-            height: 24px
-        - type: state-icon
-          entity: sensor.resting_heart_rate
-          title: Resting HR
-          style:
-            left: 10%
-            top: 68%
-            "--iron-icon-fill-color": red
-            transform: none
-        - type: state-label
-          entity: sensor.resting_heart_rate
-          title: Resting HR
-          style:
-            left: 14%
-            top: 86%
-            font-size: 18px
-            font-weight: bold
-            color: rgba(255, 255, 255, 1)
-    - type: custom:card-modder
-      card:
-        type: picture-elements
-        image: /local/images/nightsky.gif
-        elements:
-          - type: icon
-            entity: sensor.sleep_efficiency
-            title: Sleep Efficiency
-            icon: mdi:sleep
-            style:
-              top: 73%
-              left: 8%
-              size: 50%
-              color: rgba(255, 255, 255, 1)
-          - type: state-label
-            entity: sensor.sleep_efficiency
-            icon: mdi:sleep
-            units: '%'
-            style:
-              top: 73%
-              left: 17%
-              font-size: 18px
-              font-weight: bold
-              color: rgba(255, 255, 255, 1)
-          - type: icon
-            entity: sensor.sleep_start_time
-            title: Sleep Start Time
-            icon: mdi:clock
-            style:
-              top: 73%
-              left: 72%
-              size: 50%
-              color: rgba(255, 255, 255, 1)
-          - type: state-label
-            entity: sensor.sleep_start_time
-            icon: mdi:clock
-            units: '%'
-            style:
-              top: 73%
-              left: 85%
-              font-size: 18px
-              font-weight: bold
-              color: rgba(255, 255, 255, 1)
-          - type: custom:circle-sensor-card
-            entity: sensor.sleep_time_in_bed
-            max: 480
-            min: 0
-            stroke_width: 15
-            gradient: true
-            fill: rgba(252, 227, 224, .5)
-            name: in bed
-            shadow: true
-            units: ' '
-            font_style:
-              font-size: 1em
-            color_stops:
-              1: '#f2dada'
-              480: '#f7230c'
-            style:
-              top: 6%
-              left: 16%
-              width: 3.5em
-              height: 3.5em
-              transform: none
-          - type: custom:circle-sensor-card
-            entity: sensor.sleep_minutes_to_fall_asleep
-            max: 60
-            min: 0
-            stroke_width: 15
-            gradient: true
-            fill: rgba(249, 242, 212, .5)
-            name: pre
-            units: ' '
-            font_style:
-              font-size: 1em
-              font-color: white
-            color_stops:
-              1: '#f9f227'
-              60: '#f7f5cd'
-            style:
-              top: 6%
-              left: 34%
-              width: 3.5em
-              height: 3.5em
-              transform: none
-          - type: custom:circle-sensor-card
-            entity: sensor.sleep_minutes_awake
-            max: 120
-            min: 0
-            stroke_width: 15
-            gradient: true
-            fill: rgba(212, 249, 214, .5)
-            name: awake
-            units: ' '
-            font_style:
-              font-size: 1em
-            color_stops:
-              1: '#18f954'
-              120: '#d6fce0'
-            style:
-              top: 6%
-              left: 52%
-              width: 3.5em
-              height: 3.5em
-              transform: none
-          - type: custom:circle-sensor-card
-            entity: sensor.sleep_minutes_asleep
-            max: 480
-            min: 0
-            stroke_width: 15
-            gradient: true
-            fill: rgba(212, 214, 249, .5)
-            name: asleep
-            units: ' '
-            font_style:
-              font-size: 1em
-            color_stops:
-              1: '#c7d2fc'
-              480: '#2954f2'
-            style:
-              top: 6%
-              left: 70%
-              width: 3.5em
-              height: 3.5em
-              transform: none
+        type: glance
+        column_width: 33%
+        show_name: false
+        entities:
+          - entity: sensor.gabe_status
+          - entity: input_boolean.humidifier_toggle
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - entity: sensor.gabes_mate_hotspot_bt_hass
+          - entity: binary_sensor.people_home
+#                        - entity: device_tracker.ionic
     - type: custom:card-modder
       card:
         type: map
         aspect_ratio: 100%
         default_zoom: 15
+        dark_mode: true
         entities:
-          - device_tracker.5re0217120001465_2
-
+          - device_tracker.5re0217120001465
+          - sensor.gabe_status
   - type: vertical-stack
     cards:
     - type: picture-elements
@@ -814,6 +1309,36 @@ views:
 #        numberOfDays: 7
 #        entities:
 #          - calendar.gabethisisgabescom
+
+    - type: custom:atomic-calendar
+      title: "Events"
+      entities:
+      - entity: calendar.gabethisisgabescom
+      - entity: calendar.work
+      fullDayEventText: 'All day'
+      untilText: 'Until'
+      showColors: true
+      maxDaysToShow: 7
+      showLocation: true
+      showMonth: false
+      showCurrentEventLine: false
+      dateColor: white
+      dateSize: 90
+      timeColor: blue
+      timeSize: 90
+      titleColor: white
+      titleSize: 100
+      locationIconColor: 'rgb(230, 124, 115)'
+      locationLinkColor: white
+      locationTextSize: 90
+      dimFinishedEvents: true
+      finishedEventOpacity: 0.6
+      finishedEventFilter: 'grayscale(100%)'
+      dayWrapperLineColor: white
+      eventBarColor: blue
+      showProgressBar: true
+      progressBarColor: blue
+
     - type: custom:card-modder
       card:
         type: "custom:calendar-card"
@@ -822,10 +1347,6 @@ views:
         numberOfDays: 10
         entities:
           - calendar.contacts
-      style:                 
-        border-radius: 20px
-        border: solid 1px rgba(100,100,100,0.3)
-        box-shadow: 3px 3px rgba(0,0,0,0.4)
 
 - name: Apartment 10R
   title: Apartment 10R
@@ -834,8 +1355,7 @@ views:
   - type: vertical-stack
     cards:
       - type: picture-elements
-        title: House Cam
-        image: "/local/images/bg/bg-balck-donut-loop.gif"
+        image: "/local/images/bg/ph-homecam.png"
         elements:
         - type: image
           entity: camera.housecam
@@ -846,23 +1366,32 @@ views:
             width: 100%
             height: 100%
         - type: state-icon
-          entity: switch.motion_detect
-          title: null
-          style:
-            left: 80%
-            top: 10%
-        - type: state-icon
           entity: switch.entry_light
           title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
           style:
             left: 90%
             top: 10%
         - type: state-icon
-          entity: binary_sensor.homecam_motion_sensor
+          entity: binary_sensor.homecam_motion
           title: null
           style:
-            left: 70%
+            left: 80%
             top: 10%
+#        - type: state-icon
+#          entity: rest_command.trigger_snapshot_room
+#          title: null
+#          tap_action:
+#            action: call-service
+#            service: rest_command.trigger_snapshot_room
+#          hold_action:
+#            action: more-info
+#          style:
+#            left: 70%
+#            top: 10%
         - type: state-label
           entity: sensor.mqtt_topic_home_sysinfo_template_serverload
           title: null
@@ -875,10 +1404,19 @@ views:
           style:
             left: 50%
             top: 90%
-
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.recent_motion_trigger
+            state: "on"
+        card:
+          - type: picture-entity
+            entity: camera.latest_motion
+            show_name: false
+            show_state: false
       - type: picture-elements
-        title: Kiosk Cam
         image: "/local/images/bg/ph-kioskcam.png"
+        show_name: false
+        show_state: false
         elements:
         - type: image
           entity: camera.kioskcam
@@ -889,14 +1427,28 @@ views:
             width: 100%
             height: 100%
         - type: state-icon
-          entity: binary_sensor.dashboard_motion
+          entity: switch.call_the_hounds
           title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
           style:
             left: 80%
             top: 10%
         - type: state-icon
+          entity: binary_sensor.dashboard_motion
+          title: null
+          style:
+            left: 70%
+            top: 10%
+        - type: state-icon
           entity: switch.2437254184f3eb69e784
           title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
           style:
             left: 90%
             top: 10%
@@ -946,6 +1498,10 @@ views:
         show_header_toggle: off
         entities:
           - type: custom:vertical-stack-in-card
+            style:
+              border-radius: 0
+              box-shadow: 1px 1px rgba(0,0,0,0)
+              background-color: rgba(0,0,0,0)
             cards:
               - type: vertical-stack
                 cards:
@@ -953,9 +1509,8 @@ views:
                     cards:
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
-                          padding-bottom: 15px
                         card:
                           type: entity-button
                           entity: group.all_lightbulbs
@@ -972,9 +1527,8 @@ views:
                             - font-weight: bold
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
-                          padding-bottom: 15px
                         card:
                           type: entity-button
                           entity: light.entry_light
@@ -991,9 +1545,8 @@ views:
                             - font-weight: bold
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
-                          padding-bottom: 15px
                         card:
                           type: entity-button
                           entity: light.kitchen
@@ -1010,11 +1563,8 @@ views:
                             - font-weight: bold
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
-#                          background-image: url("/local/images/bg/bg-green-dark-loop.gif")
-#                          background-size: 100% 100%
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
-                          padding-bottom: 15px
                         card:
                           type: entity-button
                           entity: light.table
@@ -1033,7 +1583,7 @@ views:
                     cards:
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
                         card:
                           type: entity-button
@@ -1052,7 +1602,7 @@ views:
                             - font-weight: bold
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
                         card:
                           type: entity-button
@@ -1070,7 +1620,7 @@ views:
                             - font-weight: bold
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
                         card:
                           type: entity-button
@@ -1088,7 +1638,7 @@ views:
                             - font-weight: bold
                       - type: custom:card-modder
                         style:
-                          background-color: rgba(50,50,50,0)
+                          border-radius: 0
                           box-shadow: 1px 1px rgba(0,0,0,0)
                         card:
                           type: entity-button
@@ -1104,26 +1654,6 @@ views:
                           style:
                             - font-size: 12px
                             - font-weight: bold
-                  - type: custom:card-modder
-                    style:
-                      background-color: rgba(50,50,50,0)
-                      box-shadow: 1px 1px rgba(0,0,0,0)
-                      padding: 0
-                      margin: 0
-                    card:
-                      type: glance
-                      column_width: 33%
-                      show_name: false
-                      entities:
-                        - entity: group.gabe
-                        - entity: device_tracker.gabes_macbook
-                        - entity: device_tracker.5re0217120001465_2
-#                        - entity: device_tracker.ionic
-                        - entity: switch.sonoff_10006b7f44
-                          tap_action:
-                            action: toggle
-                          hold_action:
-                            action: more-info
       - type: custom:card-modder
         style:
           background-color: rgba(50,50,50,0)
@@ -1267,10 +1797,6 @@ views:
                   top: 90%
                   left: 12%
       - type: custom:card-modder
-        style:                 
-          border-radius: 20px
-          border: solid 1px rgba(100,100,100,0.3)
-          box-shadow: 3px 3px rgba(0,0,0,0.4)
         card:
           type: conditional
           conditions:
@@ -1317,10 +1843,6 @@ views:
   - type: vertical-stack
     cards:            
     - type: custom:card-modder
-      style:                 
-        border-radius: 20px
-        border: solid 1px rgba(100,100,100,0.3)
-        box-shadow: 3px 3px rgba(0,0,0,0.4)
       card:
         type: picture-glance
         title: Monoprice Mini Select Printer
@@ -1567,8 +2089,9 @@ views:
   - type: vertical-stack
     cards:
       - type: picture-elements
-        title: Kiosk Cam
-        image: "/local/images/bg/bg-pantiltcam-ph.png"
+        image: "/local/images/bg/ph-pantiltcam.png"
+        show_name: false
+        show_state: false
         elements:
         - type: image
           entity: camera.pantiltcam
@@ -1638,6 +2161,40 @@ views:
           style:
             left: 80%
             top: 40%
+        - type: icon
+          entity: sensor.onlyreefcontrolpitemp
+          title: Water Temperature
+          icon: mdi:thermometer
+          style:
+            top: 85%
+            left: 60%
+            color: rgba(255, 255, 255, 1)
+        - type: icon
+          entity: sensor.reefcontrolpifloat
+          title: Water Level
+          icon: mdi:waves
+          style:
+            top: 85%
+            left: 14%
+            color: rgba(255, 255, 255, 1)
+        - type: state-label
+          entity: sensor.onlyreefcontrolpitemp
+          icon: mdi:thermometer
+          style:
+            top: 85%
+            left: 74%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: state-label
+          entity: sensor.reefcontrolpifloat
+          icon: mdi:waves
+          style:
+            top: 85%
+            left: 24%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
       - type: entities
         show_header_toggle: off
         entities:
@@ -2258,24 +2815,6 @@ views:
               style:
                 top: 5%
                 left: 90%
-            - type: state-label
-              entity: sensor.reefcontrolpilightbrightness
-              style:
-                top: 12%
-                left: 90%
-                align: right
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.reefcontrolpilightcolor
-              style:
-                top: 17%
-                left: 90%
-                align: right
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
             - type: icon
               entity: sensor.reefcontrolpipump2power
               title: Doser
@@ -2358,40 +2897,6 @@ views:
               style:
                 top: 51%
                 left: 32%
-            - type: icon
-              entity: sensor.onlyreefcontrolpitemp
-              title: Water Temperature
-              icon: mdi:thermometer
-              style:
-                top: 94%
-                left: 70%
-                color: rgba(255, 255, 255, 1)
-            - type: icon
-              entity: sensor.reefcontrolpifloat
-              title: Water Level
-              icon: mdi:waves
-              style:
-                top: 94%
-                left: 34%
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.onlyreefcontrolpitemp
-              icon: mdi:thermometer
-              style:
-                top: 94%
-                left: 84%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.reefcontrolpifloat
-              icon: mdi:waves
-              style:
-                top: 94%
-                left: 44%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
 
       - type: conditional
         conditions:
@@ -2784,16 +3289,14 @@ views:
               - switch.reeftank_light_switch
               - input_boolean.reef_temp_daytime_state
               - input_boolean.reef_temp_nightime_state
-              - automation.start_fade_down_of_reef_lights_at_sunset
-              - automation.start_fade_up_of_reef_lights_at_sunrise
+              - automation.turn_off_reef_lights_outlet_at_sunset
+              - automation.turn_on_reef_lights_outlet_at_sunrise
               - script.reeftank_moon_on
               - script.reeftank_moon_off
               - automation.reef_sump_pump_low_off
               - automation.reef_sump_pump_low_timer
               - automation.reef_sump_pulse
               - automation.regulate_reef_heater_to_off_on_low_misread
-              - automation.turn_off_wavemaker_at_low_tide
-              - automation.turn_on_wavemaker_at_high_tide
               - automation.set_reef_thermostat_max_daytime_selector
               - automation.set_reef_thermostat_max_nighttime_selector
 
@@ -2804,10 +3307,62 @@ views:
   cards:
   - type: vertical-stack
     cards:
-      - type: picture-entity
-        entity: camera.octocam
+      - type: picture-elements
+        image: "/local/images/bg/ph-octocam.jpg"
         show_name: false
         show_state: false
+        elements:
+          - type: image
+            entity: camera.octocam
+            camera_image: camera.octocam
+            style:
+              left: 50%
+              top: 50%
+              width: 100%
+              height: 100%
+          - type: state-label
+            entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+            icon: mdi:thermometer
+            style:
+              top: 90%
+              left: 84%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: state-label
+            entity: sensor.mqtt_topic_octo_water_level_template_level
+            icon: mdi:waves
+            style:
+              top: 90%
+              left: 54%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: state-label
+            entity: sensor.monthly_amazon_ph
+            icon: mdi:test-tube
+            style:
+              top: 90%
+              left: 14%
+              font-size: 16px
+              font-weight: bold
+              color: rgba(255, 255, 255, 1)
+          - type: icon
+            entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
+            title: Water Temperature
+            icon: mdi:thermometer
+            style:
+              top: 90%
+              left: 72%
+              color: rgba(255, 255, 255, 1)
+          - type: icon
+            entity: sensor.mqtt_topic_octo_water_level_template_level
+            title: Water Level
+            icon: mdi:waves
+            style:
+              top: 90%
+              left: 44%
+              color: rgba(255, 255, 255, 1)
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -3030,108 +3585,6 @@ views:
     cards:
       - type: conditional
         conditions:
-          - entity: switch.06200940dc4f22cbb432_4
-            state: "off"
-        card:
-          type: picture-elements
-          image: /local/images/amazon_off.jpg
-          elements:
-            - type: state-label
-              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
-              icon: mdi:thermometer
-              style:
-                top: 90%
-                left: 84%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.mqtt_topic_octo_water_level_template_level
-              icon: mdi:waves
-              style:
-                top: 90%
-                left: 54%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.monthly_amazon_ph
-              icon: mdi:test-tube
-              style:
-                top: 90%
-                left: 14%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: icon
-              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
-              title: Water Temperature
-              icon: mdi:thermometer
-              style:
-                top: 90%
-                left: 72%
-                color: rgba(255, 255, 255, 1)
-            - type: icon
-              entity: sensor.mqtt_topic_octo_water_level_template_level
-              title: Water Level
-              icon: mdi:waves
-              style:
-                top: 90%
-                left: 44%
-                color: rgba(255, 255, 255, 1)
-      - type: conditional
-        conditions:
-          - entity: switch.06200940dc4f22cbb432_4
-            state: "on"
-        card:
-          type: picture-elements
-          image: /local/images/amazon_on.jpg
-          elements:
-            - type: state-label
-              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
-              icon: mdi:thermometer
-              style:
-                top: 90%
-                left: 84%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.mqtt_topic_octo_water_level_template_level
-              icon: mdi:waves
-              style:
-                top: 90%
-                left: 54%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: state-label
-              entity: sensor.monthly_amazon_ph
-              icon: mdi:test-tube
-              style:
-                top: 90%
-                left: 14%
-                font-size: 16px
-                font-weight: bold
-                color: rgba(255, 255, 255, 1)
-            - type: icon
-              entity: sensor.mqtt_topic_octo_sysinfo_template_watertemp
-              title: Water Temperature
-              icon: mdi:thermometer
-              style:
-                top: 90%
-                left: 72%
-                color: rgba(255, 255, 255, 1)
-            - type: icon
-              entity: sensor.mqtt_topic_octo_water_level_template_level
-              title: Water Level
-              icon: mdi:waves
-              style:
-                top: 90%
-                left: 44%
-                color: rgba(255, 255, 255, 1)
-      - type: conditional
-        conditions:
           - entity: switch.06200940dc4f22cbb432_7
             state: "on"
         card:
@@ -3267,7 +3720,7 @@ views:
               - automation.set_amazon_thermostat_max_daytime_selector
               - automation.set_amazon_thermostat_max_night_selector
               - automation.activate_feeder_script_morning
-              - automation.activate_feeder_script_midday
+#              - automation.activate_feeder_script_midday
               - automation.activate_feeder_script_afternoon
       - type: custom:dark-sky-weather-card
         entity_daily_summary: sensor.amazon_weather_daily_summary
@@ -3857,14 +4310,26 @@ views:
   cards:
   - type: vertical-stack
     cards:  
+      - type: conditional
+        conditions:
+          - entity: sensor.weather_alert_active_nyc
+            state: "On"
+        card:
+           type: markdown
+           content: >
+               ## NYC Weather Alert! [[ sensor.weatheralerts ]]
+      - type: conditional
+        conditions:
+          - entity: sensor.weather_alert_active_hbg
+            state: "On"
+        card:
+           type: markdown
+           content: >
+               ## Harrisburg Weather Alert! [[ sensor.weatheralerts_2 ]]
       - type: custom:card-modder
         card:
           type: weather-forecast
           entity: weather.dark_sky
-        style:                 
-          border-radius: 20px
-          border: solid 1px rgba(100,100,100,0.3)
-          box-shadow: 3px 3px rgba(0,0,0,0.4)
       - type: custom:mini-graph-card
         hours_to_show: 48
         unit: °F
@@ -3912,6 +4377,10 @@ views:
     cards:
       - type: picture-entity
         entity: camera.weather_radar
+        show_name: false
+        show_state: false
+      - type: picture-entity
+        entity: camera.okx
         show_name: false
         show_state: false
       - type: conditional
@@ -4220,6 +4689,17 @@ views:
     cards:
       - type: iframe
         url: https://embed.windy.com/embed2.html
+      - type: custom:card-modder
+        card:
+          type: map
+          aspect_ratio: 100%
+          default_zoom: 8
+          dark_mode: true
+          geo_location_sources:
+            - wwlln
+            - usgs_earthquakes_feed
+          entities:
+            - zone.home
       - type: conditional
         conditions:
           - entity: sensor.dark_sky_cloud_coverage
@@ -4522,134 +5002,104 @@ views:
   - type: custom:roku-card
     entity: media_player.roku_2ld558098368
     title: Roku
-    ip_address: 'http://192.168.50.243'
+    theme: darkpurple
+    power:
+      service: script.turn_on
+      service_data:
+        entity_id: script.tv_go_ok
+
 #  - type: media-control
 #    entity: media_player.roku_2ld558098368
 #  - type: vertical-stack
 #    cards: !include remotes/roku.yaml
+
   - type: entities
     title: Media select
     entities:
       - input_select.harmony
+
+  - type: picture-elements
+    image: /local/images/harmony_remote.png
+    elements:
+      - type: service-button
+        title: Back
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_back
+        style:
+          top: 63%
+          left: 65%
+      - type: service-button
+        title: Right
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_right
+        style:
+          top: 43%
+          left: 65%
+      - type: service-button
+        title: Left
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_left
+        style:
+          top: 45%
+          left: 35%
+      - type: service-button
+        title: Pause
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_pause
+        style:
+          top: 90%
+          left: 50%
+      - type: service-button
+        title: OK
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_ok
+        style:
+          top: 45%
+          left: 50%
+      - type: service-button
+        title: Down
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_down
+        style:
+          top: 55%
+          left: 50%
+      - type: service-button
+        title: Up
+        service: script.turn_on
+        service_data:
+          entity_id: script.tv_go_up
+        style:
+          top: 35%
+          left: 50%
+      - type: service-button
+        title: Up
+        service: script.turn_on
+        service_data:
+          entity_id: script.bose_up
+        style:
+          top: 38%
+          left: 20%
+      - type: service-button
+        title: Down
+        service: script.turn_on
+        service_data:
+          entity_id: script.bose_down
+        style:
+          top: 55%
+          left: 20%
+
 #  - type: 'custom:podcast-card'
 #    entity: sensor.gpodder
 #    name: Podcasts
 #    default_target: media_player.office_home
 #    show_player: True
 #    custom_player: True
-  - type: custom:vertical-stack-in-card
-    cards:
-      - type: picture-elements
-        #title: Remote
-        image: "/local/images/icons/media_icons/LHarmonyBG.jpg"
-        aspect_ratio: 50%
-        elements:
-          - type: image
-            image: "/local/images/icons/media_icons/power-logo.png"
-            entity: input_select.harmony
-            state_image:
-              'PowerOff': "/local/images/icons/media_icons/power-logo_active.png"
-            tap_action: call-service
-            service: remote.send_command
-            service_data:
-              "entity_id": "remote.gabes_harmony_hub"
-              "device": "-1"
-              "command": "PowerOff"
-            style:
-              top: 10em
-              left: 10%
-              width: 54px
-              height: 54px
-              background-color: rgb(255, 255, 255, 0.0)
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 2
-          - type: image
-            image: "/local/images/icons/media_icons/plex-logo.png"
-            entity: sensor.harmony_remote_activity
-            state_image:
-              'Watch Kodi': "/local/images/icons/media_icons/plex-logo_active.png"
-            tap_action: call-service
-            service: script.turn_on_plex
-            style:
-              top: 10em
-              left: 30%
-              width: 54px
-              height: 54px
-              background-color: rgb(255, 255, 255, 0.0)
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 2
-          - type: image
-            image: "/local/images/icons/media_icons/xbox-logo.png"
-            entity: sensor.harmony_remote_activity
-            state_image:
-              'Play XBox One': "/local/images/icons/media_icons/xbox-logo-active.png"
-            tap_action: call-service
-            service: script.turn_on_xbox
-            style:
-              top: 10em
-              left: 50%
-              width: 54px
-              height: 54px
-              background-color: rgb(255, 255, 255, 0.0)
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 2
-          - type: image
-            image: "/local/images/icons/media_icons/vol_-.png"
-            tap_action: call-service
-            service: remote.send_command
-            service_data:
-              "entity_id": "remote.gabes_harmony_hub"
-              "device": "29883813"
-              "command": "VolumeDown"
-            style:
-              top: 12em
-              left: 85%
-              width: 54px
-              height: 54px
-              background-color: rgb(255, 255, 255, 0.0)
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 2
-          - type: image
-            image: "/local/images/icons/media_icons/vol_+.png"
-            tap_action: call-service
-            service: remote.send_command
-            service_data:
-              "entity_id": "remote.gabes_harmony_hub"
-              "device": "29883813"
-              "command": "VolumeUp"
-            style:
-              top: 8em
-              left: 85%
-              width: 54px
-              height: 54px
-              background-color: rgb(255, 255, 255, 0.0)
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 2
-          - type: image
-            image: "/local/images/icons/media_icons/vol_btn_border.png"
-            style:
-              top: 11em
-              left: 85%
-              width: 69px
-              height: 155px
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 1
-          - type: image
-            image: "/local/images/icons/media_icons/horizontal_Rule.png"
-            style:
-              top: 13em
-              left: 40%
-              width: 70%
-              height: 2px
-              filter: invert(0.20)
-              border-radius: 4px
-              z-index: 1
 
 ## SYSTEM
 - name: System
@@ -4801,10 +5251,6 @@ views:
           title: Devices
           show_state: false
           columns: 4
-          style:                 
-            border-radius: 20px
-            border: solid 1px rgba(100,100,100,0.3)
-            box-shadow: 3px 3px rgba(0,0,0,0.4)
   - type: entities
     title: Chores
     entities:
@@ -5134,11 +5580,6 @@ views:
 #    - sensor.rt_acrh13_packets_sec_sent
 #    - sensor.rt_acrh13_packets_sent
 #    - sensor.cert_expiry
-  - type: custom:tracker-card
-    title: HA Components
-    trackers:
-      - sensor.custom_card_tracker
-      - sensor.custom_component_tracker
 
 #- name: Twitter
 #  title: Twitter
@@ -5148,10 +5589,6 @@ views:
 #    cards:
 #      - type: picture-elements
 #        camera_image: camera.latestoctocam_tweet
-#        style:                 
-#          border-radius: 20px
-#          border: solid 1px rgba(100,100,100,0.3)
-#          box-shadow: 3px 3px rgba(0,0,0,0.4)
 #        elements:
 #          - type: icon
 #            entity: sensor.latest_octo_tweet_text
@@ -5187,10 +5624,6 @@ views:
 #          content: >
 #            [[ sensor.latest_octo_tweet_text.state ]]
 #            [[ sensor.latest_octo_tweet_date.state ]]
-#        style:                 
-#          border-radius: 20px
-#          border: solid 1px rgba(100,100,100,0.3)
-#          box-shadow: 3px 3px rgba(0,0,0,0.4)
 #  - type: vertical-stack            
 #    cards:
 #      - type: conditional
@@ -5208,10 +5641,6 @@ views:
 #          content: >
 #            [[ sensor.latest_sfgabe_tweet_text.state ]]
 #            [[ sensor.latest_sfgabe_tweet_date.state ]]
-#        style:                 
-#          border-radius: 20px
-#          border: solid 1px rgba(100,100,100,0.3)
-#          box-shadow: 3px 3px rgba(0,0,0,0.4)
 
 - name: Kiosk
   title: Kiosk
@@ -5222,7 +5651,7 @@ views:
     - type: vertical-stack
       cards:
       - type: picture-elements
-        image: /local/images/kleftiko.jpg
+        image: /local/images/bg_canal.gif
         style:
           top: "-100px"
         elements:
@@ -5241,14 +5670,6 @@ views:
               -moz-osx-font-smoothing: grayscale
               font-smoothing: antialiased
               -webkit-font-smoothing: antialiased
-          - type: state-icon
-            entity: switch.motion_detect
-            tap_action:
-              action: toggle
-            style:
-              top: 16%
-              left: 10%
-              pointer-events: none
           - type: state-icon
             entity: sensor.outside_temp
             style:
@@ -5490,6 +5911,22 @@ views:
   cards:
     - type: horizontal-stack
       cards:
+        - type: conditional
+          conditions:
+            - entity: sensor.weather_alert_active_nyc
+              state: "On"
+          card:
+             type: markdown
+             content: >
+                 ## NYC Weather Alert! [[ sensor.weatheralerts ]]
+        - type: conditional
+          conditions:
+            - entity: sensor.weather_alert_active_hbg
+              state: "On"
+          card:
+             type: markdown
+             content: >
+                 ## Harrisburg Weather Alert! [[ sensor.weatheralerts_2 ]]
         - type: weather-forecast
           entity: weather.dark_sky
         - type: vertical-stack

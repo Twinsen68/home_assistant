@@ -1,11 +1,3 @@
-#Switch for Motion Detection
-- platform: command_line
-  switches:
-    motion_detect:
-      friendly_name: Motion Detection
-      command_on: !secret switches_motion_on
-      command_off: !secret switches_motion_off
-
 #Switch for Entry Light
 - platform: command_line
   switches:
@@ -19,7 +11,14 @@
   switches:
     entry_hello:
       friendly_name: Entry Hello
-      command_on:  !secret switches_entry_hello_on
+      command_on: !secret switches_entry_hello_on
+
+#Hounds Alarm
+- platform: command_line
+  switches:
+    call_the_hounds:
+      friendly_name: Call the Hounds
+      command_on: !secret switches_kiosk_sound_hounds
 
 #- platform: command_line
 #  switches:
@@ -262,7 +261,6 @@
   resource: http://reefcontrolpi.local/api/lights/1
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
-#  authentication: basic  
   body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":40}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":60}}}},"jack":"1"}'
   body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
   is_on_template: '{{ value_json.channels["1"].profile.config.value == 60 }}'
@@ -479,6 +477,122 @@
   payload_on: "ON"
   state_off: "OFF"
   payload_off: "OFF"
+
+- platform: mqtt
+  name: ET Eyes
+  state_topic: "et-both-eye/reading"
+  command_topic: "et/reading"
+  state_on: "ON"
+  payload_on: "C"
+  state_off: "OFF"
+  payload_off: "D"
+
+- platform: mqtt
+  name: ET Blink
+  command_topic: "et/reading"
+  state_topic: "et-eyeblinks/reading"
+  state_on: "ON"
+  payload_on: "F"
+  state_off: "OFF"
+  payload_off: "D"
+
+- platform: mqtt
+  name: ET Chest
+  command_topic: "et/reading"
+  state_topic: "et-body/reading"
+  state_on: "ON"
+  payload_on: "0"
+  state_off: "OFF"
+  payload_off: "1"
+
+- platform: mqtt
+  name: ET Heartbeat
+  command_topic: "et/reading"
+  state_topic: "et-heartbeat/reading"
+  state_on: "ON"
+  payload_on: "E"
+  state_off: "OFF"
+  payload_off: "1"
+
+- platform: mqtt
+  name: ET Finger
+  command_topic: "et/reading"
+  state_topic: "et-finger/reading"
+  state_on: "ON"
+  payload_on: "2"
+  state_off: "OFF"
+  payload_off: "3"
+
+- platform: mqtt
+  name: ET Finger Blink
+  command_topic: "et/reading"
+  state_topic: "et-fingerblinks/reading"
+  state_on: "ON"
+  payload_on: "G"
+  state_off: "OFF"
+  payload_off: "2"
+
+- platform: mqtt
+  name: ET Arm
+  command_topic: "et/reading"
+  state_topic: "et-arm/reading"
+  state_on: "ON"
+  payload_on: "9"
+  state_off: "OFF"
+  payload_off: "8"
+
+- platform: mqtt
+  name: ET Limb
+  command_topic: "et/reading"
+  state_topic: "et-limb/reading"
+  state_on: "ON"
+  payload_on: "A"
+  state_off: "OFF"
+  payload_off: "B"
+
+- platform: mqtt
+  name: Desk Switch 1
+  command_topic: "desk_switch/reading"
+  state_topic: "desk_switch/reading"
+  state_on: "ON"
+  payload_on: "1_ON"
+  state_off: "OFF"
+  payload_off: "1_OFF"
+
+- platform: mqtt
+  name: Desk Switch 2
+  command_topic: "desk_switch/reading"
+  state_topic: "desk_switch/reading"
+  state_on: "ON"
+  payload_on: "2_ON"
+  state_off: "OFF"
+  payload_off: "2_OFF"
+
+- platform: mqtt
+  name: Desk Switch 3
+  command_topic: "desk_switch/reading"
+  state_topic: "desk_switch/reading"
+  state_on: "ON"
+  payload_on: "3_ON"
+  state_off: "OFF"
+  payload_off: "3_OFF"
+
+#Switch for Motion Detection
+# This should change to notify on motion
+#- platform: command_line
+#  switches:
+#    motion_detect:
+#      friendly_name: Motion Detection
+#      value_template: '{{ value_json.status }}'
+#      command_on: !secret switches_motion_on
+#      command_off: !secret switches_motion_off
+
+- platform: command_line
+  switches:
+    motion_text_change:
+      friendly_name: HomeCam Text Change
+      command_on: !secret switches_homecam_motion_text
+      command_off: !secret switches_homecam_no_motion_text
 
 #Harmony
 - platform: template

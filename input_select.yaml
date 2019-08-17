@@ -1,7 +1,7 @@
 radio_station:
   name: 'Select Radio Station'
   options:
-    - Radio 538
+    - BBC News
     - Q-Music
     - 3FM
     - 100% NL
@@ -22,10 +22,10 @@ radio_station:
 speaker_radio:
   name: 'Select Speakers'
   options:
-    - Entry
+    - Kiosk Speaker
     - Soundbar
-    - Tablet
-  initial: Entry
+    - Tablet Speaker
+  initial: Kiosk Speaker
   icon: mdi:speaker-wireless
 
 harmony:

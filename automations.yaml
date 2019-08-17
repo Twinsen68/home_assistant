@@ -23,36 +23,52 @@
     data:
       name: midnight
 
-- alias: Activate Motion Detect on Leaving Home Zone
-  id: gabe_out_of_home_zone_motion_on
+- alias: Occupancy On
+  hide_entity: true
   trigger:
-    platform: state
-    entity_id: device_tracker.huawei_mate_992528f2b1a5
-#    zone: zone.home
-    from: 'home'
-    to: 'not_home'
-    for:
-      hours: 0
-      minutes: 15
-      seconds: 0
+    - platform: state
+      entity_id: binary_sensor.people_home
+      from: "off"
+      to: "on"
   action:
-    - service: homeassistant.turn_on
+    - service: input_boolean.turn_on
       data:
-        entity_id: switch.motion_detect
+        entity_id: input_boolean.occupancy
+
+- alias: Occupancy Off
+  hide_entity: true
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.people_home
+      from: "on"
+      to: "off"
+  action:
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.occupancy
 
 - alias: Turn Off Lights on Leaving Home Zone
   id: gabe_out_of_home_zone_lights_off
   trigger:
-    platform: state
-    entity_id: device_tracker.huawei_mate_992528f2b1a5
-#    zone: zone.home
-#    event: leave
-    from: 'home'
-    to: 'not_home'
-    for:
-      hours: 0
-      minutes: 15
-      seconds: 0
+#    - platform: state
+#      entity_id: device_tracker.huawei_mate_9_92528f2b1a5
+#      from: 'home'
+#      to: 'not_home'
+    - platform: state
+      entity_id: binary_sensor.people_home
+      from: 'on'
+      to: 'off'
+      for:
+          hours: 0
+          minutes: 15
+          seconds: 0
+    - platform: numeric_state
+      entity_id: sensor.home_occupancy_confidence
+      below: 51
+      for:
+          hours: 0
+          minutes: 15
+          seconds: 0
   action:
     - service: homeassistant.turn_off
       data:
@@ -61,33 +77,44 @@
 - alias: Turn On Lights on Enter Home Zone
   id: gabe_arrive_in_home_zone_lights_on
   trigger:
-    - platform: zone
-      entity_id: device_tracker.5re0217120001465
-      zone: zone.home
-      event: enter
-    - platform: zone
-      entity_id: device_tracker.huawei_mate_992528f2b1a5
-      zone: zone.home
-      event: enter
+#    - platform: zone
+#      entity_id: device_tracker.5re0217120001465
+#      zone: zone.home
+#      event: enter
+#    - platform: zone
+#      entity_id: device_tracker.huawei_mate_9_92528f2b1a5
+#      zone: zone.home
+#      event: enter
+    - platform: state
+      entity_id: binary_sensor.people_home
+      from: 'off'
+      to: 'on'
   action:
     - service: switch.turn_on
       entity_id: switch.entry_light
 
-- alias: Deactivate Motion Detect on Enter Home Zone
-  id: gabe_arrive_in_home_zone_motion_off
-  trigger:
-    - platform: zone
-      entity_id: device_tracker.5re0217120001465
-      zone: zone.home
-      event: enter
-    - platform: zone
-      entity_id: device_tracker.huawei_mate_992528f2b1a5
-      zone: zone.home
-      event: enter
-  action:
-    - service: homeassistant.turn_off
-      data:
-        entity_id: switch.motion_detect
+#- alias: Deactivate Detect on Enter Home Zone
+#  id: gabe_arrive_in_home_zone_motion_off
+#  trigger:
+#    - platform: zone
+#      entity_id: device_tracker.5re0217120001465
+#      zone: zone.home
+#      event: enter
+#    - platform: zone
+#      entity_id: device_tracker.huawei_mate_9_92528f2b1a5
+#      zone: zone.home
+#      event: enter
+#    - platform: numeric_state
+#      entity_id: sensor.home_occupancy_confidence
+#      above: 70
+#    - platform: state
+#      entity_id: binary_sensor.people_home
+#      from: 'off'
+#      to: 'on'
+#  action:
+#    - service: homeassistant.turn_off
+#      data:
+#        entity_id: switch.motion_detect
 
 - alias: Welcome on Enter Home Zone
   id: gabe_arrive_in_home_zone_welcome
@@ -120,35 +147,24 @@
       data:
         call_greeting_berny: 1
 
-- alias: Nanoo welcome
-  id: nanoo_arrive_in_home_zone_welcome
-  trigger:
-    - platform: zone
-      entity_id: group.nanoo
-      zone: zone.home
-      event: enter
-  condition:
-    condition: template
-    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
-  action:
-    - service: script.janet_speech_engine
-      data:
-        call_greeting_nanoo: 1
-
 #Morning Greeting
 - alias: 'Morning Greeting'
   id: morning_greeting_update
   trigger:
     platform: state
+#    entity_id: binary_sensor.kiosk_att_motion
     entity_id: binary_sensor.dashboard_motion
     from: 'off'
     to: 'on'
   condition:
     condition: and
     conditions:
-      - condition: time
-        before: '10:30:00'
-        after: '07:30:00'
+#      - condition: time
+#        before: '10:30:00'
+#        after: '07:30:00'
+      - condition: state
+        entity_id: input_boolean.alarm_went_off
+        state: 'on'
       - condition: template
         value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.morning_greeting.attributes.last_triggered) | int > 10800 }}'
   action:
@@ -192,7 +208,7 @@
 - alias: Turn off kiosk charger
   trigger:
     platform: template
-    value_template: "{{ 80 < states.binary_sensor.dashboard_motion.attributes.battery_level }}"
+    value_template: "{{ 80 < states.light.dashboard_screen.attributes.battery_level }}"
   action:
     service: switch.turn_off
     entity_id: switch.2437254184f3eb69e784
@@ -200,7 +216,7 @@
 - alias: Turn on kiosk charger
   trigger:
     platform: template
-    value_template: "{{ 20 > states.binary_sensor.dashboard_motion.attributes.battery_level }}"
+    value_template: "{{ 20 > states.light.dashboard_screen.attributes.battery_level }}"
   action:
     service: switch.turn_on
     entity_id: switch.2437254184f3eb69e784
@@ -221,14 +237,77 @@
       platform: homeassistant    
   action:
     - delay: '00:00:10'  
+#    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+#      timeout: 00:00:10
+    - service: rest_command.kiosk_sound_battle
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/smarthome.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_smarthome.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008
+          vibrate: 700, 700, 700
+        message: "Home Assistant restarted at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}"
+        title: "Hello World!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+    - delay:
+        seconds: 6
+    - service: notify.kiosk
+      data:
+        message: 'Home Assistant has started'
+    - delay:
+        seconds: 5  
     - service: script.janet_speech_engine
       data:
         call_introduction: 1 
-    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
-      timeout: 00:00:10
-    - service: notify.kiosk
+    - delay:
+        seconds: 10  
+    - service: alexa_media.update_last_called 
+    - delay:
+        seconds: 5 
+    - service: notify.alexa_media
       data:
-        message: 'I think Janet was trying to tell you that Home Assistant has started'
+        data:
+          type: tts
+        target: 
+          - media_player.gabe_s_alexa
+        message: 'Alexa Tee Tee Ess is Connected' 
+
+#SSL Expiry
+- alias: ssl_expiry_notify
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.ssl_certificate_expiry
+    below: 2
+  condition:
+    condition: time
+    after: '13:00:00'
+  action:
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/ssl.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_calendar.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/10
+          vibrate: 700, 700, 700
+        message: "Your SSL cert expires in {{ states.sensor.ssl_certificate_expiry.state }} days."
+        title: "Beep! Boop!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+    - service: script.janet_speech_engine
+      data:
+        message: "Hey Gabe, I just want to let you know that your website SSL certificate expires in {{ states.sensor.ssl_certificate_expiry.state }} days. You have instructions on how to renew it saved in your evernote app."
+    - service: persistent_notification.create
+      data:
+        message: "Your SSL cert expires in {{ states.sensor.ssl_certificate_expiry.state }} days."
+        title: "Beep! Boop!"
 
 - alias: Set Harmony activity
   hide_entity: True
@@ -267,22 +346,22 @@
       entity_id: input_select.harmony
       option: "{{ states.remote.harmony_hub.attributes.current_activity }}"
 
-## World Tides Wavemaker
-- alias: Turn on Wavemaker at high tide
-  trigger:
-    platform: template
-    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_high_tide.state , "%H:%M") }}'
-  action:
-    service: switch.turn_on
-    entity_id: switch.06200940dc4f22cbb94b_2
+## Reef Tides Wavemaker
+#- alias: Turn on Wavemaker at high tide
+#  trigger:
+#    platform: template
+#    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_high_tide.state , "%H:%M") }}'
+#  action:
+#    service: switch.turn_on
+#    entity_id: switch.06200940dc4f22cbb94b_2
 
-- alias: Turn off Wavemaker at low tide
-  trigger:
-    platform: template
-    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_low_tide.state , "%H:%M") }}'
-  action:
-    service: script.turn_on
-    entity_id: script.reef_waves_lowtide_fade_script
+#- alias: Turn off Wavemaker at low tide
+#  trigger:
+#    platform: template
+#    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_low_tide.state , "%H:%M") }}'
+#  action:
+#    service: script.turn_on
+#    entity_id: script.reef_waves_lowtide_fade_script
 
 ## Amazon Tides Wavemaker
 - alias: Turn on Amazon Waves at high tide
@@ -302,21 +381,45 @@
     entity_id: script.freshwater_waves_on_script
 
 #Sunrise Sunset on Tanks
-- alias: Start Fade Down of Reef Lights at Sunset
-  trigger:
-    platform: template
-    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefsunsettides.state , '%k:%M') }}"
-  action:
-  - service: script.turn_on
-    entity_id: script.reeftank_evening_fade_kessil
+#- alias: Start Fade Down of Reef Lights at Sunset
+#  trigger:
+#    platform: template
+#    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reefsunsettides.state , '%k:%M') }}"
+#  action:
+#  - service: script.turn_on
+#    entity_id: script.reeftank_evening_fade_kessil
 
-- alias: Start Fade Up of Reef Lights at Sunrise
+#- alias: Start Fade Up of Reef Lights at Sunrise
+#  trigger:
+#    platform: template
+#    value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.reefsunrisetides.state , '%H:%M') }}"
+#  action:
+#  - service: script.turn_on
+#    entity_id: script.reeftank_morning_fade_kessil
+
+#Sunrise Sunset on Reef Tank Diurnal Phasing
+- alias: Set sunrise and set with reef-pi
+  trigger:
+    platform: time
+    at: '04:15:00'
+  action:
+  - service: rest_command.set_diurnal_reef_lights
+
+- alias: Turn Off Reef Lights Outlet at Sunset
   trigger:
     platform: template
-    value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.reefsunrisetides.state , '%H:%M') }}"
+    value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reeftime_sunset_adjustment.state , '%k:%M') }}"
   action:
   - service: script.turn_on
-    entity_id: script.reeftank_morning_fade_kessil
+    entity_id: script.reeftank_evening_outlet_kessil
+
+- alias: Turn On Reef Lights Outlet at Sunrise
+  trigger:
+    platform: template
+    value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.reeftime_sunrise_adjustment.state , '%H:%M') }}"
+  action:
+  - service: script.turn_on
+    entity_id: script.reeftank_morning_outlet_kessil
 
 #Moonrise Moonset on Tanks
 - alias: Stop Reef Moon
@@ -627,7 +730,7 @@
   trigger:
     platform: numeric_state
     entity_id: sensor.plant_monitor_soil_moisture
-    below: 20
+    below: 16
   condition:
     condition: and
     conditions:
@@ -637,8 +740,22 @@
       - condition: template
         value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.ferns_needs_water.attributes.last_triggered) | int > 43200 }}'
   action:
-    - service: ifttt.trigger
-      data_template: {"event":"plant_needs_water", "value1":"Bedroom Ferns", "value2":"{{ states.sensor.plant_monitor_soil_moisture.state }}"}
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_plant.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
+          vibrate: 700, 700, 700
+        message: "Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}%"
+        title: "I'm thirsty!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+#    - service: ifttt.trigger
+#      data_template: {"event":"plant_needs_water", "value1":"Bedroom Ferns", "value2":"{{ states.sensor.plant_monitor_soil_moisture.state }}"}
     - service: persistent_notification.create
       data:
         message: "Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}%"
@@ -657,8 +774,22 @@
       - condition: template
         value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.plant_needs_water.attributes.last_triggered) | int > 43200 }}'
   action:
-    - service: ifttt.trigger
-      data_template: {"event":"plant_needs_water", "value1":"Hydroponic Garden", "value2":"{{ states.sensor.garden_monitor_soil_moisture.state }}"}
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_plant.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
+          vibrate: 700, 700, 700
+        message: "Your herb garden needs water. Soil moisture is currently at {{ states.sensor.garden_monitor_soil_moisture.state }}%"
+        title: "I'm thirsty!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+#    - service: ifttt.trigger
+#      data_template: {"event":"plant_needs_water", "value1":"Hydroponic Garden", "value2":"{{ states.sensor.garden_monitor_soil_moisture.state }}"}
     - service: persistent_notification.create
       data:
         message: "Your herb garden needs water. Soil moisture is currently at {{ states.sensor.garden_monitor_soil_moisture.state }}%"
@@ -677,8 +808,22 @@
       - condition: template
         value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.empty_garden_drain.attributes.last_triggered) | int > 43200 }}'
   action:
-    - service: ifttt.trigger
-      data_template: {"event":"empty_garden_drain", "value1":"Hydroponic Garden", "value2":"{{ states.sensor.garden_monitor_water_level.state }}"}
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_pipe.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
+          vibrate: 700, 700, 700
+        message: "Empty the drainage reservoir soon. It is currently at {{ states.sensor.garden_monitor_water_level.state }}%"
+        title: "Empty me!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+#    - service: ifttt.trigger
+#      data_template: {"event":"empty_garden_drain", "value1":"Hydroponic Garden", "value2":"{{ states.sensor.garden_monitor_water_level.state }}"}
     - service: persistent_notification.create
       data:
         message: "Empty the drainage reservoir soon. It is currently at {{ states.sensor.garden_monitor_water_level.state }}%"
@@ -707,7 +852,7 @@
       - tue
       - thu
   - condition: state
-    entity_id: device_tracker.5re0217120001465
+    entity_id: device_tracker.huawei_mate_9_92528f2b1a5
     state: work
   action:
     service: script.turn_on
@@ -828,7 +973,7 @@
     value_template: "{{ states('sensor.time') == (((state_attr('input_datetime.bedroom_alarm_clock_time' , 'timestamp')) - (15 * 60))|timestamp_custom('%H:%M', false)) }}"
   condition:
     - condition: state
-      entity_id: device_tracker.huawei_mate_992528f2b1a5
+      entity_id: device_tracker.huawei_mate_9_92528f2b1a5
       state: 'home'
     - condition: state
       entity_id: input_boolean.bedroom_alarm_clock_status
@@ -1081,6 +1226,81 @@
       data:
         entity_id: group.all_lightbulbs
 
+#  Capture a frame every 10 minutes while the room is occupied
+- alias : Room Auto Record
+  trigger:
+    platform: time_pattern
+    minutes: '/10'
+    seconds: 0
+  condition:
+    - condition: state
+      entity_id: binary_sensor.people_home
+      state: 'off'
+    - condition: state
+      entity_id: 'binary_sensor.room_occupied'
+      state: 'on'
+  action:
+    - service: rest_command.trigger_snapshot_room
+
+- alias: Motion Detection Alert On 
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.room_occupied
+      from: 'off'
+      to: 'on'
+    - platform: state
+      entity_id: binary_sensor.dashboard_motion
+      from: 'off'
+      to: 'on'
+  condition:
+    - condition: state
+      entity_id: binary_sensor.people_home
+      state: 'off'
+  action:
+    - service: switch.turn_on
+      entity_id: switch.motion_text_change
+    - service: rest_command.trigger_snapshot_room
+    - delay: '00:00:04'
+    - service: shell_command.motion_detect_get_latest
+    - delay: '00:00:02'
+    - service: notify.html5_push
+      data:
+        data:
+          actions:
+          - action: test_call_the_hounds
+            title: Call the Hounds!
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dog.png
+          - action: dismiss
+            title: Dismiss
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dismiss.png
+          image: "https://thisisgabes.asuscomm.com:8008/local/motion/recent-motion-overall.jpg"
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/cctv.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_camera.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
+          vibrate: 700, 700, 700
+        message: "Motion in living room at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}"
+        title: "Intruder Alert!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+    - service: persistent_notification.create
+      data:
+        message: "I have detected motion in you living room!"
+        title: "Intruder Alert!"
+
+#Hounds Alarm
+- alias: hound_alarm
+  trigger:
+  - event_data:
+      action: test_call_the_hounds
+    event_type: html5_notification.clicked
+    platform: event
+  action:
+  - entity_id: switch.call_the_hounds
+    service: switch.turn_on
+
 # Alert if Offline
 - alias: Alert when device goes offline
   trigger:
@@ -1144,3 +1364,59 @@
         entity_id: media_player.yamaha_receiver
         volume_level: >
           {{ (1.0 - trigger.to_state.state | float / 100.0) | round(2) }}
+
+#Humidifier Switch through Alexa routine
+- alias: Turn on Humidifier
+  trigger:
+    - platform: state
+      entity_id: input_boolean.humidifier_toggle
+      to: 'on'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_humidifier_on
+- alias: Turn off Humidifier
+  trigger:
+    - platform: state
+      entity_id: input_boolean.humidifier_toggle
+      to: 'off'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_humidifier_off
+
+- alias: Homecam Snapshot Momentary
+  trigger:
+    - platform: state
+      entity_id: input_boolean.homecam_snapshot
+      to: 'on'
+  action:
+    - service: rest_command.trigger_snapshot_room
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.homecam_snapshot
+
+#thundercloud
+- alias: "Porch Animation Speed"
+  initial_state: True
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_number.thundercloud_animation_speed
+  action:
+    - service: mqtt.publish
+      data_template:
+        topic: "thundercloud/reading/set"
+        payload: '{"transition":{{ trigger.to_state.state | int }}}'
+
+- alias: Lightning Warning
+  trigger:
+    - platform: geo_location
+      source: wwlln
+      zone: zone.home
+      event: enter
+  action:
+    - service: persistent_notification.create
+      data_template:
+        message: "{{ trigger.to_state.name }} - {{ trigger.to_state.attributes.status }}, as of {{ trigger.to_state.attributes.publication_date }}"
+        title: "Oooooh! Lightning!"
+    - service: script.turn_on
+      entity_id: script.lightning_burst

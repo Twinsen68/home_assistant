@@ -173,3 +173,14 @@ include:
 # test for plant sensor
     - device_tracker.esp_55f7c6
     - device_tracker.esp_55f8c6
+    - sensor.some_inside_temperature_sensor
+    - sensor.some_freezer_temp_sensor
+    - sensor.some_energy_sensor
+    - sensor.some_gas_detector
+    - sensor.some_daycom_sensor
+    - sensor.maybe_hallway_motion_detector
+    - sensor.maybe_closet_motion_detector
+    - binary_sensor.homecam_motion
+    - binary_sensor.room_occupied
+    - sensor.gabe_status
+    - binary_sensor.people_home
