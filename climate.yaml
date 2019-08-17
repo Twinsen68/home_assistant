@@ -12,7 +12,7 @@
     seconds: 60
   keep_alive:
     minutes: 3
-  initial_operation_mode: "auto"
+  initial_hvac_mode: heat
   away_temp: 78
   precision: 0.1
 
@@ -30,6 +30,6 @@
     seconds: 60
   keep_alive:
     minutes: 3
-  initial_operation_mode: "auto"
+  initial_hvac_mode: heat
   away_temp: 80
   precision: 0.1
