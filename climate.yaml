@@ -33,3 +33,37 @@
   initial_hvac_mode: heat
   away_temp: 80
   precision: 0.1
+
+- platform: generic_thermostat
+  name: Bedroom Therm
+  heater: input_boolean.bedroom_ac_toggle
+  target_sensor: sensor.plant_monitor_temp_f
+  min_temp: 65
+  max_temp: 90
+  initial_hvac_mode: cool
+  ac_mode: true
+  target_temp: 76
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
+  min_cycle_duration:
+    minutes: 3
+  keep_alive:
+    minutes: 3
+  away_temp: 82
+
+- platform: generic_thermostat
+  name: Living Room Therm
+  heater: input_boolean.livingroom_ac_toggle
+  target_sensor: sensor.garden_monitor_temp_f
+  min_temp: 65
+  max_temp: 90
+  initial_hvac_mode: cool
+  ac_mode: true
+  target_temp: 76
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
+  min_cycle_duration:
+    minutes: 3
+  keep_alive:
+    minutes: 3
+  away_temp: 82

@@ -923,6 +923,15 @@ welcome_lights_on:
         brightness: 50
         transition: 30
 
+#Bed Occupancy
+zero_bed:
+  alias: Tare Bed
+  sequence:
+    - service: mqtt.publish
+      data_template:
+        topic: "bed_occupancy/reading/tare"
+        payload: '0'
+
 #Lighting Scripts
 lights_chill_blue:
   sequence:
@@ -1177,6 +1186,98 @@ alexa_humidifier_off:
       media_content_id: humidifieroff
       media_content_type: routine
     service: media_player.play_media
+
+alexa_bedroom_ac_on:
+  alias: Alexa Bedroom AC On
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: bedroomacon
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_bedroom_ac_off:
+  alias: Alexa Bedroom AC Off
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: bedroomacoff
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_livingroom_ac_on:
+  alias: Alexa Livingroom AC On
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: livingroomacon
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_livingroom_ac_off:
+  alias: Alexa Livingroom AC Off
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: livingroomacoff
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_bedroom_ac_hi:
+  alias: Alexa Bedroom AC Hi
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: bedroomaccool
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_bedroom_ac_low:
+  alias: Alexa Bedroom AC Low
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: bedroomacmiddle
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_livingroom_ac_hi:
+  alias: Alexa Livingroom AC Hi
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: livingroomaccool
+      media_content_type: routine
+    service: media_player.play_media
+
+alexa_livingroom_ac_low:
+  alias: Alexa Livingroom AC Low
+  sequence:
+  - data:
+      entity_id: media_player.gabe_s_alexa
+      media_content_id: livingroomacmiddle
+      media_content_type: routine
+    service: media_player.play_media
+
+sleep_mode_cool_room:
+  alias: Sleep Mode Cool Bedroom
+  sequence:
+    - service: switch.turn_off
+      entity_id: switch.entry_light
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.livingroom_ac_hilow
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.bedroom_ac_hilow
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.bedroom_therm
+        temperature: 71
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.living_room_therm
+        temperature: 83
 
 radio_tune:
   alias: Play Radio on Kiosk Speaker

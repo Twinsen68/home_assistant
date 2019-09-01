@@ -552,15 +552,20 @@ script:
           - condition: or
             conditions:
               - condition: state
-                #TODO
-                entity_id: group.location
+                entity_id: binary_sensor.people_home
+                state: 'on'
+              - condition: state
+                entity_id: person.gabe_2
+                state: 'home'
+              - condition: state
+                entity_id: person.berny_2
                 state: 'home'
               - condition: state
                 entity_id: input_boolean.janet_guest_mode
                 state: 'on'
         #TODO
-      - wait_template: "{{ not is_state( media_player, 'playing') }}"
-        timeout: 00:00:30
+#      - wait_template: "{{ not is_state( media_player, 'playing') }}"
+#        timeout: 00:00:30
 
       - service: media_player.volume_set
         data_template:
@@ -568,9 +573,9 @@ script:
           volume_level: >-
             {{ states.input_number.janet_notification_volume.state }}
 
-      - service: rest_command.kiosk_sound_janet_boop
+#      - service: rest_command.kiosk_sound_janet_boop
 
-      - service: tts.google_cloud_say
+      - service: tts.google_say
         data_template:
           entity_id: media_player.kiosk_speaker
           message: >-
@@ -587,7 +592,6 @@ script:
         state: 'on'
       - service: tts.google_cloud_say
         data_template:
-#          title: "Janet:"
           entity_id: media_player.kiosk_speaker
           message: >-
             {{ speech_message | replace("\n","") | replace("   ","") |

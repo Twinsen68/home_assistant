@@ -73,6 +73,14 @@
     - service: homeassistant.turn_off
       data:
         entity_id: group.all_lightbulbs
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.bedroom_therm
+        temperature: 85
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.living_room_therm
+        temperature: 85
 
 - alias: Turn On Lights on Enter Home Zone
   id: gabe_arrive_in_home_zone_lights_on
@@ -92,6 +100,20 @@
   action:
     - service: switch.turn_on
       entity_id: switch.entry_light
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.livingroom_ac_hilow
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.bedroom_ac_hilow
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.bedroom_therm
+        temperature: 74
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.living_room_therm
+        temperature: 75
 
 #- alias: Deactivate Detect on Enter Home Zone
 #  id: gabe_arrive_in_home_zone_motion_off
@@ -120,9 +142,12 @@
   id: gabe_arrive_in_home_zone_welcome
   trigger:
     - platform: state
+      entity_id: binary_sensor.people_home
+      to: 'on'
+  condition:
+    - condition: state
       entity_id: input_select.gabe_status_dropdown
-      to: "Just Arrived"
-#  condition:
+      state: "Just Arrived"
 #    condition: template
 #    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.gabe_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
@@ -136,26 +161,27 @@
   id: mom_arrive_in_home_zone_welcome
   trigger:
     - platform: zone
-      entity_id: group.berny
+      entity_id: person.berny
       zone: zone.home
       event: enter
-  condition:
-    condition: template
-    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
+#  condition:
+#    condition: template
+#    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
     - service: script.janet_speech_engine
       data:
         call_greeting_berny: 1
+    - service: script.turn_on
+      entity_id: script.welcome_lights_on
 
 #Morning Greeting
 - alias: 'Morning Greeting'
   id: morning_greeting_update
   trigger:
     platform: state
-#    entity_id: binary_sensor.kiosk_att_motion
-    entity_id: binary_sensor.dashboard_motion
-    from: 'off'
-    to: 'on'
+    entity_id: input_boolean.bed_occupancy
+    from: 'on'
+    to: 'off'
   condition:
     condition: and
     conditions:
@@ -1017,7 +1043,6 @@
   trigger:
     - platform: state
       entity_id: group.gabe
-      from: 'not_home'
       to: 'home'
   action:
     - service: input_select.select_option
@@ -1037,6 +1062,9 @@
       from: 'Just Left'
       to: 'Just Arrived'
   condition:
+    - condition: state
+      entity_id: input_boolean.bed_occupancy
+      state: 'off'
   action:
     - service: input_select.select_option
       data:
@@ -1047,7 +1075,6 @@
   trigger:
     - platform: state
       entity_id: group.gabe
-      from: 'home'
       to: 'not_home'
   action:
     - service: input_select.select_option
@@ -1067,6 +1094,86 @@
       data:
         entity_id: input_select.gabe_status_dropdown
         option: Away
+    - service: rest_command.tasker_away_from_home
+
+- alias: Mark Gabe as in Bed
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bed_occupancy
+      to: 'on'
+      for:
+        minutes: 10
+  condition:
+    - condition: state
+      entity_id: input_select.gabe_status_dropdown
+      state: 'Home'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.gabe_status_dropdown
+        option: 'In Bed'
+
+
+- alias: Lobby mail check
+  trigger:
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      to: 'In the Lobby'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.usps_packages
+        above: 0
+      - condition: time
+        after: '15:00:00'
+  action:
+    - service: notify.html5_push
+      data:
+        data:
+          actions:
+          - action: dismiss
+            title: "Got it!"
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_mailbox.png
+          image: "https://thisisgabes.asuscomm.com:8008/local/mail_images/todays_mail.gif"
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/mailbox_on.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_mailbox.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
+          vibrate: 700, 700, 700
+        message: "You have {{ states.sensor.usps_mail.state }} new snail mails!"
+        title: "New Snail Mail!"
+
+- alias: Lobby package check
+  trigger:
+    - platform: state
+      entity_id: input_select.gabe_status_dropdown
+      to: 'In the Lobby'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.usps_packages
+        above: 0
+      - condition: time
+        after: '15:00:00'
+  action:
+    - service: notify.html5_push
+      data:
+        data:
+          actions:
+          - action: dismiss
+            title: "Got it!"
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_package.png
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/package.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_package.png
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
+          vibrate: 700, 700, 700
+        message: "You have {{ states.sensor.usps_packages.state }} new packages!"
+        title: "New Packages!"
 
 - alias: Mark Gabe as extended away
   trigger:
@@ -1267,8 +1374,8 @@
       data:
         data:
           actions:
-          - action: test_call_the_hounds
-            title: Call the Hounds!
+          - action: call_the_hounds
+            title: "Call the Hounds!"
             icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dog.png
           - action: dismiss
             title: Dismiss
@@ -1280,21 +1387,21 @@
           timestamp: '%m'
           url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
           vibrate: 700, 700, 700
-        message: "Motion in living room at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}"
+        message: Motion in living room at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}
         title: "Intruder Alert!"
         target:
           - "Gabes Mate"
           - "Macbook"
     - service: persistent_notification.create
       data:
-        message: "I have detected motion in you living room!"
+        message: I detected motion in your living room at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }} 
         title: "Intruder Alert!"
 
 #Hounds Alarm
 - alias: hound_alarm
   trigger:
   - event_data:
-      action: test_call_the_hounds
+      action: call_the_hounds
     event_type: html5_notification.clicked
     platform: event
   action:
@@ -1383,6 +1490,72 @@
     - service: script.turn_on
       entity_id: script.alexa_humidifier_off
 
+#AC Switch through Alexa routine
+- alias: Turn on Bedroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedroom_ac_toggle
+      to: 'on'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_bedroom_ac_on
+- alias: Turn off Bedroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedroom_ac_toggle
+      to: 'off'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_bedroom_ac_off
+- alias: Turn on Livingroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.livingroom_ac_toggle
+      to: 'on'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_livingroom_ac_on
+- alias: Turn off Livingroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.livingroom_ac_toggle
+      to: 'off'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_livingroom_ac_off
+- alias: Hi Bedroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedroom_ac_hilow
+      to: 'on'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_bedroom_ac_hi
+- alias: Low Bedroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedroom_ac_hilow
+      to: 'off'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_bedroom_ac_low
+- alias: Hi Livingroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.livingroom_ac_hilow
+      to: 'on'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_livingroom_ac_hi
+- alias: Low Livingroom AC
+  trigger:
+    - platform: state
+      entity_id: input_boolean.livingroom_ac_hilow
+      to: 'off'
+  action:
+    - service: script.turn_on
+      entity_id: script.alexa_livingroom_ac_low
+
 - alias: Homecam Snapshot Momentary
   trigger:
     - platform: state
@@ -1394,8 +1567,252 @@
     - service: input_boolean.turn_off
       entity_id: input_boolean.homecam_snapshot
 
+
+#Aircraft Radio
+- alias: Aircraft Radio Power On
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_power_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_power
+    - delay: '00:00:02'
+    - service: shell_command.aircraft_radio_mute
+
+- alias: Aircraft Radio Power Off
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_power_toggle
+      to: 'off'
+  action:
+    - service: shell_command.aircraft_radio_mute
+    - delay: '00:00:02'
+    - service: shell_command.aircraft_radio_power
+
+- alias: Aircraft Radio Play Pause
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_play_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_play
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_play_toggle
+
+- alias: Aircraft Radio Mode
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_mode_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_mute
+    - delay: '00:00:02'
+    - service: shell_command.aircraft_radio_mode
+    - delay: '00:00:02'
+    - service: shell_command.aircraft_radio_mute
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_mode_toggle
+
+- alias: Aircraft Radio Mute
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_mute_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_mute
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_mute_toggle
+
+- alias: Aircraft Radio EQ
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_eq_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_eq
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_eq_toggle
+
+- alias: Aircraft Radio Fast Forward
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_fwd_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_fwd
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_fwd_toggle
+
+- alias: Aircraft Radio Stop
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_stop_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_stop
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_stop_toggle
+
+- alias: Aircraft Radio Back
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_back_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_back
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_back_toggle
+
+- alias: Aircraft Radio Rewind
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_rwd_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_rwd
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_rwd_toggle
+
+- alias: Aircraft Radio Volume Up
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_volume_up_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_up
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_radio_volume_up_toggle
+
+- alias: Aircraft Radio Rewind
+  trigger:
+    - platform: state
+      entity_id: input_boolean.aircraft_radio_volume_down_toggle
+      to: 'on'
+  action:
+    - service: shell_command.aircraft_radio_down
+    - delay: '00:00:02'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.aircraft_volume_down_toggle
+
+#Amazon ATO
+- alias: Amazon ATO
+  trigger:
+    - platform: state
+      entity_id: input_boolean.amazon_ato
+      to: 'on'
+  action:
+    - service: shell_command.amazon_ato_on
+    - delay: '00:00:20'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.amazon_ato
+    - service: shell_command.amazon_ato_off
+
+#Bed Occupancy
+- alias: Bed Set
+  hide_entity: True
+  trigger:
+    platform: state
+    entity_id: sensor.bed_occupancy_load
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.bed_occupancy_load
+        above: '201'
+      - condition: state
+        entity_id: binary_sensor.people_home
+        state: 'on'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.bed_occupancy
+
+# clears the in_bed boolean under a certain mass
+- alias: Bed Clear
+  hide_entity: True
+  trigger:
+    platform: state
+    entity_id: sensor.bed_occupancy_load
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.bed_occupancy_load
+        below: '200'
+      - condition: state
+        entity_id: binary_sensor.people_home
+        state: 'on'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.bed_occupancy
+
+- alias: Bed Tare Set
+  hide_entity: True
+  trigger:
+    platform: time
+    at: '13:00:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.bed_occupancy_load
+        below: '100'
+      - condition: state
+        entity_id: binary_sensor.people_home
+        state: 'off'
+  action:
+    - service: script.turn_on
+      entity_id: script.zero_bed
+
+# tasks to perform when in bed
+- alias: Bed Occupied Tasks Single
+  trigger:
+    platform: state
+    entity_id: sensor.bed_occupancy_count
+    to: 'Single'
+  condition:
+    condition: time
+    after: '23:00:00'
+    before: '06:00:00'
+  action:
+    - service: light.turn_off
+      entity_id: light.bedside_table
+      data:
+        transition: 1800
+
+- alias: Bed Occupied Tasks Double
+  trigger:
+    platform: state
+    entity_id: sensor.bed_occupancy_count
+    to: 'Double'
+  condition:
+    condition: time
+    after: '20:00:00'
+    before: '06:00:00'
+  action:
+    - service: light.turn_on
+      entity_id: light.bedside_table
+      data:
+        brightness: 120
+        rgb_color: [115,50,168]
+        transition: 300
+    - service: light.turn_on
+      entity_id: light.bedroom_desk
+      data:
+        brightness: 60
+        rgb_color: [89,50,168]
+        transition: 600
+
 #thundercloud
-- alias: "Porch Animation Speed"
+- alias: "Thundercloud Animation Speed"
   initial_state: True
   hide_entity: False
   trigger:

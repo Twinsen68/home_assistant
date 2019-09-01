@@ -184,3 +184,8 @@ include:
     - binary_sensor.room_occupied
     - sensor.gabe_status
     - binary_sensor.people_home
+    - input_boolean.bedroom_ac_toggle
+    - input_boolean.livingroom_ac_toggle
+    - climate.living_room_therm
+    - climate.bedroom_therm
+    - input_boolean.bed_occupancy

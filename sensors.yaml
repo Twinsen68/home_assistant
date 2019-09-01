@@ -1669,55 +1669,6 @@
 - platform: dnsip
   name: "IP Address"
 
-- platform: feedparser
-  name: News Top
-  feed_url: 'http://feeds.reuters.com/reuters/topNews'
-  date_format: '%a, %b %d %I:%M %p'
-  inclusions:
-    - title
-    - link
-    - description
-    - image
-    - pubDate
-
-- platform: feedparser
-  name: News Tech
-  feed_url: 'http://feeds.reuters.com/reuters/technologyNews'
-  date_format: '%a, %b %d %I:%M %p'
-  inclusions:
-    - title
-    - link
-    - description
-    - image
-    - pubDate
-
-- platform: feedparser
-  name: News Weird
-  feed_url: 'http://feeds.reuters.com/reuters/oddlyEnoughNews'
-  date_format: '%a, %b %d %I:%M %p'
-  inclusions:
-    - title
-    - link
-    - description
-    - image
-    - pubDate
-
-- platform: feedparser
-  name: News Arts
-  feed_url: 'http://feeds.reuters.com/news/artsculture'
-  date_format: '%a, %b %d %I:%M %p'
-  inclusions:
-    - title
-    - link
-    - description
-    - image
-    - pubDate
-
-- platform: feedparser
-  name: News NPR Audio
-  feed_url: 'https://www.npr.org/rss/podcast.php?id=500005'
-  date_format: '%a, %b %d %I:%M %p'
-
 - platform: template
   sensors:
     npr_news_mp3_link:
@@ -1758,6 +1709,15 @@
   name: stats_work
   entity_id: device_tracker.5re0217120001465
   state: 'Work'
+  type: time
+  end: '{{ now() }}'
+  duration:
+    days: 7
+
+- platform: history_stats
+  name: stats_bed
+  entity_id: input_boolean.bed_occupancy
+  state: 'on'
   type: time
   end: '{{ now() }}'
   duration:
@@ -1858,6 +1818,14 @@
             {{ minutes }} minutes
           {%- endif -%}
         {%- endif -%}
+
+#Amazon ATO Level
+- platform: rest
+  name: Amazon ATO Level
+  resource: http://esp_ba4cae/checklevel
+  scan_interval: 85000
+  headers:
+      content-type: application/json
 
 #ReefControlPi Data
 - platform: rest
@@ -2467,6 +2435,48 @@
   state_topic: "humidity-bedroom/reading"
   name: Bedroom Humidity
   value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "bed_occupancy/reading/load"
+  name: Bed Occupancy Load
+  value_template: "{{ value }}"
+  unit_of_measurement: "oz"
+
+- platform: mqtt
+  state_topic: "bed_occupancy/reading/tare"
+  name: Bed Occupancy Tare
+  value_template: "{{ value }}"
+  unit_of_measurement: "oz"
+
+- platform: template
+  sensors:
+    bed_occupancy_count:
+      icon_template: >-
+        {% set bed_load = states.sensor.bed_occupancy_load.state | int %}
+        {% if bed_load < 300 %}
+          icon: mdi:account-off
+        {% elif 301 <= bed_load < 1700 %}
+          icon: mdi:bed-king
+        {% elif 1701 <= bed_load < 3000 %}
+          icon: mdi:account-multiple
+        {% elif 3001 <= bed_load < 10000 %}
+          icon: mdi:party-popper
+        {% else %}
+          icon: mdi:help-circle
+        {% endif %}
+      value_template: >
+        {% set bed_load = states.sensor.bed_occupancy_load.state | int %}
+        {% if bed_load < 300 %}
+          Empty
+        {% elif 301 <= bed_load < 1700 %}
+          Single
+        {% elif 1701 <= bed_load < 3000 %}
+          Double
+        {% elif 3001 <= bed_load < 10000 %}
+          Party Time!
+        {% else %}
+          N/A
+        {% endif %}
 
 #This is to use the remote
 - platform: huesensor

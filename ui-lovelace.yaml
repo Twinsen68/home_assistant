@@ -74,7 +74,7 @@ resources:
     type: module
   - url: /local/custom_ui/circle-sensor-card.js?v=1
     type: module
-  - url: /local/custom_ui/card-tools.js?v=5.1
+  - url: /local/custom_ui/card-tools.js?v=5.2
     type: js
   - url: /local/custom_ui/lovelace-fullykiosk.js?v=1
     type: js
@@ -86,7 +86,7 @@ resources:
     type: module
   - url: /local/community/mini-graph-card/mini-graph-card.js
     type: module
-  - url: /local/custom_ui/simple-thermostat.js?v=1
+  - url: /local/community/simple-thermostat/simple-thermostat.js
     type: module
   - url: /local/community/bar-card/bar-card.js
     type: js
@@ -107,7 +107,7 @@ cch:
   clock_date: true
   date_locale: en-us
   disable: false
-  hide_tabs: 1,2,3,14,15,16,17,18,19
+  hide_tabs: 1,2,3,4,15,16,17,18,19,20,21,22
   conditional_styles:
     - entity: notifications
       condition:
@@ -117,7 +117,7 @@ cch:
           hide: true
     - template:
         tab:
-          4:
+          5:
             - icon: >
                 if (states["binary_sensor.people_home"].state == "on") "mdi:account-heart";
                 else "mdi:account-remove";
@@ -126,7 +126,7 @@ cch:
                 else "#ffffff";
     - template:
         tab:
-          5:
+          6:
             - icon: >
                 if (states["light.bedside_table"].state == 'on') "mdi:lightbulb-on";
                 else if (states["light.bedroom_desk"].state == 'on') "mdi:lightbulb-on";
@@ -145,16 +145,16 @@ cch:
                 else "#ffffff";
     - template:
         tab:
-          9:
+          10:
             - icon: >
-                if (states["sensor.plant_monitor_soil_moisture"].state <= '20') "mdi:water-off";
+                if (states["sensor.plant_monitor_soil_moisture"].state <= '16') "mdi:water-off";
                 else "mdi:flower";
             - color:  >
-                if (states["sensor.plant_monitor_soil_moisture"].state <= '20') "#acd6fa";
+                if (states["sensor.plant_monitor_soil_moisture"].state <= '16') "#acd6fa";
                 else "#ffffff";
     - template:
         tab:
-          10:
+          11:
             - icon: >
                 if (states["sensor.weather_alert_active_nyc"].state == 'on') "mdi:flash-alert";
                 else "mdi:weather-sunny";
@@ -163,7 +163,7 @@ cch:
                 else "#ffffff";
     - template:
         tab:
-          18:
+          19:
             - icon: >
                 if (states["sensor.weather_alert_active_nyc"].state == 'on') "mdi:flash-alert";
                 else "mdi:weather-sunny";
@@ -175,13 +175,12 @@ cch:
           user_agent: Mobile Safari
         config:
           background: 'rgba(150, 150, 150, 0.4)'
-          options: hide
           voice: hide
           default_tab: 1
           notifications: clock
           clock_date: true
           date_locale: en-us
-          hide_tabs: 0,14,15,16,17,18,19
+          hide_tabs: 0,15,16,17,18,19,20,21
           kiosk_mode: true
           swipe: true
           swipe_animate: swipe
@@ -197,29 +196,29 @@ cch:
           notifications: clock
           clock_date: true
           date_locale: en-us
-          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10,11,12,13
+          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,21,22
           kiosk_mode: true
           swipe: true
           swipe_animate: swipe
           swipe_wrap: true
 #          swipe_prevent_default: true
       - conditions:
-          user: samsungtab
+          user: SamsungTab
         config:
           background: 'rgba(150, 150, 150, 0.4)'
           menu: hide
           options: hide
           voice: show
-          default_tab: 12
+          default_tab: 15
           notifications: clock
           clock_date: true
           date_locale: en-us
-          hide_tabs: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
-          kiosk_mode: true
+          hide_tabs: 0,1,4,5,6,7,8,9,10,11,12,13,14,21,22
+          kiosk_mode: false
           swipe: true
-          swipe_animate: flip
+          swipe_animate: swipe
           swipe_wrap: true
-          swipe_prevent_default: true
+#          swipe_prevent_default: true
 
 background: url("/local/images/bg/bg-tile-stars.gif")
 name: Apartment 10R
@@ -451,7 +450,7 @@ views:
           entities:
             - entity: sensor.gabe_status
             - entity: binary_sensor.people_home
-            - entity: sensor.rpi_power_status
+            - entity: input_boolean.bed_occupancy
             - entity: sensor.garden_monitor_temp_f
       - type: picture-elements
         image: "/local/images/bg/ph-homecam.png"
@@ -496,21 +495,32 @@ views:
         - type: state-label
           entity: sensor.last_homecam_motion
           title: null
+          prefix: "Last Motion: "
           style:
-            left: 30%
+            left: 50%
             top: 90%
-#        - type: state-label
-#          entity: sensor.mqtt_topic_home_sysinfo_template_serverload
-#          title: null
-#          style:
-#            left: 40%
-#            top: 90%
-#        - type: state-label
-#          entity: sensor.mqtt_topic_home_sysinfo_template_serverspeed
-#          title: null
-#          style:
-#            left: 50%
-#            top: 90%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: state-icon
+          entity: input_boolean.livingroom_ac_toggle
+          title: null
+          style:
+            left: 90%
+            top: 80%
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - type: state-label
+          entity: sensor.garden_monitor_temp_f
+          title: null
+          style:
+            left: 90%
+            top: 90%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
 
       - type: picture-elements
         image: "/local/images/bg/ph-kioskcam.png"
@@ -551,6 +561,25 @@ views:
           style:
             left: 90%
             top: 10%
+        - type: state-icon
+          entity: input_boolean.bedroom_ac_toggle
+          title: null
+          style:
+            left: 90%
+            top: 80%
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - type: state-label
+          entity: sensor.plant_monitor_temp_f
+          title: null
+          style:
+            left: 90%
+            top: 90%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
   - type: vertical-stack
     cards:
     - type: entities
@@ -676,6 +705,71 @@ views:
                         style:
                           - font-size: 12px
                           - font-weight: bold
+
+- name: Temp
+  title: Temp
+  icon: mdi:air-conditioner
+  cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:card-modder
+        style:
+          background-color: rgba(50,50,50,0)
+          box-shadow: 1px 1px rgba(0,0,0,0)
+          background-image: url("/local/images/bg/bg_livingroom.jpg")
+          background-position: bottom
+        card:
+          type: custom:simple-thermostat
+          entity: climate.living_room_therm
+          name: Living Room
+          mode_type: operation
+          icon:
+            cool: mdi:air-conditioner
+            idle: mdi:fan-off
+          decimals: 1
+          step_size: .5
+          sensors:
+            - entity: sensor.garden_monitor_temp_f
+              name: Inside
+              icon: mdi:home
+              unit: F
+            - entity: sensor.garden_monitor_temp_h
+              name: Humidity
+              icon: mdi:water-percent
+              unit: "%"
+            - entity: sensor.dark_sky_temperature
+              name: Outside
+              icon: mdi:tree
+              unit: F
+      - type: custom:card-modder
+        style:
+          background-color: rgba(50,50,50,0)
+          box-shadow: 1px 1px rgba(0,0,0,0)
+          background-image: url("/local/images/bg/bg_bedroom.jpg")
+          background-position: bottom
+        card:
+          type: custom:simple-thermostat
+          entity: climate.bedroom_therm
+          name: Bedroom
+          mode_type: operation
+          icon:
+            cool: mdi:air-conditioner
+            idle: mdi:fan-off
+          decimals: 1
+          step_size: .5
+          sensors:
+            - entity: sensor.plant_monitor_temp_f
+              name: Inside
+              icon: mdi:home
+              unit: F
+            - entity: sensor.plant_monitor_temp_h
+              name: Humidity
+              icon: mdi:water-percent
+              unit: "%"
+            - entity: sensor.dark_sky_temperature
+              name: Outside
+              icon: mdi:tree
+              unit: F
 
 - name: Quick Fish Info
   title: Quick Fish Info
@@ -1210,6 +1304,8 @@ views:
       card:
         type: glance
         entities:
+          - entity: sensor.stats_bed
+            name: null
           - entity: sensor.stats_home
             name: null
           - entity: sensor.stats_work
@@ -1226,7 +1322,7 @@ views:
               action: toggle
             hold_action:
               action: more-info
-          - entity: sensor.rpi_power_status
+          - entity: sensor.bed_occupancy_count
           - entity: binary_sensor.people_home
     - type: custom:card-modder
       card:
@@ -1402,21 +1498,32 @@ views:
         - type: state-label
           entity: sensor.last_homecam_motion
           title: null
+          prefix: "Last Motion: "
           style:
-            left: 30%
+            left: 50%
             top: 90%
-#        - type: state-label
-#          entity: sensor.mqtt_topic_home_sysinfo_template_serverload
-#          title: null
-#          style:
-#            left: 40%
-#            top: 90%
-#        - type: state-label
-#          entity: sensor.mqtt_topic_home_sysinfo_template_serverspeed
-#          title: null
-#          style:
-#            left: 50%
-#            top: 90%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+        - type: state-icon
+          entity: input_boolean.livingroom_ac_toggle
+          title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          style:
+            left: 90%
+            top: 80%
+        - type: state-label
+          entity: sensor.garden_monitor_temp_f
+          title: null
+          style:
+            left: 90%
+            top: 90%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
       - type: conditional
         conditions:
           - entity: binary_sensor.recent_motion_trigger
@@ -1465,6 +1572,83 @@ views:
           style:
             left: 90%
             top: 10%
+        - type: state-icon
+          entity: input_boolean.bedroom_ac_toggle
+          title: null
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+          style:
+            left: 90%
+            top: 80%
+        - type: state-label
+          entity: sensor.plant_monitor_temp_f
+          title: null
+          style:
+            left: 90%
+            top: 90%
+            font-size: 16px
+            font-weight: bold
+            color: rgba(255, 255, 255, 1)
+      - type: custom:card-modder
+        style:
+          background-color: rgba(50,50,50,0)
+          box-shadow: 1px 1px rgba(0,0,0,0)
+          background-image: url("/local/images/bg/bg_livingroom.jpg")
+          background-position: bottom
+        card:
+          type: custom:simple-thermostat
+          entity: climate.living_room_therm
+          name: Living Room
+          mode_type: operation
+          icon:
+            cool: mdi:air-conditioner
+            idle: mdi:fan-off
+          decimals: 1
+          step_size: .5
+          sensors:
+            - entity: sensor.garden_monitor_temp_f
+              name: Inside
+              icon: mdi:home
+              unit: F
+            - entity: sensor.garden_monitor_temp_h
+              name: Humidity
+              icon: mdi:water-percent
+              unit: "%"
+            - entity: sensor.dark_sky_temperature
+              name: Outside
+              icon: mdi:tree
+              unit: F
+      - type: custom:card-modder
+        style:
+          background-color: rgba(50,50,50,0)
+          box-shadow: 1px 1px rgba(0,0,0,0)
+          background-image: url("/local/images/bg/bg_bedroom.jpg")
+          background-position: bottom
+        card:
+          type: custom:simple-thermostat
+          entity: climate.bedroom_therm
+          name: Bedroom
+          mode_type: operation
+          icon:
+            cool: mdi:air-conditioner
+            idle: mdi:fan-off
+          decimals: 1
+          step_size: .5
+          sensors:
+            - entity: sensor.plant_monitor_temp_f
+              name: Inside
+              icon: mdi:home
+              unit: F
+            - entity: sensor.plant_monitor_temp_h
+              name: Humidity
+              icon: mdi:water-percent
+              unit: "%"
+            - entity: sensor.dark_sky_temperature
+              name: Outside
+              icon: mdi:tree
+              unit: F
       - type: conditional
         conditions:
           - entity: sensor.usps_mail
@@ -3458,8 +3642,6 @@ views:
             style:
               - font-size: 12px
               - font-weight: bold
-#          - type: entity-button
-#            color_type: blank-card
       - type: picture-elements
         image: /local/images/amazon-tide.gif
         elements:
@@ -4330,7 +4512,12 @@ views:
         card:
            type: markdown
            content: >
-               ## NYC Weather Alert! [[ sensor.weatheralerts ]]
+               ## [[ sensor.weatheralerts ]] for NYC!
+
+               [[ sensor.weatheralerts.attributes.title ]]
+
+               [[ sensor.weatheralerts.attributes.summary ]]
+
       - type: conditional
         conditions:
           - entity: sensor.weather_alert_active_hbg
@@ -4338,7 +4525,12 @@ views:
         card:
            type: markdown
            content: >
-               ## Harrisburg Weather Alert! [[ sensor.weatheralerts_2 ]]
+               ## [[ sensor.weatheralerts_2 ]] for Harrisburg!
+
+               [[ sensor.weatheralerts_2.attributes.title ]]
+
+               [[ sensor.weatheralerts_2.attributes.summary ]]
+
       - type: custom:card-modder
         card:
           type: weather-forecast
@@ -5012,6 +5204,156 @@ views:
   title: Media
   icon: mdi:television-classic
   cards:
+  - type: vertical-stack
+    cards:
+      - type: conditional
+        conditions:
+          - entity: input_boolean.aircraft_radio_power_toggle
+            state: "on"
+        card:
+          type: picture-elements
+          image: "/local/images/aircraft_radio_on.jpg"
+          show_name: false
+          show_state: false
+          elements:
+          - type: state-icon
+            entity: input_boolean.aircraft_radio_power_toggle
+            title: null
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            style:
+              left: 15%
+              top: 72%
+      - type: conditional
+        conditions:
+          - entity: input_boolean.aircraft_radio_power_toggle
+            state: "off"
+        card:
+          type: picture-elements
+          image: "/local/images/aircraft_radio_off.jpg"
+          show_name: false
+          show_state: false
+          elements:
+          - type: state-icon
+            entity: input_boolean.aircraft_radio_power_toggle
+            title: null
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            style:
+              left: 15%
+              top: 72%
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_power_toggle
+            size: 30%
+            icon: mdi:power
+            color: auto
+            name: Power
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_play_toggle
+            size: 30%
+            icon: mdi:play-pause
+            color: auto
+            name: Play
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_rwd_toggle
+            icon: mdi:rewind
+            size: 30%
+            color: auto
+            name: Rewind
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_fwd_toggle
+            size: 30%
+            icon: mdi:fast-forward
+            color: auto
+            name: Fast Forward
+            tap_action: 
+              action: toggle
+            hold_action:
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_mode_toggle
+            size: 30%
+            icon: mdi:radio
+            color: auto
+            name: Mode
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_volume_up_toggle
+            size: 30%
+            icon: mdi:volume-high
+            color: auto
+            name: Volume Up
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_volume_down_toggle
+            size: 30%
+            icon: mdi:volume-medium
+            color: auto
+            name: Volume Down 
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
+          - type: entity-button
+            entity: input_boolean.aircraft_radio_mute_toggle
+            size: 30%
+            icon: mdi:volume-off
+            color: auto
+            name: Mute
+            tap_action: 
+              action: toggle
+            hold_action: 
+              action: none
+            style:
+              - font-size: 12px
+              - font-weight: bold
   - type: custom:roku-card
     entity: media_player.roku_2ld558098368
     title: Roku
@@ -5880,8 +6222,6 @@ views:
         style:
           background-color: rgba(50,50,50,0)
           box-shadow: 1px 1px rgba(0,0,0,0)
-          background-image: url("/local/images/bg/bg-mailboxes.jpg")
-          background-position: center
           font-size: 18px
           font-weight: bold
           padding-bottom: 15px
@@ -5895,7 +6235,161 @@ views:
               name: Packages
       - type: picture
         image: /local/mail_images/todays_mails.gif
-
+- name: Radio Only
+  title: Radio Only
+  icon: mdi:radio
+  id: kiosk_radio_only
+  cards:
+    - type: vertical-stack
+      cards:
+        - type: conditional
+          conditions:
+            - entity: input_boolean.aircraft_radio_power_toggle
+              state: "on"
+          card:
+            type: picture-elements
+            image: "/local/images/aircraft_radio_on.jpg"
+            show_name: false
+            show_state: false
+            elements:
+            - type: state-icon
+              entity: input_boolean.aircraft_radio_power_toggle
+              title: null
+              tap_action:
+                action: toggle
+              hold_action:
+                action: none
+              style:
+                left: 15%
+                top: 72%
+        - type: conditional
+          conditions:
+            - entity: input_boolean.aircraft_radio_power_toggle
+              state: "off"
+          card:
+            type: picture-elements
+            image: "/local/images/aircraft_radio_off.jpg"
+            show_name: false
+            show_state: false
+            elements:
+            - type: state-icon
+              entity: input_boolean.aircraft_radio_power_toggle
+              title: null
+              tap_action:
+                action: toggle
+              hold_action:
+                action: none
+              style:
+                left: 15%
+                top: 72%
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_power_toggle
+              size: 30%
+              icon: mdi:power
+              color: auto
+              name: Power
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_play_toggle
+              size: 30%
+              icon: mdi:play-pause
+              color: auto
+              name: Play
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_rwd_toggle
+              icon: mdi:rewind
+              size: 30%
+              color: auto
+              name: Rewind
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_fwd_toggle
+              size: 30%
+              icon: mdi:fast-forward
+              color: auto
+              name: Fast Forward
+              tap_action: 
+                action: toggle
+              hold_action:
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_mode_toggle
+              size: 30%
+              icon: mdi:radio
+              color: auto
+              name: Mode
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_volume_up_toggle
+              size: 30%
+              icon: mdi:volume-high
+              color: auto
+              name: Volume Up
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_volume_down_toggle
+              size: 30%
+              icon: mdi:volume-medium
+              color: auto
+              name: Volume Down 
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_mute_toggle
+              size: 30%
+              icon: mdi:volume-off
+              color: auto
+              name: Mute
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
 - name: Fart Machine
   title: Fart Machine
   icon: mdi:skull-crossbones
@@ -5931,7 +6425,11 @@ views:
           card:
              type: markdown
              content: >
-                 ## NYC Weather Alert! [[ sensor.weatheralerts ]]
+               ## [[ sensor.weatheralerts ]] for Harrisburg!
+
+               [[ sensor.weatheralerts.attributes.title ]]
+
+               [[ sensor.weatheralerts.attributes.summary ]]
         - type: conditional
           conditions:
             - entity: sensor.weather_alert_active_hbg
@@ -5939,7 +6437,11 @@ views:
           card:
              type: markdown
              content: >
-                 ## Harrisburg Weather Alert! [[ sensor.weatheralerts_2 ]]
+               ## [[ sensor.weatheralerts_2 ]] for Harrisburg!
+
+               [[ sensor.weatheralerts_2.attributes.title ]]
+
+               [[ sensor.weatheralerts_2.attributes.summary ]]
         - type: weather-forecast
           entity: weather.dark_sky
         - type: vertical-stack
@@ -6259,3 +6761,122 @@ views:
             action: none
       hold_action:
             action: none
+- name: Radio Only
+  title: Radio Only
+  icon: mdi:radio
+  id: mobile_radio_only
+  cards:
+    - type: vertical-stack
+      cards:
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_power_toggle
+              size: 30%
+              icon: mdi:power
+              color: auto
+              name: Power
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_play_toggle
+              size: 30%
+              icon: mdi:play-pause
+              color: auto
+              name: Play
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_mode_toggle
+              size: 30%
+              icon: mdi:radio
+              color: auto
+              name: Mode
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_mute_toggle
+              size: 30%
+              icon: mdi:volume-off
+              color: auto
+              name: Mute
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_rwd_toggle
+              icon: mdi:rewind
+              size: 30%
+              color: auto
+              name: Rewind
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_fwd_toggle
+              size: 30%
+              icon: mdi:fast-forward
+              color: auto
+              name: Fast Forward
+              tap_action: 
+                action: toggle
+              hold_action:
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_volume_up_toggle
+              size: 30%
+              icon: mdi:volume-high
+              color: auto
+              name: Volume Up
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold
+            - type: entity-button
+              entity: input_boolean.aircraft_radio_volume_down_toggle
+              size: 30%
+              icon: mdi:volume-medium
+              color: auto
+              name: Volume Down 
+              tap_action: 
+                action: toggle
+              hold_action: 
+                action: none
+              style:
+                - font-size: 12px
+                - font-weight: bold

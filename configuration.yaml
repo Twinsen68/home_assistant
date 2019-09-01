@@ -96,18 +96,20 @@ sun:
 
 # Text to speech
 tts:
-  - platform: google_cloud
-    key_file: !secret tts_keyfile
-    language: en-US
-    gender: female
-    voice: en-US-Wavenet-F
-    encoding: mp3
-    speed: 1.2
-    pitch: -2.0
-    gain: 0.0
-    profiles:
-      - handset-class-device
-      - small-bluetooth-speaker-class-device
+  - platform: google_translate
+    base_url: !secret config_base_url
+#    key_file: !secret tts_keyfile
+    service_name: google_say
+#    language: en-US
+#    gender: female
+#    voice: en-US-Wavenet-F
+#    encoding: mp3
+#    speed: 1.2
+#    pitch: -2.0
+#    gain: 0.0
+#    profiles:
+#      - handset-class-device
+#      - small-bluetooth-speaker-class-device
 
 # Cloud
 cloud:

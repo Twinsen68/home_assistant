@@ -64,9 +64,77 @@ humidifier_toggle:
   name: Humidifier Toggle
   icon: mdi:power
   initial: off
+bedroom_ac_toggle:
+  name: Bedroom AC Toggle
+  icon: mdi:air-conditioner
+  initial: off
+livingroom_ac_toggle:
+  name: Living Room AC Toggle
+  icon: mdi:air-conditioner
+  initial: off
+bedroom_ac_hilow:
+  name: Bedroom AC HighLow
+  icon: mdi:air-conditioner
+  initial: off
+livingroom_ac_hilow:
+  name: Living Room AC HighLow
+  icon: mdi:air-conditioner
+  initial: off
 homecam_snapshot:
   name: Homecam Snapshot Toggle
   icon: mdi:camera
+  initial: off
+
+#Aircraft Radio
+aircraft_radio_power_toggle:
+  name: Aircraft Radio Power Toggle
+  icon: mdi:power
+  initial: off
+aircraft_radio_mute_toggle:
+  name: Aircraft Radio Mute Toggle
+  icon: mdi:volume-off
+  initial: off
+aircraft_radio_play_toggle:
+  name: Aircraft Radio Play Toggle
+  icon: mdi:play-pause
+  initial: off
+aircraft_radio_stop_toggle:
+  name: Aircraft Radio Stop Toggle
+  icon: mdi:stop
+  initial: off
+aircraft_radio_eq_toggle:
+  name: Aircraft Radio EQ Toggle
+  icon: mdi:speaker-wireless
+  initial: off
+aircraft_radio_mode_toggle:
+  name: Aircraft Radio Mode Toggle
+  icon: mdi:radio
+  initial: off
+aircraft_radio_back_toggle:
+  name: Aircraft Radio Back Toggle
+  icon: mdi:arrow-left
+  initial: off
+aircraft_radio_fwd_toggle:
+  name: Aircraft Radio Fwd Toggle
+  icon: mdi:fast-forward
+  initial: off
+aircraft_radio_rwd_toggle:
+  name: Aircraft Radio Rwd Toggle
+  icon: mdi:rewind
+  initial: off
+aircraft_radio_volume_up_toggle:
+  name: Aircraft Radio Volume Up Toggle
+  icon: mdi:volume-high
+  initial: off
+aircraft_radio_volume_down_toggle:
+  name: Aircraft Radio Volume Down Toggle
+  icon: mdi:volume-medium
+  initial: off
+
+#Amazon ATO
+amazon_ato_on:
+  name: Amazon ATO
+  icon: mdi:pipes
   initial: off
 
 #BT occupancy Sensor
@@ -76,4 +144,10 @@ occupancy:
 alarm_went_off:
   name: Alarm Went Off
   icon: mdi:alarm
+  initial: off
+
+#Bed Occupancy
+bed_occupancy:
+  name: Bed Occupancy
+  icon: mdi:bed-king
   initial: off
