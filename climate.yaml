@@ -53,13 +53,13 @@
 
 - platform: generic_thermostat
   name: Living Room Therm
-  heater: input_boolean.livingroom_ac_toggle
+  heater: input_boolean.bedroom_ac_toggle
   target_sensor: sensor.garden_monitor_temp_f
   min_temp: 65
   max_temp: 90
   initial_hvac_mode: cool
   ac_mode: true
-  target_temp: 76
+  target_temp: 77
   cold_tolerance: 0.2
   hot_tolerance: 0.2
   min_cycle_duration:

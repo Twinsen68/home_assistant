@@ -573,7 +573,7 @@ script:
           volume_level: >-
             {{ states.input_number.janet_notification_volume.state }}
 
-#      - service: rest_command.kiosk_sound_janet_boop
+      - service: rest_command.kiosk_sound_janet_boop
 
       - service: tts.google_say
         data_template:
@@ -590,7 +590,7 @@ script:
       - condition: state
         entity_id: input_boolean.janet_text_notifications
         state: 'on'
-      - service: tts.google_cloud_say
+      - service: tts.google_say
         data_template:
           entity_id: media_player.kiosk_speaker
           message: >-

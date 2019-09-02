@@ -151,3 +151,16 @@ bed_occupancy:
   name: Bed Occupancy
   icon: mdi:bed-king
   initial: off
+
+#Roomba
+disable_roomba:
+  name: Disable Roomba
+  initial: off
+roomba_ran:
+  name: Roomba Ran
+  initial: off
+
+#Automation Disable for Guests
+guest_mode:
+  name: Guest Mode
+  initial: off

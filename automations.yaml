@@ -100,12 +100,12 @@
   action:
     - service: switch.turn_on
       entity_id: switch.entry_light
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.livingroom_ac_hilow
-    - service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.bedroom_ac_hilow
+#    - service: input_boolean.turn_on
+#      data:
+#        entity_id: input_boolean.livingroom_ac_hilow
+#    - service: input_boolean.turn_on
+#      data:
+#        entity_id: input_boolean.bedroom_ac_hilow
     - service: climate.set_temperature
       data:
         entity_id: climate.bedroom_therm
@@ -270,10 +270,10 @@
       data:
         data:
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/smarthome.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_smarthome.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/smarthome.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_smarthome.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS
           vibrate: 700, 700, 700
         message: "Home Assistant restarted at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}"
         title: "Hello World!"
@@ -317,10 +317,10 @@
       data:
         data:
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/ssl.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_calendar.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/ssl.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_calendar.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/lovelace/10
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/lovelace/10
           vibrate: 700, 700, 700
         message: "Your SSL cert expires in {{ states.sensor.ssl_certificate_expiry.state }} days."
         title: "Beep! Boop!"
@@ -770,10 +770,10 @@
       data:
         data:
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_plant.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/plant.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_plant.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/lovelace/6
           vibrate: 700, 700, 700
         message: "Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}%"
         title: "I'm thirsty!"
@@ -804,10 +804,10 @@
       data:
         data:
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_plant.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/plant.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_plant.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/lovelace/6
           vibrate: 700, 700, 700
         message: "Your herb garden needs water. Soil moisture is currently at {{ states.sensor.garden_monitor_soil_moisture.state }}%"
         title: "I'm thirsty!"
@@ -838,10 +838,10 @@
       data:
         data:
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_pipe.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/plant.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_pipe.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/lovelace/6
           vibrate: 700, 700, 700
         message: "Empty the drainage reservoir soon. It is currently at {{ states.sensor.garden_monitor_water_level.state }}%"
         title: "Empty me!"
@@ -1134,13 +1134,13 @@
           actions:
           - action: dismiss
             title: "Got it!"
-            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_mailbox.png
-          image: "https://thisisgabes.asuscomm.com:8008/local/mail_images/todays_mail.gif"
+            icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_mailbox.png
+          image: "https://MUST_BE_PUBLIC_IP_ADDRESS/local/mail_images/todays_mail.gif"
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/mailbox_on.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_mailbox.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/mailbox_on.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_mailbox.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/states/group.homecams
           vibrate: 700, 700, 700
         message: "You have {{ states.sensor.usps_mail.state }} new snail mails!"
         title: "New Snail Mail!"
@@ -1165,12 +1165,12 @@
           actions:
           - action: dismiss
             title: "Got it!"
-            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_package.png
+            icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_package.png
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/package.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_package.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/package.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_package.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/states/group.homecams
           vibrate: 700, 700, 700
         message: "You have {{ states.sensor.usps_packages.state }} new packages!"
         title: "New Packages!"
@@ -1376,16 +1376,16 @@
           actions:
           - action: call_the_hounds
             title: "Call the Hounds!"
-            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dog.png
+            icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_dog.png
           - action: dismiss
             title: Dismiss
-            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dismiss.png
-          image: "https://thisisgabes.asuscomm.com:8008/local/motion/recent-motion-overall.jpg"
+            icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_dismiss.png
+          image: "https://MUST_BE_PUBLIC_IP_ADDRESS/local/motion/recent-motion-overall.jpg"
           renotify: 1
-          icon: https://thisisgabes.asuscomm.com:8008/local/icons/cctv.png
-          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_camera.png
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/cctv.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_camera.png
           timestamp: '%m'
-          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/states/group.homecams
           vibrate: 700, 700, 700
         message: Motion in living room at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}
         title: "Intruder Alert!"
@@ -1837,3 +1837,284 @@
         title: "Oooooh! Lightning!"
     - service: script.turn_on
       entity_id: script.lightning_burst
+
+
+#################################################################
+## Roomba Automations
+#################################################################
+
+        ##########################################################
+        ## Run Roomba when Away
+        ##########################################################
+
+- alias: Roomba - Run Roomba when Away
+
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.people_home
+      from: 'on'
+      to: 'off'
+      for:
+        hours: 0
+        minutes: 30
+        seconds: 0
+
+  condition:
+    - condition: state
+      entity_id: input_boolean.disable_roomba
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.roomba_ran
+      state: 'off'
+    - condition: time
+      after: '10:00'
+      before: '20:00'
+    - condition: state
+      entity_id: vacuum.roomba
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.roomba_batt
+      above: 99
+
+  action:
+    - service: vacuum.turn_on
+      entity_id:
+        - vacuum.roomba
+
+        ##########################################################
+        ## Shut Off Roombas when Home
+        ##########################################################
+
+- alias: Roomba - Shut Off Roomba when Home
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.disable_roomba
+      from: 'off'
+      to: 'on'
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+
+  condition:
+    - condition: state
+      entity_id: input_boolean.disable_roomba
+      state: 'off'
+    - condition: state
+      entity_id: vacuum.roomba
+      state: 'on'
+
+  action:
+    - service: vacuum.return_to_base
+      entity_id:
+        - vacuum.roomba
+
+        ##########################################################
+        ## Run Roomba Weekdays when not Home
+        ##########################################################
+
+- alias: Roomba - Run Roomba Weekdays when not Home
+
+  trigger:
+   - platform: time
+     at: '13:00'
+
+  condition:
+    - condition: state
+      entity_id: input_boolean.disable_roomba
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.roomba_ran
+      state: 'off'
+    - condition: time
+      weekday:
+        - tue
+        - wed
+        - thu
+        - fri
+    - condition: state
+      entity_id: vacuum.roomba
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.people_home
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.roomba_batt
+      above: 99
+
+  action:
+    - service: vacuum.turn_on
+      entity_id:
+        - vacuum.roomba
+
+        ##########################################################
+        ## Run Roomba Weekends
+        ##########################################################
+
+- alias: Roomba - Run Roomba Weekends
+
+  trigger:
+   - platform: time
+     at: '17:00'
+
+  condition:
+    - condition: state
+      entity_id: input_boolean.disable_roomba
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.roomba_ran
+      state: 'off'
+    - condition: time
+      weekday:
+        - sat
+        - sun
+        - mon
+    - condition: state
+      entity_id: vacuum.roomba
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.roomba_batt
+      above: 99
+    - condition: state
+      entity_id: binary_sensor.people_home
+      state: 'off'
+
+  action:
+    - service: vacuum.turn_on
+      entity_id:
+        - vacuum.roomba
+
+        ##########################################################
+        ## Turn off Roomba when House Guests Arrive
+        ##########################################################
+
+- alias: Roomba - Turn off Roomba when House Guests Arrive
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.guest_mode
+      from: 'off'
+      to: 'on'
+
+  condition:
+    - condition: state
+      entity_id: input_boolean.disable_roomba
+      state: 'off'
+    - condition: state
+      entity_id: vacuum.roomba
+      state: 'on'
+
+  action:
+    - service: vacuum.return_to_base
+      entity_id:
+        - vacuum.roomba
+
+        ##########################################################
+        ## Set Roomba has Ran for the Day
+        ##########################################################
+
+- alias: Roomba - Set Roomba has Ran for the Day
+
+  trigger:
+    - platform: state
+      entity_id: vacuum.roomba
+      from: 'off'
+      to: 'on'
+      for:
+        hours: 0
+        minutes: 40
+        seconds: 0
+
+  condition:
+    condition: state
+    entity_id: input_boolean.disable_roomba
+    state: 'off'
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id:
+        - input_boolean.roomba_ran
+
+        ##########################################################
+        ## Reset Roomba has ran for the day
+        ##########################################################
+
+- alias: Roomba - Reset Roomba has ran for the day
+
+  trigger:
+   - platform: time
+     at: '00:01'
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id:
+        - input_boolean.roomba_ran
+
+        ##########################################################
+        ## Roomba is Stuck Notification
+        ##########################################################
+
+- alias: Roomba - Stuck Notification
+
+  trigger:
+    - platform: template
+      value_template: "{%if is_state_attr('vacuum.roomba', 'status', 'Stuck') %}true{%endif%}"
+
+  condition:
+    condition: state
+    entity_id: input_boolean.disable_roomba
+    state: 'off'
+
+  action:
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/roomba.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_roomba.png
+          timestamp: '%m'
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/lovelace/6
+          vibrate: 700, 700, 700
+        message: "Roomba is stuck"
+        title: "Send Help!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+    - service: persistent_notification.create
+      data:
+        message: "Roomba is stuck"
+        title: "Send Help!"
+
+        ##########################################################
+        ## Roomba is Full Notification
+        ##########################################################
+
+- alias: Roomba - Full Notification
+
+  trigger:
+    - platform: template
+      value_template: "{%if is_state_attr('vacuum.roomba', 'bin_full', true) %}true{%endif%}"
+  condition:
+    condition: state
+    entity_id: input_boolean.disable_roomba
+    state: 'off'
+  action:
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/dust.png
+          badge: https://MUST_BE_PUBLIC_IP_ADDRESS/local/icons/badge_roomba.png
+          timestamp: '%m'
+          url: https://MUST_BE_PUBLIC_IP_ADDRESS/lovelace/6
+          vibrate: 700, 700, 700
+        message: "Roomba is full"
+        title: "I ate too much!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+    - service: persistent_notification.create
+      data:
+        message: "Roomba is full"
+        title: "I ate too much!"

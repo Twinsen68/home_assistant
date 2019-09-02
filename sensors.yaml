@@ -2454,7 +2454,7 @@
       icon_template: >-
         {% set bed_load = states.sensor.bed_occupancy_load.state | int %}
         {% if bed_load < 300 %}
-          icon: mdi:account-off
+          icon: mdi:close-circle-outline
         {% elif 301 <= bed_load < 1700 %}
           icon: mdi:bed-king
         {% elif 1701 <= bed_load < 3000 %}
@@ -2795,3 +2795,12 @@
     - sensor.gabes_macbook_bt_hass
     - sensor.ionic_bt_hass
     - sensor.gabes_mate_hotspot_bt_hass
+
+#Roomba
+- platform: template
+  sensors:
+    roomba_batt:
+      value_template: '{{ states.vacuum.roomba.attributes.battery_level }}'
+      friendly_name: 'Downstairs Roomba'
+      unit_of_measurement: '%'
+      device_class: battery

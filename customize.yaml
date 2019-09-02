@@ -101,6 +101,10 @@ sensor.stats_home:
   icon: mdi:home
   friendly_name: 'At Home (7 days)'
 
+sensor.stats_bed:
+  icon: mdi:bed-king
+  friendly_name: 'In Bed (7 days)'
+
 sensor.usps_mail:
   friendly_name: USPS Mail
   templates:

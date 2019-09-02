@@ -114,6 +114,13 @@ tts:
 # Cloud
 cloud:
 
+#Roomba
+vacuum:
+  - platform: roomba
+    host: !secret roomba_hostname
+    username: !secret roomba_blid
+    password: !secret roomba_password
+
 #Alexa
 alexa:
 

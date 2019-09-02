@@ -1582,6 +1582,14 @@ views:
           style:
             left: 90%
             top: 80%
+        - type: state-icon
+          entity: sensor.bed_occupancy_count
+          title: null
+          tap_action:
+            action: more-info
+          style:
+            left: 60%
+            top: 10%
         - type: state-label
           entity: sensor.plant_monitor_temp_f
           title: null
