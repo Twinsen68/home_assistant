@@ -227,7 +227,7 @@ amazon_temp:
   name: Amazon Tank Temp
   entities:
     - history_graph.amazon_water_temp_sync
-    - sensor.mqtt_topic_octo_sysinfo_template_watertemp
+    - sensor.onlyamazonpitemp
     - sensor.monthly_amazon_temp
     - sensor.monthly_amazon_ph
     - switch.06200940dc4f22cbb432_2

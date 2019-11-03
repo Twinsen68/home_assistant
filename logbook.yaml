@@ -188,3 +188,5 @@ include:
     - climate.bedroom_therm
     - input_boolean.bed_occupancy
     - sensor.bed_occupancy_count
+    - sensor.onlyamazonpitemp
+    - sensor.amazonpifloat

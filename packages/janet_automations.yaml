@@ -59,7 +59,7 @@ automation:
   - alias: Janet Rain Alert
     trigger:
       - platform: state
-        entity_id:  sensor.dark_sky_icon
+        entity_id: sensor.dark_sky_icon_0h
         to: 'rain'
     action:
       - service: script.janet_speech_engine

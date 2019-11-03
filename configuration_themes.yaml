@@ -5,7 +5,7 @@ midnight:
   dark-primary-color: 'var(--accent-color)'                                       # Hyperlinks                                         
   light-primary-color: 'var(--accent-color)'                                      # Horizontal line in about
   ha-card-border-radius: '13px'   
-  ha-card-background: 'rgba(150, 150, 150, 0.3)'
+  ha-card-background: 'rgba(40, 0, 51, 0.5)'
   
 # Text colors                                                                  
   primary-text-color: '#FFFFFF'                                                   # Primary text colour, here is referencing dark-primary-color

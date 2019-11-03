@@ -501,16 +501,6 @@ octotank_evening_off:
     - service: automation.trigger
       entity_id: automation.set_amazon_thermostat_max_night_selector
 
-#Vacuum Room
-roomba_turn_on:  
-  alias: "Turn On Roomba"
-  sequence:
-    - service: remote.send_command
-      data_template:
-        entity_id: remote.gabes_harmony_hub
-        device: 55925028
-        command: 'Medium'
-
 #Freshwater Feeder
 freshwater_feeder_script:  
   alias: "Feed the Fish"
@@ -519,7 +509,7 @@ freshwater_feeder_script:
       entity_id: switch.octofishfeeder
     - service: downloader.download_file
       data_template:
-        url: "http://octocam.local:8765/picture/1/current/?_username=admin&_signature=a96455e6bfe50190508c4b21bc26d8f2ef93221d"
+        url: "{{ states('sensor.octocam_pic_url') }}"
         filename: "latest_octocam.jpg"
         overwrite: true
     - delay:
@@ -528,7 +518,7 @@ freshwater_feeder_script:
       entity_id: switch.octofishfeeder
     - service: notify.octo_cam_bot_notifier
       data:
-        message: "I, OctoCamBot, just fed the fish! \U0001F420 \U0001F95E \U0001F389 \U0001F32E \U0001F420 \U0001F9C1 \U0001F355 EmojiStats: \U0001F321 {{ states.sensor.mqtt_topic_octo_sysinfo_template_watertemp.state }}F \U0001F964  {{ states.sensor.mqtt_topic_octo_water_level_template_level.state }} \U0001F305 {{ states.sensor.amazonsunrisetides.state }} \U0001F307 {{ states.sensor.amazonsunsettides.state }}"
+        message: "I, OctoCamBot, just fed the fish! \U0001F420 \U0001F95E \U0001F389 \U0001F32E \U0001F420 \U0001F355 EmojiStats: \U0001F321 {{ states.sensor.onlyamazonpitemp.state }}F \U0001F964  {{ states. sensor.amazonpifloat.state }} \U0001F305 {{ states.sensor.amazonsunrisetides.state }} \U0001F307 {{ states.sensor.amazonsunsettides.state }}"
         data:
           media: /home/homeassistant/.homeassistant/www/images/latest_octocam.jpg
 
@@ -744,8 +734,16 @@ kiosk_weather_report:
 
 kiosk_good_morning:
   sequence:
+    - service: input_select.select_option
+      data_template:
+        entity_id: input_select.alexa_bedroom_ac
+        option: 85
+    - service: input_select.select_option
+      data_template:
+        entity_id: input_select.alexa_livingroom_ac
+        option: 72
     - delay:
-        seconds: 180
+        seconds: 480
     - service: input_boolean.turn_off
       entity_id: input_boolean.alarm_went_off
 #    - service: rest_command.kiosk_sound_incomingtransmission
@@ -874,7 +872,7 @@ tv_lights_on:
     - service: light.turn_on
       data:
         entity_id: light.table
-        xy_color: [0.67,0.39]
+        rgb_color: [255,251,4]
         brightness: 44
         transition: 60
     - service: light.turn_off
@@ -883,27 +881,31 @@ tv_lights_on:
         transition: 60
     - service: light.turn_off
       data:
+        entity_id: light.thundercloud
+        transition: 60
+    - service: light.turn_off
+      data:
         entity_id: light.kitchen
-        xy_color: [0.65,0.41]
+        rgb_color: [255,251,4]
         brightness: 60
         transition: 60
 
 welcome_lights_on:
   sequence:
-    - service: switch.turn_on
-      entity_id: switch.entry_light
+    - service: light.turn_on
+      entity_id: light.entry_light
     - service: light.turn_on
       data:
         entity_id: light.bedside_table
         brightness: 20
-        hs_color: 27.632,89.412
+        rgb_color: [255,251,4]
         transition: 40
     - delay:
         seconds: 30
     - service: light.turn_on
       data:
         entity_id: light.table
-        hs_color: 30,43.137
+        rgb_color: [255,182,109]
         brightness: 221
         transition: 30
     - delay:
@@ -912,14 +914,14 @@ welcome_lights_on:
       data:
         entity_id: light.kitchen
         brightness: 254
-        hs_color: 13.889,42.353
+        rgb_color: [255,251,4]
         transition: 30
     - delay:
         seconds: 20
     - service: light.turn_on
       data:
         entity_id: light.desk
-        hs_color: 255.146,80.784
+        rgb_color: [255,182,109]
         brightness: 50
         transition: 30
 
@@ -1011,7 +1013,6 @@ lights_random:
         effect: random
         transition: 30
 
-#Lighting Scripts
 lights_loop:
   sequence:
     - service: homeassistant.turn_on
@@ -1047,6 +1048,33 @@ lights_loop:
         entity_id: light.bedside_table
         effect: colorloop
         transition: 60
+
+lightning_burst:
+  sequence:
+    - service: light.turn_on
+      entity_id: light.thundercloud
+      data:
+        effect: lightning
+    - delay: 00:05:00
+    - service: light.turn_on
+      entity_id: light.thundercloud
+      data:
+        effect: solid
+
+thundercloud_celebrate:
+  sequence:
+    - service: light.turn_on
+      entity_id: light.thundercloud
+      data:
+        brightness: 255
+        effect: bpm
+    - delay: 00:01:00
+    - service: light.turn_on
+      entity_id: light.thundercloud
+      data:
+        brightness: 200
+        rgb_color: [255,190,0]
+        effect: solid
 
 soundbar_power_off:
   alias: Soundbar Power Off
@@ -1151,7 +1179,9 @@ alexa_set_volume:
           {% endif %}
 
 alexa_tts:
-  sequence:
+  sequence: 
+    - service: script.turn_on
+      entity_id: script.alexa_connect_to_speaker
     - service: script.turn_on
       entity_id: script.alexa_set_volume
     - delay: '00:00:01'      
@@ -1163,11 +1193,31 @@ alexa_tts:
 alexa_morning_weather:
   alias: Alexa Morning Weather
   sequence:
-  - data:
-      entity_id: media_player.gabe_s_alexa
-      media_content_id: morningweather
-      media_content_type: routine
-    service: media_player.play_media
+    - service: script.turn_on
+      entity_id: script.alexa_connect_to_speaker
+    - delay: '00:00:01' 
+    - service: script.turn_on
+      entity_id: script.alexa_set_volume
+    - delay: '00:00:01' 
+    - data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_id: morningweather
+        media_content_type: routine
+      service: media_player.play_media
+
+alexa_joke:
+  alias: Alexa Joke
+  sequence:
+    - service: script.turn_on
+      entity_id: script.alexa_connect_to_speaker
+    - service: script.turn_on
+      entity_id: script.alexa_set_volume
+    - delay: '00:00:01' 
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_id: "Alexa.Joke.Play"
+        media_content_type: sequence
 
 alexa_humidifier_on:
   alias: Alexa Humidifier On
@@ -1187,6 +1237,7 @@ alexa_humidifier_off:
       media_content_type: routine
     service: media_player.play_media
 
+#ac units
 alexa_bedroom_ac_on:
   alias: Alexa Bedroom AC On
   sequence:
@@ -1223,61 +1274,101 @@ alexa_livingroom_ac_off:
       media_content_type: routine
     service: media_player.play_media
 
-alexa_bedroom_ac_hi:
-  alias: Alexa Bedroom AC Hi
+alexa_livingroom_ac_set:
+  alias: Alexa Livingroom AC Set
   sequence:
-  - data:
+  - service: media_player.play_media
+    data_template:
+      media_content_id: >
+          {% if is_state("input_select.alexa_livingroom_ac", "63") %}livingroomacsixthree
+          {% elif is_state("input_select.alexa_livingroom_ac", "64") %}livingroomacsixfour
+          {% elif is_state("input_select.alexa_livingroom_ac", "65") %}livingroomacsixfive
+          {% elif is_state("input_select.alexa_livingroom_ac", "66") %}livingroomacsixsix
+          {% elif is_state("input_select.alexa_livingroom_ac", "67") %}livingroomacsixseven
+          {% elif is_state("input_select.alexa_livingroom_ac", "68") %}livingroomacsixeight
+          {% elif is_state("input_select.alexa_livingroom_ac", "69") %}livingroomacsixnine
+          {% elif is_state("input_select.alexa_livingroom_ac", "70") %}livingroomacsevenzero
+          {% elif is_state("input_select.alexa_livingroom_ac", "71") %}livingroomacsevenone
+          {% elif is_state("input_select.alexa_livingroom_ac", "72") %}livingroomacseventwo
+          {% elif is_state("input_select.alexa_livingroom_ac", "73") %}livingroomacseventhree
+          {% elif is_state("input_select.alexa_livingroom_ac", "74") %}livingroomacsevenfour
+          {% elif is_state("input_select.alexa_livingroom_ac", "75") %}livingroomacsevenfive
+          {% elif is_state("input_select.alexa_livingroom_ac", "76") %}livingroomacsevensix
+          {% elif is_state("input_select.alexa_livingroom_ac", "77") %}livingroomacsevenseven
+          {% elif is_state("input_select.alexa_livingroom_ac", "78") %}livingroomacseveneight
+          {% elif is_state("input_select.alexa_livingroom_ac", "79") %}livingroomacsevennine
+          {% elif is_state("input_select.alexa_livingroom_ac", "80") %}livingroomaceightzero
+          {% elif is_state("input_select.alexa_livingroom_ac", "81") %}livingroomaceightone
+          {% elif is_state("input_select.alexa_livingroom_ac", "82") %}livingroomaceighttwo
+          {% elif is_state("input_select.alexa_livingroom_ac", "83") %}livingroomaceightthree
+          {% elif is_state("input_select.alexa_livingroom_ac", "84") %}livingroomaceightfour
+          {% elif is_state("input_select.alexa_livingroom_ac", "85") %}livingroomaceightfive
+          {% endif %}
       entity_id: media_player.gabe_s_alexa
-      media_content_id: bedroomaccool
       media_content_type: routine
-    service: media_player.play_media
 
-alexa_bedroom_ac_low:
-  alias: Alexa Bedroom AC Low
+alexa_bedroom_ac_set:
+  alias: Alexa Bedroom AC Set
   sequence:
-  - data:
+  - service: media_player.play_media
+    data_template:
+      media_content_id: >
+          {% if is_state("input_select.alexa_bedroom_ac", "63") %}bedroomacsixthree
+          {% elif is_state("input_select.alexa_bedroom_ac", "64") %}bedroomacsixfour
+          {% elif is_state("input_select.alexa_bedroom_ac", "65") %}bedroomacsixfive
+          {% elif is_state("input_select.alexa_bedroom_ac", "66") %}bedroomacsixsix
+          {% elif is_state("input_select.alexa_bedroom_ac", "67") %}bedroomacsixseven
+          {% elif is_state("input_select.alexa_bedroom_ac", "68") %}bedroomacsixeight
+          {% elif is_state("input_select.alexa_bedroom_ac", "69") %}bedroomacsixnine
+          {% elif is_state("input_select.alexa_bedroom_ac", "70") %}bedroomacsevenzero
+          {% elif is_state("input_select.alexa_bedroom_ac", "71") %}bedroomacsevenone
+          {% elif is_state("input_select.alexa_bedroom_ac", "72") %}bedroomacseventwo
+          {% elif is_state("input_select.alexa_bedroom_ac", "73") %}bedroomacseventhree
+          {% elif is_state("input_select.alexa_bedroom_ac", "74") %}bedroomacsevenfour
+          {% elif is_state("input_select.alexa_bedroom_ac", "75") %}bedroomacsevenfive
+          {% elif is_state("input_select.alexa_bedroom_ac", "76") %}bedroomacsevensix
+          {% elif is_state("input_select.alexa_bedroom_ac", "77") %}bedroomacsevenseven
+          {% elif is_state("input_select.alexa_bedroom_ac", "78") %}bedroomacseveneight
+          {% elif is_state("input_select.alexa_bedroom_ac", "79") %}bedroomacsevennine
+          {% elif is_state("input_select.alexa_bedroom_ac", "80") %}bedroomaceightzero
+          {% elif is_state("input_select.alexa_bedroom_ac", "81") %}bedroomaceightone
+          {% elif is_state("input_select.alexa_bedroom_ac", "82") %}bedroomaceighttwo
+          {% elif is_state("input_select.alexa_bedroom_ac", "83") %}bedroomaceightthree
+          {% elif is_state("input_select.alexa_bedroom_ac", "84") %}bedroomaceightfour
+          {% elif is_state("input_select.alexa_bedroom_ac", "85") %}bedroomaceightfive
+          {% endif %}
       entity_id: media_player.gabe_s_alexa
-      media_content_id: bedroomacmiddle
       media_content_type: routine
-    service: media_player.play_media
-
-alexa_livingroom_ac_hi:
-  alias: Alexa Livingroom AC Hi
-  sequence:
-  - data:
-      entity_id: media_player.gabe_s_alexa
-      media_content_id: livingroomaccool
-      media_content_type: routine
-    service: media_player.play_media
-
-alexa_livingroom_ac_low:
-  alias: Alexa Livingroom AC Low
-  sequence:
-  - data:
-      entity_id: media_player.gabe_s_alexa
-      media_content_id: livingroomacmiddle
-      media_content_type: routine
-    service: media_player.play_media
 
 sleep_mode_cool_room:
   alias: Sleep Mode Cool Bedroom
   sequence:
     - service: switch.turn_off
       entity_id: switch.entry_light
-    - service: input_boolean.turn_on
+    - service: input_select.select_option
       data:
-        entity_id: input_boolean.livingroom_ac_hilow
-    - service: input_boolean.turn_on
+        entity_id: input_select.alexa_bedroom_ac
+        option: 72
+    - service: input_select.select_option
       data:
-        entity_id: input_boolean.bedroom_ac_hilow
-    - service: climate.set_temperature
+        entity_id: input_select.alexa_livingroom_ac
+        option: 83
+    - service: script.turn_on
       data:
-        entity_id: climate.bedroom_therm
-        temperature: 71
-    - service: climate.set_temperature
+        entity: script.alexa_bedroom_ac_set
+    - service: script.turn_on
       data:
-        entity_id: climate.living_room_therm
-        temperature: 83
+        entity: script.alexa_livingroom_ac_set
+
+alexa_connect_to_speaker:
+  alias: Alexa Connect to Speaker
+  sequence:
+    - condition: template
+      value_template:  '{{ (states.sensor.soundbar_connected.state) != "On" }}'
+    - service: media_player.select_source
+      data:
+        source: "[AV] Samsung Soundbar K360 K-Series"
+        entity_id: media_player.gabe_s_alexa
 
 radio_tune:
   alias: Play Radio on Kiosk Speaker
@@ -1290,7 +1381,7 @@ radio_tune:
 #       data:
 #         entity_id: media_player.soundbar
 #         volume_level: '0.20'
-    -  service: media_player.play_media
+     - service: media_player.play_media
 #       entity: media_player.kiosk_speaker
        data_template:
          entity_id: media_player.kiosk_speaker

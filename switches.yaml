@@ -137,78 +137,90 @@
             device: 'Generic LED'
 
 - platform: rest
-  name: Reef Pump 1
-  resource: http://reefcontrolpi.local/api/lights/2
+  name: Reef Doser Scheduled
+  resource: http://reef-pi.local/api/doser/pumps/1
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
 #  authentication: basic  
-  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":99}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":99}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
-  body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
-  is_on_template: '{{ value_json.channels["3"].profile.config.value == 99 }}'
+  body_on: '{"id":"1","name":"Doser","jack":"3","pin":2,"regiment":{"enable":true,"schedule":{"day":"*","hour":"13","minute":"0","second":"0","week":"*","month":"*"},"duration":1,"speed":100}}'
+  body_off: '{"id":"1","name":"Doser","jack":"3","pin":2,"regiment":{"enable":false,"schedule":{"day":"*","hour":"13","minute":"0","second":"0","week":"*","month":"*"},"duration":1,"speed":100}}'
+  is_on_template: '{{ value_json.regiment.enable }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
-  name: Reef Pump 1 Scheduled
-  resource: http://reefcontrolpi.local/api/lights/2
+  name: Reef ATO Scheduled
+  resource: http://reef-pi.local/api/doser/pumps/4
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
 #  authentication: basic  
-  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":99,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:34"}}},"3":{"name":"Forward - 99","min":0,"start_min":99,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"diurnal","config":{"start":"23:28","end":"23:34"}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
-  body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
-  is_on_template: '{{ value_json.channels["3"].profile.type == "diurnal" }}'
+  body_on: '{"id":"4","name":"ATO Pump","jack":"2","pin":7,"regiment":{"enable":true,"schedule":{"day":"*","hour":"23","minute":"30","second":"0","week":"*","month":"*"},"duration":10,"speed":100}}'
+  body_off: '{"id":"4","name":"ATO Pump","jack":"2","pin":7,"regiment":{"enable":false,"schedule":{"day":"*","hour":"23","minute":"30","second":"0","week":"*","month":"*"},"duration":10,"speed":100}}'
+  is_on_template: '{{ value_json.regiment.enable }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
-  name: Reef Pump 1 Reverse
-  resource: http://reefcontrolpi.local/api/lights/2
+  name: Reef ATO Switch
+  resource: http://reef-pi.local/api/equipment/8
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
-#  authentication: basic  
-  body_on: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":99}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":99}}}},"jack":"2"}'
-  body_off: '{"id":"2","name":"Pump 1","channels":{"2":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":2,"color":"","profile":{"type":"fixed","config":{"value":0}}},"3":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":3,"color":"","profile":{"type":"fixed","config":{"value":0}}},"4":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":4,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"2"}'
-  is_on_template: '{{ value_json.channels["4"].profile.config.value == 99 }}'
+  body_on: '{"id":"8","name":"ATO Manual","outlet":"8","on":true}'
+  body_off: '{"id":"8","name":"ATO Manual","outlet":"8","on":false}'
+  is_on_template: '{{ value_json.on }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
-  name: Reef Pump 2
-  resource: http://reefcontrolpi.local/api/lights/3
+  name: Refugium Light Switch
+  resource: http://reef-pi.local/api/equipment/2
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
-#  authentication: basic  
-  body_on: '{"id":"3","name":"Pump 2","channels":{"5":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":5,"color":"","profile":{"type":"fixed","config":{"value":0}}},"6":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":6,"color":"","profile":{"type":"fixed","config":{"value":99}}},"7":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":7,"color":"","profile":{"type":"fixed","config":{"value":99}}}},"jack":"3"}'
-  body_off: '{"id":"3","name":"Pump 2","channels":{"5":{"name":"Reverse - 0","min":0,"start_min":0,"max":99,"reverse":false,"pin":5,"color":"","profile":{"type":"fixed","config":{"value":0}}},"6":{"name":"Forward - 99","min":0,"start_min":0,"max":99,"reverse":false,"pin":6,"color":"","profile":{"type":"fixed","config":{"value":0}}},"7":{"name":"Power","min":0,"start_min":0,"max":99,"reverse":false,"pin":7,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"3"}'
-  is_on_template: '{{ value_json.channels["7"].profile.config.value == 99 }}'
+  body_on: '{"id":"2","name":"Refugium Light","outlet":"2","on":true}'
+  body_off: '{"id":"2","name":"Refugium Light","outlet":"2","on":false}'
+  is_on_template: '{{ value_json.on }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Relay 2 Switch
+  resource: http://reef-pi.local/api/equipment/1
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  body_on: '{"id":"1","name":"Relay 1","outlet":"1","on":true}'
+  body_off: '{"id":"1","name":"Relay 1","outlet":"1","on":false}'
+  is_on_template: '{{ value_json.on }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
   name: Kessil Light Level 1
-  resource: http://reefcontrolpi.local/api/lights/1
+  resource: http://reef-pi.local/api/lights/3
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
 #  authentication: basic  
-  body_on: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":99,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":10}}}},"jack":"1"}'
-  body_off: '{"id":"1","name":"Kessil","channels":{"0":{"name":"Color","min":1,"start_min":10,"max":99,"reverse":true,"pin":0,"color":"","profile":{"type":"fixed","config":{"value":1}}},"1":{"name":"Brightness","min":1,"start_min":10,"max":90,"reverse":true,"pin":1,"color":"","profile":{"type":"fixed","config":{"value":1}}}},"jack":"1"}'
+  body_on: '{"id":"3","name":"Kessil","channels":{"0":{"name":"channel-1","on":false,"min":0,"max":100,"pin":0,"color":"#0045ff","manual":true,"value":0,"profile":{"name":"","type":"fixed","config":{"value":100},"min":0,"max":0}},"1":{"name":"channel-2","on":false,"min":0,"max":100,"pin":1,"color":"#0019ff","manual":true,"value":0,"profile":{"name":"","type":"fixed","config":{"value":100},"min":0,"max":0}}},"jack":"1","enable":true}'
+  body_off: '{"id":"3","name":"Kessil","channels":{"0":{"name":"channel-1","on":false,"min":0,"max":100,"pin":0,"color":"#0045ff","manual":true,"value":0,"profile":{"name":"","type":"fixed","config":{"value":0},"min":0,"max":0}},"1":{"name":"channel-2","on":false,"min":0,"max":100,"pin":1,"color":"#0019ff","manual":true,"value":0,"profile":{"name":"","type":"fixed","config":{"value":0},"min":0,"max":0}}},"jack":"1","enable":false}'
   is_on_template: '{{ value_json.channels["1"].profile.config.value == 10 }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -223,7 +235,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -238,7 +250,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -253,7 +265,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -267,7 +279,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -282,7 +294,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -297,7 +309,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -312,7 +324,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -327,7 +339,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -342,7 +354,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -357,7 +369,7 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
@@ -372,7 +384,36 @@
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Garden Water Scheduled
+  resource: http://reef-pi.local/api/doser/pumps/4
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+#  authentication: basic  
+  body_on: '{"id":"4","name":"Plant Water","jack":"1","pin":5,"regiment":{"enable":true,"schedule":{"day":"*","hour":"6,9,12,15,18","minute":"0","second":"0"},"duration":6,"speed":100}}'
+  body_off: '{"id":"4","name":"Plant Water","jack":"1","pin":5,"regiment":{"enable":false,"schedule":{"day":"*","hour":"6,9,12,15,18","minute":"0","second":"0"},"duration":6,"speed":100}}'
+  is_on_template: '{{ value_json.regiment.enable }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: Garden Water Switch
+  resource: http://amazoncontrolpi.local/api/lights/7
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  body_on: '{"id":"7","name":"Garden Pumps (Power)","channels":{"5":{"name":"Power","min":0,"start_min":0,"max":100,"reverse":false,"pin":5,"color":"","profile":{"type":"fixed","config":{"value":100}}}},"jack":"1"}'
+  body_off: '{"id":"7","name":"Garden Pumps (Power)","channels":{"5":{"name":"Power","min":0,"start_min":0,"max":100,"reverse":false,"pin":5,"color":"","profile":{"type":"fixed","config":{"value":0}}}},"jack":"1"}'
+  is_on_template: '{{ value_json.channels["5"].profile.value == "100" }}'
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 #- platform: command_line
@@ -389,22 +430,6 @@
       friendly_name: Octo Fish Feeder
       command_on: !secret switches_octofishfeeder_on
       command_off: !secret switches_octofishfeeder_off
-
-#Switch for Garden Light
-- platform: command_line
-  switches:
-    garden_light:
-      friendly_name: Garden Light
-      command_on: !secret switches_gardenlight_on
-      command_off: !secret switches_gardenlight_off
-
-#Switch for Garden Waterbot
-- platform: command_line
-  switches:
-    garden_waterbot:
-      friendly_name: Garden Waterer
-      command_on: !secret switches_garden_water_schedule_on
-      command_off: !secret switches_garden_water_schedule_off
 
 - platform: mqtt
   name: Mailbox Red Light
@@ -469,14 +494,6 @@
   payload_on: "Fluxing"
   state_off: "Turned Off"
   payload_off: "Turned Off"
-
-- platform: mqtt
-  name: Garden Light Manual
-  command_topic: "octocam-gpio-lights/reading"
-  state_on: "ON"
-  payload_on: "ON"
-  state_off: "OFF"
-  payload_off: "OFF"
 
 - platform: mqtt
   name: ET Eyes

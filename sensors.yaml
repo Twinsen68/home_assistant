@@ -11,12 +11,14 @@
     - 5
     - 6
     - 7
-#  prefer_icons: 1
+  hourly_forecast:
+    - 0
+    - 1
   scan_interval:
     # At least one of these must be specified:
     days: 0
     hours: 0
-    minutes: 30
+    minutes: 5
     seconds: 0
     milliseconds: 0
   monitored_conditions:
@@ -43,6 +45,7 @@
     - daily_summary
     - precip_intensity_max
     - uv_index
+    - alerts
 
 - platform: season
 
@@ -547,33 +550,6 @@
         {% set time = as_timestamp(states.binary_sensor.homecam_motion.last_changed) | timestamp_custom("%l:%M %p")%}
         {{[day,time]|join(" at ")}} 
 
-- platform: mqtt
-  state_topic: 'water-level-octo/reading'
-  name: OctoCam Water Level Raw
-  value_template: "{{ value }}"
-
-- platform: template
-  scan_interval: 120
-  sensors:
-    mqtt_topic_octo_water_level_template_level:
-      friendly_name: "Amazon Water Level"
-      value_template: '{{ states.sensor.octocam_water_level_raw.state.split("|")[0] }}'
-    mqtt_topic_octo_water_level_template_time:
-      friendly_name: "Amazon Water Level Last Flip"
-      value_template: >
-        {%- set date = as_timestamp(states.sensor.octocam_water_level_raw.state.split("at ")[1]) -%}
-        {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
-
-- platform: mqtt
-  state_topic: 'waterbot-garden/reading'
-  name: Garden Waterbot Raw
-  value_template: "{{ value }}"
-
-- platform: mqtt
-  state_topic: 'lightbot-garden/reading'
-  name: Garden Lightbot Raw
-  value_template: "{{ value }}"
-
 - platform: template
   scan_interval: 120
   sensors:
@@ -586,8 +562,9 @@
     mqtt_topic_garden_water_state_time:
       friendly_name: "Garden Water State Time"
       value_template: >
-        {%- set date = as_timestamp(states.sensor.garden_waterbot_raw.state.split("at ")[1]) -%}
-        {{ date | timestamp_custom("%k:%M %P") }}
+        {%- set my_lastwater = states.sensor.gardenwaterinfo.attributes.current | last -%}
+        {%- set my_lastwatertime =  my_lastwater.time -%}
+        {{ my_lastwatertime }}
 
 #Garden monitor channels
 - platform: mqtt
@@ -716,29 +693,6 @@
   unit_of_measurement: '°C'
   value_template: "{{ value }}"
 
-#Octocam status
-- platform: mqtt
-  state_topic: 'psmqtt/octocam/cpu_percent'
-  name: Latest Reef CPU Percent
-  value_template: "{{ value }}"
-  unit_of_measurement: '%'
-
-- platform: mqtt
-  state_topic: 'psmqtt/octocam/boot_time/uptime'
-  name: Latest Reef CPU Uptime
-  value_template: "{{ value }}"
-
-- platform: mqtt
-  state_topic: 'psmqtt/octocam/disk_usage/percent/|'
-  name: Latest Reef CPU Disk Usage
-  value_template: "{{ value }}"
-  unit_of_measurement: '%'
-
-- platform: mqtt
-  state_topic: 'psmqtt/octocam/boot_time/uptime'
-  name: Latest Reef CPU Stats
-  value_template: "{{ value }}"
-
 - platform: mqtt
   state_topic: 'octoprint-dht11/reading'
   name: OctoPrint Humidity Raw
@@ -761,42 +715,208 @@
         {%- set date = as_timestamp(states.sensor.octoprint_humidity_raw.state.split("at ")[1]) -%}
         {{ date | timestamp_custom("%A, %B %d, %Y at %k:%M %P") }}
 
-- platform: mqtt
-  state_topic: 'temp-octo/reading'
-  name: OctoCam Info Raw
-  value_template: "{{ value }}"
+#Amazon-pi Data
+- platform: rest
+  name: AmazonPiSysUptime
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  json_attributes:
+    - name
+    - ip
+    - uptime
+    - cpu_temperature
+    - version
+  resource: http://amazoncontrolpi.local/api/info
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+
+- platform: rest
+  name: AmazonCameraLatest
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  json_attributes:
+    - image
+  resource: http://amazoncontrolpi.local/api/camera/latest
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
 
 - platform: template
-  scan_interval: 120
   sensors:
-    mqtt_topic_octo_sysinfo_template_servertemp:
-      friendly_name: "Amazon Server Temp"
-      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[0] | round(1) }}'
-      unit_of_measurement: '°C'
-    mqtt_topic_octo_sysinfo_template_serverload:
-      friendly_name: "Amazon Server Load"
-      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[1] | int | round(3) }}'
-    mqtt_topic_octo_sysinfo_template_serverspeed:
-      friendly_name: "Amazon Server Speed"
-      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[2].split("k")[0] | int | round(1) }}'
-      unit_of_measurement: 'kB/s'
-    mqtt_topic_octo_sysinfo_template_watertemp:
-      friendly_name: "Amazon Tank Water Temperature"
-      value_template: '{{ states.sensor.octocam_info_raw.state.split(",")[3] | multiply(0.001) | round(1) }}'
-      unit_of_measurement: '°C'
+    octocam_pic_url:
+      value_template: >
+        {% set url = states.sensor.amazoncameralatest.attributes.image %}
+        {% set prefix = "http://amazoncontrolpi.local/images/" %}
+        {{ [prefix, url] | join("") }}
 
-- platform: filter
-  name: "Filtered Amazon Tank Water Temperature"
-  entity_id: sensor.mqtt_topic_octo_sysinfo_template_watertemp
-  filters:
-    - filter: outlier
-      window_size: 5
-      radius: 5.0
-    - filter: lowpass
-      time_constant: 10
-    - filter: range
-      lower_bound: 35
-      upper_bound: 120
+- platform: template
+  sensors:
+    amazonsysinfo_template_name:
+      value_template: '{{ states.sensor.amazonpisysuptime.attributes.name }}'
+      friendly_name: Amazon Server Name
+      entity_id: sensor.reefsysinfo_template_name
+    amazonsysinfo_template_version:
+      value_template: '{{ states.sensor.amazonpisysuptime.attributes.version }}'
+      friendly_name: Amazon Server Version
+      entity_id: sensor.rreefsysinfo_template_version
+    amazonsysinfo_template_uptime:
+      value_template: '{{ states.sensor.amazonpisysuptime.attributes.uptime }}'
+      friendly_name: Amazon Server Uptime
+      entity_id: sensor.reefsysinfo_template_uptime
+    amazonsysinfo_template_ip:
+      value_template: '{{ states.sensor.amazonpisysuptime.attributes.ip }}'
+      friendly_name: Amazon Server IP
+      entity_id: sensor.reefsysinfo_template_ip
+    amazonsysinfo_template_cpu_temperature:
+      value_template: '{{ states.sensor.amazonpisysuptime.attributes.cpu_temperature }}'
+      friendly_name: Amazon Server CPU Temp
+      entity_id: sensor.amazonsysinfo_template_cpu_temperature
+
+- platform: rest
+  name: OnlyAmazonPiTemp
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/tcs/1/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+  value_template: '{{ value_json.current[-1].temperature | round(2) }}'
+  unit_of_measurement: '°F'
+
+- platform: rest
+  name: OnlyAmazonPiTempTime
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/tcs/1/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+  value_template: '{{ value_json.current[-1].time }}'
+
+- platform: rest
+  name: AmazonPiFloat
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/equipment/1
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+  value_template: >-
+    {% set float_status = value_json.on %}
+    {% if float_status == false %}OK
+    {% elif float_status == False %}OK
+    {% elif float_status == true %}Low
+    {% elif float_status == True %}Low
+    {% else %}n/a
+    {% endif %}
+
+- platform: rest
+  name: Garden Light Dummy Switch
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/equipment/5
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+  value_template: >-
+    {% set float_status = value_json.on %}
+    {% if float_status == false %}Off
+    {% elif float_status == true %}On
+    {% else %}n/a
+    {% endif %}
+
+- platform: rest
+  name: Garden Light PWM Switch
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/equipment/6
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+  value_template: >-
+    {% set float_status = value_json.on %}
+    {% if float_status == false %}Off
+    {% elif float_status == true %}On
+    {% else %}n/a
+    {% endif %}
+
+- platform: rest
+  name: GardenWaterInfo
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  json_attributes:
+    - current
+  resource: http://amazoncontrolpi.local/api/doser/pumps/4/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+  value_template: '{{ value_json.time }}'
+
+- platform: rest
+  name: Amazon Camera Config
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/camera/config
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+
+- platform: rest
+  name: Garden Lights
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  resource: http://amazoncontrolpi.local/api/lights/2
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
+
+- platform: rest
+  name: AmazonPi Errors
+  username: !secret amazonpi_username
+  password: !secret amazonpi_password
+  authentication: basic
+  json_attributes:
+    - message
+    - time
+    - count
+    - id
+  resource: http://amazoncontrolpi.local/api/errors
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://amazoncontrolpi.local/
+      Cookie: !secret amazonpi_cookie
 
 - platform: mqtt
   name: 'USPS Mail'
@@ -1822,8 +1942,8 @@
 #Amazon ATO Level
 - platform: rest
   name: Amazon ATO Level
-  resource: http://esp_ba4cae/checklevel
-  scan_interval: 85000
+  resource: http://esp_b7c590/checklevel
+  scan_interval: 170000
   headers:
       content-type: application/json
 
@@ -1839,11 +1959,11 @@
     - uptime
     - cpu_temperature
     - version
-  resource: http://reefcontrolpi.local/api/info
+  resource: http://reef-pi.local/api/info
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
 
 - platform: template
@@ -1874,13 +1994,13 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/tcs/1/usage
+  resource: http://reef-pi.local/api/tcs/2/usage
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
-  value_template: '{{ value_json.current[-1].temperature | round(2) }}'
+  value_template: '{{ value_json.current[-1].value | round(2) }}'
   unit_of_measurement: '°F'
 
 - platform: rest
@@ -1888,11 +2008,11 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/tcs/1/usage
+  resource: http://reef-pi.local/api/tcs/2/usage
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
   value_template: '{{ value_json.current[-1].time }}'
 
@@ -1901,12 +2021,12 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/1
+  resource: http://reef-pi.local/api/lights/3
   json_attributes:
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
   value_template: '{{ value_json.name }}'
 
@@ -1915,62 +2035,37 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/1
-  json_attributes:
+  resource: http://reef-pi.local/api/lights/3
+  value_template: '{{ value_json }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
-  value_template: >-
-    {% set lightbright_status = value_json.channels["1"].profile.config.value | int %}
-    {% if lightbright_status == 0 %}Off
-    {% elif lightbright_status == 1 %}Off
-    {% elif lightbright_status == 2 %}Off
-    {% elif lightbright_status <= 25 %}Low
-    {% elif lightbright_status <= 50 %}Medium
-    {% elif lightbright_status <= 75 %}High
-    {% elif lightbright_status > 75 %}Full
-    {% else %}n/a
-    {% endif %}
-#  icon_color: >
-#    if (state >= '10') return 'hs[98,158,81]'; 
-#    return 'hs[191,27,0]';
 
 - platform: rest
   name: ReefControlPiLightColor
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/1
-  json_attributes:
+  resource: http://reef-pi.local/api/lights/3
+  value_template: '{{ value_json }}'
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
-  value_template: >-
-    {% set lightcolor_status = value_json.channels["0"].profile.config.value | int %}
-    {% if lightcolor_status == 0 %}
-    {% elif lightcolor_status == 1 %}
-    {% elif lightcolor_status == 2 %}
-    {% elif lightcolor_status <= 25 %}Blue
-    {% elif lightcolor_status <= 50 %}Lt Blue
-    {% elif lightcolor_status <= 75 %}Bl White
-    {% elif lightcolor_status > 75 %}White
-    {% else %}n/a
-    {% endif %}
 
 - platform: rest
   name: ReefControlPiPump1Name
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/2
+  resource: http://reef-pi.local/api/doser/pumps/1
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
   value_template: '{{ value_json.name }}'
 
@@ -1979,60 +2074,128 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/2
+  resource: http://reef-pi.local/api/doser/pumps/1
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
   value_template: >-
-    {% set pump_1_status = value_json.channels["2"].profile.config.value | int %}
-    {% if pump_1_status == 99 %}On
-    {% elif pump_1_status == 2 %}Off
-    {% elif pump_1_status == 1 %}Off
-    {% elif pump_1_status == 0 %}Off
+    {% set pump_1_status = value_json.id["2"].enable %}
+    {% if pump_1_status == "true" %}Scheduled
+    {% elif pump_1_status == "false" %}Off
     {% else %}n/a
     {% endif %}
-#  icon_color: >
-#    if (state == '99') return 'hs[98,158,81]'; 
-#    return 'hs[191,27,0]';
+
+- platform: rest
+  name: ReefControlPiPump2Forward
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reef-pi.local/api/equipment/5
+  json_attributes:
+    - name
+    - on
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
   name: ReefControlPiPump1Forward
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/2
+  resource: http://reef-pi.local/api/equipment/4
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
-  value_template: '{{ value_json.channels["3"].profile.config.value }}'
+  value_template: '{{ value_json.on }}'
 
 - platform: rest
   name: ReefControlPiPump1StatusReverse
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/2
+  resource: http://reef-pi.local/api/equipment/3
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
-  value_template: '{{ value_json.channels["4"].profile.config.value }}'
+  value_template: '{{ value_json.on }}'
+
+- platform: rest
+  name: ReefControlPiLatestDoser
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reef-pi.local/api/doser/pumps/1/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.current[-1].time }}'
+
+- platform: rest
+  name: ReefControlPiLatestTopOff
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  json_attributes:
+    - current
+  resource: http://reef-pi.local/api/doser/pumps/4/usage
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
+  value_template: '{{ value_json.current[-1].time }}'
+
+- platform: rest
+  name: ReefControlPiRefugiumLight
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reef-pi.local/api/equipment/2
+  json_attributes:
+    - name
+    - on
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
+
+- platform: rest
+  name: ReefControlPiRelay2
+  username: !secret reefcontrolpi_username
+  password: !secret reefcontrolpi_password
+  authentication: basic
+  resource: http://reef-pi.local/api/equipment/1
+  json_attributes:
+    - name
+    - on
+  headers:
+      Connection: keep-alive
+      content-type: application/json
+      Referer: http://reef-pi.local/
+      Cookie: !secret reefcontrolpi_cookie
 
 - platform: rest
   name: ReefControlPiPump2Name
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/3
+  resource: http://reef-pi.local/api/doser/pumps/4
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
   value_template: '{{ value_json.name }}'
 
@@ -2041,34 +2204,24 @@
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/lights/3
+  resource: http://reef-pi.local/api/doser/pumps/4
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
-  value_template: >-
-    {% set pump_2_status = value_json.channels["7"].profile.config.value | int %}
-    {% if pump_2_status == 99 %}On
-    {% elif pump_2_status == 2 %}Off
-    {% elif pump_2_status == 1 %}Off
-    {% elif pump_2_status == 0 %}Off
-    {% else %}n/a
-    {% endif %}
-#  icon_color: >
-#    if (state == '99') return 'hs[98,158,81]'; 
-#    return 'hs[191,27,0]';
+  value_template: '{{ value_json.on }}'
 
 - platform: rest
   name: ReefControlPiFloat
   username: !secret reefcontrolpi_username
   password: !secret reefcontrolpi_password
   authentication: basic
-  resource: http://reefcontrolpi.local/api/equipment/8
+  resource: http://reef-pi.local/api/equipment/7
   headers:
       Connection: keep-alive
       content-type: application/json
-      Referer: http://reefcontrolpi.local/
+      Referer: http://reef-pi.local/
       Cookie: !secret reefcontrolpi_cookie
   value_template: >-
     {% set float_status = value_json.on %}
@@ -2078,16 +2231,6 @@
     {% elif float_status == True %}Low
     {% else %}n/a
     {% endif %}
-
-#- platform: rest
-#  name: ReefControlPiPump1
-#  username: !secret reefcontrolpi_username
-#  password: !secret reefcontrolpi_password
-#  authentication: basic
-#  json_attributes:
-#    - on
-#  resource: http://reefcontrolpi.local/api/equipments/1
-#  value_template: '{{ value_json.on }}'
 
 - platform: template
   sensors:
@@ -2391,6 +2534,16 @@
       friendly_name: 'Kiosk Brightness'
       value_template: '{{ states.light.dashboard_screen.attributes.brightness }}'
       entity_id: sensor.kiosk_brightness
+#Soundbar Connection
+    soundbar_connected:
+      friendly_name: 'Soundbar Connected'
+      value_template: >
+        {%- if state_attr('media_player.gabe_s_alexa', 'source') == '[AV] Samsung Soundbar K360 K-Series' %}
+         On
+        {%- else -%}
+         Off
+        {%- endif %}
+      entity_id: sensor.soundbar_connected
 
 - platform: template
   sensors:
@@ -2426,6 +2579,33 @@
   name: ET
   value_template: "{{ value }}"
 
+#Desk buttons
+- platform: mqtt
+  state_topic: "button_a/reading"
+  name: Desk Button A
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "button_b/reading"
+  name: Desk Button B
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "button_c/reading"
+  name: Desk Button C
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "button_d/reading"
+  name: Desk Button D
+  value_template: "{{ value }}"
+
+- platform: mqtt
+  state_topic: "button_e/reading"
+  name: Desk Button E
+  value_template: "{{ value }}"
+
+#Bed Sensor
 - platform: mqtt
   state_topic: "temp-bedroom/reading"
   name: Bedroom Temp
@@ -2454,7 +2634,7 @@
       icon_template: >-
         {% set bed_load = states.sensor.bed_occupancy_load.state | int %}
         {% if bed_load < 300 %}
-          icon: mdi:close-circle-outline
+          icon: mdi:stop
         {% elif 301 <= bed_load < 1700 %}
           icon: mdi:bed-king
         {% elif 1701 <= bed_load < 3000 %}
@@ -2801,6 +2981,22 @@
   sensors:
     roomba_batt:
       value_template: '{{ states.vacuum.roomba.attributes.battery_level }}'
-      friendly_name: 'Downstairs Roomba'
+      friendly_name: 'Roomba Battery'
       unit_of_measurement: '%'
       device_class: battery
+    roomba_last_run:
+      value_template: >-
+        {% set today = now().day | int %}
+        {% set roomba_date = ((as_timestamp(states.input_boolean.roomba_ran.last_changed) | timestamp_custom("%d")) | int) %}
+        {% if today == roomba_date %}
+          {% set day = "Today" %}
+        {% elif (today - 1) == roomba_date %}
+          {% set day = "Yesterday" %}
+        {% elif today == 1 and roomba_date > 27 %}
+          {% set day = "Yesterday" %}
+        {% else %}
+          {% set day = as_timestamp(states.input_boolean.roomba_ran.last_changed) | timestamp_custom("%A")%}
+        {% endif %}
+        {% set time = as_timestamp(states.input_boolean.roomba_ran.last_changed) | timestamp_custom("%l:%M %p")%}
+        {{[day,time]|join(" at ")}}
+      friendly_name: 'Roomba Last Run'

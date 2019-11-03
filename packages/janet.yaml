@@ -575,10 +575,22 @@ script:
 
       - service: rest_command.kiosk_sound_janet_boop
 
-      - service: tts.google_say
+#      - service: tts.google_say
+#        data_template:
+#          entity_id: media_player.kiosk_speaker
+#          message: >-
+#              {{ speech_message | replace("\n","") | replace("   ","") | replace("  "," ") }}
+
+      - service: script.turn_on
+        entity_id: script.alexa_connect_to_speaker
+
+      - service: notify.alexa_media
         data_template:
-          entity_id: media_player.kiosk_speaker
-          message: >-
+          data:
+            type: tts
+          target: 
+            - media_player.gabe_s_alexa
+          message:  >-
               {{ speech_message | replace("\n","") | replace("   ","") | replace("  "," ") }}
 
 ######################################################################################################

@@ -14,9 +14,6 @@ reeftank_light_switch_boolean:
   initial: on
 watch_roku_switch_boolean:
   initial: on
-turn_on_roomba_switch_boolean:
-  initial: on 
-  icon: mdi:robot-vacuum
 
 # Switches for setting day reef night temp
 reef_temp_daytime_state:
@@ -132,7 +129,7 @@ aircraft_radio_volume_down_toggle:
   initial: off
 
 #Amazon ATO
-amazon_ato_on:
+amazon_ato:
   name: Amazon ATO
   icon: mdi:pipes
   initial: off
@@ -156,9 +153,11 @@ bed_occupancy:
 disable_roomba:
   name: Disable Roomba
   initial: off
+  icon: mdi:stop
 roomba_ran:
   name: Roomba Ran
   initial: off
+  icon: mdi:robot-vacuum
 
 #Automation Disable for Guests
 guest_mode:
