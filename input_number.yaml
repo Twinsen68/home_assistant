@@ -18,3 +18,21 @@ kiosk_brightness:
   min: 0
   max: 255
   step: 1
+kessil_brightness:
+  name: Kessil Brightness
+  initial: 99
+  min: 1
+  max: 99
+  step: 1
+kessil_color:
+  name: Kessil Color
+  initial: 99
+  min: 1
+  max: 99 
+  step: 1
+garden_brightness:
+  name: Garden Brightness
+  initial: 100
+  min: 0
+  max: 100
+  step: 1

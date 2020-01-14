@@ -22,10 +22,12 @@ radio_station:
 speaker_radio:
   name: 'Select Speakers'
   options:
-    - Kiosk Speaker
     - Soundbar
-    - Tablet Speaker
-  initial: Kiosk Speaker
+    - browser_note_kiosk
+    - browser_gabes_mate
+    - browser_gabes_macbook
+    - browser_tablet_kiosk
+  initial: browser_note_kiosk
   icon: mdi:speaker-wireless
 
 harmony:
@@ -50,6 +52,7 @@ gabe_status_dropdown:
     - In the Lobby
     - At Mom's House
     - In Bed
+    - M15 Bus Uptown
   initial: Home
 
 alexa_livingroom_ac:

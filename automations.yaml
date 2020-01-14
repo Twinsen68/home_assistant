@@ -79,26 +79,19 @@
         - light.kitchen
         - light.kitchen_2
         - light.table
-    - service: input_select.select_option
-      data_template:
-        entity_id: input_select.alexa_bedroom_ac
-        option: "85"
-    - service: input_select.select_option
-      data_template:
-        entity_id: input_select.alexa_livingroom_ac
-        option: "85"
+        - light.et_figure
+#    - service: input_select.select_option
+#      data_template:
+#        entity_id: input_select.alexa_bedroom_ac
+#        option: "85"
+#    - service: input_select.select_option
+#      data_template:
+#        entity_id: input_select.alexa_livingroom_ac
+#        option: "85"
 
 - alias: Turn On Lights on Enter Home Zone
   id: gabe_arrive_in_home_zone_lights_on
   trigger:
-#    - platform: zone
-#      entity_id: device_tracker.5re0217120001465
-#      zone: zone.home
-#      event: enter
-#    - platform: zone
-#      entity_id: device_tracker.huawei_mate_9_92528f2b1a5
-#      zone: zone.home
-#      event: enter
     - platform: state
       entity_id: binary_sensor.people_home
       from: 'off'
@@ -106,14 +99,14 @@
   action:
     - service: light.turn_on
       entity_id: light.entry_light
-    - service: climate.set_temperature
-      data:
-        entity_id: climate.bedroom_therm
-        temperature: 74
-    - service: climate.set_temperature
-      data:
-        entity_id: climate.living_room_therm
-        temperature: 75
+#    - service: climate.set_temperature
+#      data:
+#        entity_id: climate.bedroom_therm
+#        temperature: 74
+#    - service: climate.set_temperature
+#      data:
+#        entity_id: climate.living_room_therm
+#        temperature: 75
     - service: script.turn_on
       entity_id: script.welcome_lights_on
 
@@ -130,11 +123,24 @@
 #    condition: template
 #    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.gabe_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
+    - delay: '00:05:00'
+    - service: script.turn_on
+      entity_id: script.thundercloud_celebrate
+    - service: rest_command.kiosk_sound_welcome
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_type: sound
+        media_content_id: amzn_sfx_trumpet_bugle_04
+    - delay: '00:00:10'
     - service: script.janet_speech_engine
       data:
         call_greeting_gabe: 1
-    - service: script.turn_on
-      entity_id: script.thundercloud_celebrate
+    - service: light.turn_on
+      entity_id: light.et_figure
+    - delay: '00:05:00'
+    - service: light.turn_off
+      entity_id: light.et_figure
 
 - alias: Mom welcome
   id: mom_arrive_in_home_zone_welcome
@@ -147,11 +153,17 @@
 #    condition: template
 #    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.mom_arrive_in_home_zone_welcome.attributes.last_triggered) | int > 10800 }}'
   action:
+    - delay: '00:02:30'
     - service: script.janet_speech_engine
       data:
         call_greeting_berny: 1
     - service: script.turn_on
       entity_id: script.thundercloud_celebrate
+    - service: light.turn_on
+      entity_id: light.et_figure
+    - delay: '00:05:00'
+    - service: light.turn_off
+      entity_id: light.et_figure
 
 #Morning Greeting
 - alias: 'Morning Greeting'
@@ -213,7 +225,7 @@
 - alias: Turn off kiosk charger
   trigger:
     platform: template
-    value_template: "{{ 80 < states.light.dashboard_screen.attributes.battery_level }}"
+    value_template: "{{ 80 < states.binary_sensor.browser_note_kiosk.attributes.battery_level }}"
   action:
     service: switch.turn_off
     entity_id: switch.2437254184f3eb69e784
@@ -221,7 +233,7 @@
 - alias: Turn on kiosk charger
   trigger:
     platform: template
-    value_template: "{{ 20 > states.light.dashboard_screen.attributes.battery_level }}"
+    value_template: "{{ 20 > states.binary_sensor.browser_note_kiosk.attributes.battery_level }}"
   action:
     service: switch.turn_on
     entity_id: switch.2437254184f3eb69e784
@@ -242,17 +254,17 @@
       platform: homeassistant    
   action:
     - delay: '00:00:10'  
-#    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+#    - wait_template: "{{ not is_state( media_player.browser_note_kiosk, 'playing') }}"
 #      timeout: 00:00:10
     - service: rest_command.kiosk_sound_battle
     - service: notify.html5_push
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/smarthome.png
-          badge: LOCALHOST_URL/local/icons/badge_smarthome.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/smarthome.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_smarthome.png
           timestamp: '%m'
-          url: LOCALHOST_URL
+          url: https://thisisgabes.asuscomm.com:8008
           vibrate: 700, 700, 700
         message: "Home Assistant restarted at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}"
         title: "Hello World!"
@@ -274,10 +286,10 @@
     - service: alexa_media.update_last_called 
     - delay:
         seconds: 5
-    - service: script.turn_on
-      entity_id: script.alexa_connect_to_speaker
-    - delay:
-        seconds: 5
+#    - service: script.turn_on
+#      entity_id: script.alexa_connect_to_speaker
+#    - delay:
+#        seconds: 5
     - service: notify.alexa_media
       data:
         data:
@@ -300,10 +312,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/ssl.png
-          badge: LOCALHOST_URL/local/icons/badge_calendar.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/ssl.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_calendar.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/10
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/10
           vibrate: 700, 700, 700
         message: "Your SSL cert expires in {{ states.sensor.ssl_certificate_expiry.state }} days."
         title: "Beep! Boop!"
@@ -356,21 +368,21 @@
       option: "{{ states.remote.harmony_hub.attributes.current_activity }}"
 
 ## Reef Tides Wavemaker
-#- alias: Turn on Wavemaker at high tide
-#  trigger:
-#    platform: template
-#    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_high_tide.state , "%H:%M") }}'
-#  action:
-#    service: switch.turn_on
-#    entity_id: switch.06200940dc4f22cbb94b_2
+- alias: Turn on Wavemaker at high tide
+  trigger:
+    platform: template
+    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_high_tide.state , "%H:%M") }}'
+  action:
+    service: switch.turn_on
+    entity_id: switch.06200940dc4f22cbb94b_2
 
-#- alias: Turn off Wavemaker at low tide
-#  trigger:
-#    platform: template
-#    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_low_tide.state , "%H:%M") }}'
-#  action:
-#    service: script.turn_on
-#    entity_id: script.reef_waves_lowtide_fade_script
+- alias: Turn off Wavemaker at low tide
+  trigger:
+    platform: template
+    value_template: '{{ strptime(states.sensor.time_utc.state , "%H:%M") == strptime(states.sensor.reef_time_low_tide.state , "%H:%M") }}'
+  action:
+    service: script.turn_on
+    entity_id: script.reef_waves_lowtide_fade_script
 
 ## Amazon Tides Wavemaker
 - alias: Turn on Amazon Waves at high tide
@@ -413,6 +425,39 @@
   - service: script.turn_on
     entity_id: script.reeftank_morning_outlet_kessil
 
+- alias: Kessil Color
+  trigger:
+    platform: state
+    entity_id: input_number.kessil_color
+  condition:
+    condition: template
+    value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+  action:
+    service: switch.turn_on
+    entity_id: switch.kessil_color_level
+
+- alias: Kessil Brightness
+  trigger:
+    platform: state
+    entity_id: input_number.kessil_brightness
+  condition:
+    condition: template
+    value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+  action:
+    service: switch.turn_on
+    entity_id: switch.kessil_brightness_level
+
+- alias: Garden Brightness
+  trigger:
+    platform: state
+    entity_id: input_number.garden_brightness
+  condition:
+    condition: template
+    value_template: "{{ trigger.to_state.state != trigger.from_state.state }}"
+  action:
+    service: switch.turn_on
+    entity_id: switch.garden_brightness_level
+
 #Moonrise Moonset on Tanks
 - alias: Stop Reef Moon
   trigger:
@@ -420,7 +465,7 @@
     value_template: "{{ strptime(states.sensor.time.state , '%H:%M') == strptime(states.sensor.reeftime_sunrise_adjustment.state , '%H:%M') }}"
   condition:
     condition: numeric_state
-    entity_id: sensor.reef_weather_moon_phase_1d
+    entity_id: sensor.reef_weather_moon_phase_0d
     above: .35
     below: .65 
   action:
@@ -435,11 +480,11 @@
     condition: or
     conditions:
       - condition: numeric_state
-        entity_id: sensor.reef_weather_moon_phase_1d
+        entity_id: sensor.reef_weather_moon_phase_0d
         above: .38
         below: .48 
       - condition: numeric_state
-        entity_id: sensor.reef_weather_moon_phase_1d
+        entity_id: sensor.reef_weather_moon_phase_0d
         above: .53
         below: .63 
   action:
@@ -456,11 +501,11 @@
     condition: or
     conditions:
       - condition: numeric_state
-        entity_id: sensor.reef_weather_moon_phase_1d
+        entity_id: sensor.reef_weather_moon_phase_0d
         above: .48
         below: .49 
       - condition: numeric_state
-        entity_id: sensor.reef_weather_moon_phase_1d
+        entity_id: sensor.reef_weather_moon_phase_0d
         above: .51
         below: .53 
   action:
@@ -475,7 +520,7 @@
     value_template: "{{ strptime(states.sensor.time.state , '%k:%M') == strptime(states.sensor.reeftime_sunset_adjustment.state , '%k:%M') }}"
   condition:
     condition: numeric_state
-    entity_id: sensor.reef_weather_moon_phase_1d
+    entity_id: sensor.reef_weather_moon_phase_0d
     above: .49
     below: .51 
   action:
@@ -530,7 +575,10 @@
 - alias: Set Amazon Thermostat Max Daytime Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.monthly_amazon_temp_lowmed.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
+#summer temp
+#    value_template: "{{ states.sensor.monthly_amazon_temp_lowmed.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
+#winter temp
+    value_template: "{{ states.sensor.monthly_amazon_temp_med.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: switch.06200940dc4f22cbb432_4
@@ -539,13 +587,19 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.octo_tank_therm
-       temperature: '{{ states.sensor.monthly_amazon_temp_lowmed.state | float }}'
+#summer temp
+#       temperature: '{{ states.sensor.monthly_amazon_temp_lowmed.state | float }}'
+#winter temp
+       temperature: '{{ states.sensor.monthly_amazon_temp_med.state | float }}'
 
  # This automation script runs when a value is received via Amazon sensor: monthly_amazon_temp
 - alias: Set Amazon Thermostat Max Night Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.monthly_amazon_temp_min.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
+#summer temp
+#    value_template: "{{ states.sensor.monthly_amazon_temp_min.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
+#winter temp
+    value_template: "{{ states.sensor.monthly_amazon_temp_lowmed.state != states.climate.octo_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: switch.06200940dc4f22cbb432_4
@@ -554,13 +608,19 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.octo_tank_therm
-       temperature: '{{ states.sensor.monthly_amazon_temp_min.state | float }}'
+#summer temp
+#       temperature: '{{ states.sensor.monthly_amazon_temp_min.state | float }}'
+#winter temp
+       temperature: '{{ states.sensor.monthly_amazon_temp_lowmed.state | float }}'
 
  # This automation script runs when a value is received via Reef sensor: reef_low_avg_daily_temp
 - alias: Set Reef Thermostat Max Daytime Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.reef_high_avg_daily_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
+#summer temp
+#    value_template: "{{ states.sensor.reef_high_avg_daily_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
+#winter temp
+    value_template: "{{ states.sensor.noaa_daily_max_reef_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: input_boolean.reef_temp_daytime_state
@@ -569,13 +629,19 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.reef_tank_therm
-       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float }}'
+#summer temp
+#       temperature: '{{ states.sensor.reef_high_avg_daily_temp.state | float }}'
+#winter temp
+       temperature: '{{ states.sensor.noaa_daily_max_reef_temp.state | float }}'
 
  # This automation script runs when a value is received via Reef sensor: noaa_daily_min_reef_temp
 - alias: Set Reef Thermostat Max Nighttime Selector
   trigger:
     platform: template
-    value_template: "{{ states.sensor.noaa_daily_min_reef_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
+#summer temp
+#    value_template: "{{ states.sensor.noaa_daily_min_reef_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
+#winter temp
+    value_template: "{{ states.sensor.reef_low_avg_daily_temp.state != states.climate.reef_tank_therm.attributes.temperature.state }}"
   condition:
     condition: state
     entity_id: input_boolean.reef_temp_nightime_state
@@ -584,7 +650,10 @@
      service: climate.set_temperature
      data_template:
        entity_id: climate.reef_tank_therm
-       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float }}'
+#summer temp
+#       temperature: '{{ states.sensor.noaa_daily_min_reef_temp.state | float }}'
+#winter temp
+       temperature: '{{ states.sensor.reef_low_avg_daily_temp.state | float }}'
 
 - alias: Regulate Reef Heater To Off on Low Misread
   trigger:
@@ -687,52 +756,6 @@
     service: switch.turn_off
     entity_id: switch.2437254184f3eb695276
 
-## Herb Garden
-- alias: Garden Turn On Lights
-  trigger:
-    - platform: time
-      at: '06:00:00'
-  action:
-    service: switch.turn_on
-    entity_id: switch.garden_light_manual
-
-- alias: Garden Turn Lights Bugfix
-  trigger:
-    platform: numeric_state
-    entity_id: sensor.garden_monitor_light_level
-    below: 25
-  condition:
-    - condition: time
-      after: '06:02:00'
-      before: '20:58:00'
-  action:
-    service: switch.turn_on
-    entity_id: switch.garden_light_manual
-
-- alias: Garden Turn Off Lights
-  trigger:
-    - platform: time
-      at: '21:00:00'
-  action:
-    service: switch.turn_off
-    entity_id: switch.garden_light_manual
-
-- alias: Garden Turn On Waterbot Morning
-  trigger:
-    - platform: time
-      at: '7:03:00'
-  action:
-    service: switch.turn_on
-    entity_id: switch.garden_waterbot
-
-- alias: Garden Turn Off Waterbot Morning
-  trigger:
-    - platform: time
-      at: '15:03:00'
-  action:
-    service: switch.turn_off
-    entity_id: switch.garden_waterbot
-
 #Alert if plants need water
 - alias: ferns_needs_water
   trigger:
@@ -752,10 +775,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/plant.png
-          badge: LOCALHOST_URL/local/icons/badge_plant.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_plant.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/6
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
           vibrate: 700, 700, 700
         message: "Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}%"
         title: "I'm thirsty!"
@@ -768,6 +791,11 @@
       data:
         message: "Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}%"
         title: "Bedroom Ferns Water Alert!"
+    - service: script.janet_speech_engine
+      data:
+        call_plant_alert: 1
+        call_bedroom_plant_warning: 1
+
 - alias: plant_needs_water
   trigger:
     platform: numeric_state
@@ -786,10 +814,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/plant.png
-          badge: LOCALHOST_URL/local/icons/badge_plant.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_plant.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/6
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
           vibrate: 700, 700, 700
         message: "Your herb garden needs water. Soil moisture is currently at {{ states.sensor.garden_monitor_soil_moisture.state }}%"
         title: "I'm thirsty!"
@@ -820,10 +848,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/plant.png
-          badge: LOCALHOST_URL/local/icons/badge_pipe.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/plant.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_pipe.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/6
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
           vibrate: 700, 700, 700
         message: "Empty the drainage reservoir soon. It is currently at {{ states.sensor.garden_monitor_water_level.state }}%"
         title: "Empty me!"
@@ -849,24 +877,6 @@
     - service: ifttt.trigger
       data_template: {"event":"change_of_ip", "value1":"GardenBot changed state to {{ states.device_tracker.octocam.state }}"}
 
-## Vacuuming
-- alias: Vacuum on Schedule
-  trigger:
-    platform: time
-    at: '14:00:00'
-  condition:
-  - condition: time
-    weekday:
-      - tue
-      - thu
-  - condition: state
-    entity_id: device_tracker.huawei_mate_9_92528f2b1a5
-    state: work
-  action:
-    service: script.turn_on
-    entity_id: script.roomba_turn_on
-
-
 #Alert if public IP Changes
 - alias: ip_change_alert
   trigger:
@@ -883,7 +893,7 @@
 - alias: usps_mail_alert
   trigger:
     platform: zone
-    entity_id: device_tracker.huawei_mate_992528f2b1a5
+    entity_id: device_tracker.huawei_mate_9_92528f2b1a5
     zone: zone.home
     event: enter
   condition:
@@ -922,24 +932,44 @@
     - service: automation.turn_off
       entity_id: automation.usps_mail_alert
 
-#3D Printer Shutdown on Idle
-- alias: Turn off 3D Printer on Idle
+#3d Printer Finished Alert
+- alias: octoprint_finished
   trigger:
-    platform: state
-    entity_id: sensor.octoprint_target_tool1_temp
-    to: '32'
-#  condition:
-#    condition: state
-#    entity_id: binary_sensor.octoprint_status_printing
-#    state: 'off'
-  # Trigger only if state was this for last 30 minutes.
-#    for:
-#      minutes: 30
+    platform: numeric_state
+    entity_id: sensor.octoprint_job_percentage
+    above: 96
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        before: '22:30:00'
+        after: '09:30:00'
+      - condition: template
+        value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.octoprint_finished.attributes.last_triggered) | int > 3000 }}'
   action:
-#    - delay:
-#        minutes: 15
-    - service: switch.turn_off
-      entity_id: switch.2437254184f3eb695327
+    - service: camera.snapshot
+      data:
+        entity_id: camera.octopi3dprinter
+        filename: '/www/snapshots/3dprinter_{{ now().strftime("%Y%m%d-%H") }}.jpg'
+    - service: notify.html5_push
+      data:
+        data:
+          renotify: 1
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/robot5.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_roomba.png
+          image: 'https://thisisgabes.asuscomm.com:8008/local/snapshots/3dprinter_{{ now().strftime("%Y%m%d-%H") }}.jpg'
+          timestamp: '%m'
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/7
+          vibrate: 700, 700, 700
+        message: "Your 3D print is {{ states.sensor.octoprint_job_percentage.state }}% done after {{ states.sensor.sensor.octoprint_time_elapsed_format.state }}."
+        title: "Neato!"
+        target:
+          - "Gabes Mate"
+          - "Macbook"
+    - service: persistent_notification.create
+      data:
+        message: "Your 3D print is {{ states.sensor.octoprint_job_percentage.state }}% done after {{ states.sensor.sensor.octoprint_time_elapsed_format.state }}."
+        title: "Neato!"
 
 - id: 'rpi_power_issue'
   alias: Power Problem Notification
@@ -1063,6 +1093,142 @@
       data:
         entity_id: input_select.gabe_status_dropdown
         option: Just Left
+    - service: browser_mod.navigate
+      data:
+        navigation_path: /lovelace/18
+        deviceID:
+          - browser_gabes_mate
+
+- alias: Bus Stop Popup
+  trigger:
+    - platform: zone
+      entity_id: group.gabe
+      zone: zone.bus_uptown
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.gabe_status_dropdown
+        option: M15 Bus Uptown
+    - service: browser_mod.navigate
+      data:
+        navigation_path: /lovelace/18
+        deviceID:
+          - browser_gabes_mate
+    - service: browser_mod.popup
+      data:
+        title: Next Bus
+        card:
+          - type: "custom:button-card"
+            entity: sensor.siri_bus_m15sbs_local_0_name_uptown_allen_at_grand
+            show_icon: false
+            color: '#ffffff'
+            name: M15-SBS
+            state:
+                - value: 'unknown'
+                  styles:
+                    card:
+                      - display: none
+            show_name: false
+            tap_action: 
+              action: none
+            styles:
+              card:
+                - background-color: '#1f3db5'
+                - color: '#ffffff'
+                - filter: opacity(90%)
+                - font-size: 26px
+                - padding: 2% 3%
+                - font-weight: bold
+                - text-transform: capitalize
+              grid:
+                - grid-template-areas: '"name0 stop0" "destination0 distance0" "stop1 stop1" "destination1 distance1" "stop2 stop2" "destination2 distance2"'
+                - grid-template-columns: 1fr 1fr
+                - grid-template-rows:  1fr min-content min-content min-content min-content min-content
+              custom_fields:
+                name0:
+                  - align-self: start
+                  - justify-self: start
+                  - font-size: 24px
+                destination0:
+                  - align-self: start
+                  - justify-self: start
+                  - font-size: 14px
+                  - padding-left: 44px
+                stop0:
+                  - align-self: end
+                  - justify-self: end
+                  - font-size: 24px
+                  - --text-color-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_0_distance_uptown_allen_at_grand"].state < 500) return "#fa9393"; ]]]'
+                  - --animation-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_0_distance_uptown_allen_at_grand"].state < 300) return "blink 2s ease infinite"; ]]]'
+                distance0:
+                  - padding-bottom: 2px
+                  - align-self: end
+                  - justify-self: end
+                  - font-size: 14px
+                  - --text-color-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_0_distance_uptown_allen_at_grand"].state < 500) return "#fa9393"; ]]]'
+                destination1:
+                  - align-self: start
+                  - justify-self: start
+                  - font-size: 14px
+                  - filter: opacity(70%)
+                  - padding-left: 44px
+                stop1:
+                  - align-self: end
+                  - justify-self: end
+                  - padding-top: 10px
+                  - font-size: 20px
+                  - filter: opacity(70%)
+                  - --text-color-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_1_distance_uptown_allen_at_grand"].state < 500) return "#fa9393"; ]]]'
+                  - --animation-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_1_distance_uptown_allen_at_grand"].state < 300) return "blink 2s ease infinite"; ]]]'
+                distance1:
+                  - padding-bottom: 2px
+                  - align-self: end
+                  - justify-self: end
+                  - font-size: 10px
+                  - filter: opacity(70%)
+                  - --text-color-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_1_distance_uptown_allen_at_grand"].state < 500) return "#fa9393"; ]]]'
+                destination2:
+                  - align-self: start
+                  - justify-self: start
+                  - font-size: 14px
+                  - filter: opacity(50%)
+                  - padding-left: 44px
+                stop2:
+                  - align-self: end
+                  - justify-self: end
+                  - padding-top: 10px
+                  - font-size: 20px
+                  - filter: opacity(50%)
+                  - --text-color-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_2_distance_uptown_allen_at_grand"].state < 500) return "#fa9393"; ]]]'
+                  - --animation-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_2_distance_uptown_allen_at_grand"].state < 300) return "blink 2s ease infinite"; ]]]'
+                distance2:
+                  - padding-bottom: 2px
+                  - align-self: end
+                  - justify-self: end
+                  - font-size: 10px
+                  - filter: opacity(50%)
+                  - --text-color-sensor: '[[[ if (states["sensor.siri_bus_m15sbs_local_2_distance_uptown_allen_at_grand"].state < 500) return "#fa9393"; ]]]'
+            custom_fields:
+              name0: >
+                [[[ return '<ha-icon icon="mdi:bus-clock" style="width: 24px; height: 24px; padding: 2px 10px; color: white;"></ha-icon>' + states['sensor.siri_bus_m15sbs_local_0_name_uptown_allen_at_grand'].state; ]]]
+              destination0: >
+                [[[ return (states['sensor.siri_bus_m15sbs_local_0_destination_uptown_allen_at_grand'].state) ]]]
+              stop0: >
+                [[[ return '<span style="color: var(--text-color-sensor); animation: var(--animation-sensor);">' +(states['sensor.siri_bus_m15sbs_local_0_stop_uptown_allen_at_grand'].state) + '</span>' ]]]
+              distance0: >
+                [[[ return '<span style="color: var(--text-color-sensor);">' +(states['sensor.siri_bus_m15sbs_local_0_distance_uptown_allen_at_grand'].state) + ' meters</span>' ]]]
+              destination1: >
+                [[[ return (states['sensor.siri_bus_m15sbs_local_1_destination_uptown_allen_at_grand'].state) ]]]
+              stop1: >
+                [[[ return '<span style="color: var(--text-color-sensor); animation: var(--animation-sensor);">' +(states['sensor.siri_bus_m15sbs_local_1_stop_uptown_allen_at_grand'].state) + '</span>' ]]]
+              distance1: >
+                [[[ return '<span style="color: var(--text-color-sensor)">' +(states['sensor.siri_bus_m15sbs_local_1_distance_uptown_allen_at_grand'].state) + ' meters</span>' ]]]
+              destination2: >
+                [[[ return (states['sensor.siri_bus_m15sbs_local_2_destination_uptown_allen_at_grand'].state) ]]]
+              stop2: >
+                [[[ return '<span style="color: var(--text-color-sensor); animation: var(--animation-sensor);">' +(states['sensor.siri_bus_m15sbs_local_2_stop_uptown_allen_at_grand'].state) + '</span>' ]]]
+              distance2: >
+                [[[ return '<span style="color: var(--text-color-sensor);">' +(states['sensor.siri_bus_m15sbs_local_2_distance_uptown_allen_at_grand'].state) + ' meters</span>' ]]]
  
 - alias: Mark Gabe as away
   trigger:
@@ -1116,13 +1282,13 @@
           actions:
           - action: dismiss
             title: "Got it!"
-            icon: LOCALHOST_URL/local/icons/badge_mailbox.png
-          image: "LOCALHOST_URL/local/mail_images/todays_mail.gif"
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_mailbox.png
+          image: "https://thisisgabes.asuscomm.com:8008/local/mail_images/todays_mail.gif"
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/mailbox_on.png
-          badge: LOCALHOST_URL/local/icons/badge_mailbox.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/mailbox_on.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_mailbox.png
           timestamp: '%m'
-          url: LOCALHOST_URL/states/group.homecams
+          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
           vibrate: 700, 700, 700
         message: "You have {{ states.sensor.usps_mail.state }} new snail mails!"
         title: "New Snail Mail!"
@@ -1147,12 +1313,12 @@
           actions:
           - action: dismiss
             title: "Got it!"
-            icon: LOCALHOST_URL/local/icons/badge_package.png
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_package.png
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/package.png
-          badge: LOCALHOST_URL/local/icons/badge_package.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/package.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_package.png
           timestamp: '%m'
-          url: LOCALHOST_URL/states/group.homecams
+          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
           vibrate: 700, 700, 700
         message: "You have {{ states.sensor.usps_packages.state }} new packages!"
         title: "New Packages!"
@@ -1428,16 +1594,16 @@
           actions:
           - action: call_the_hounds
             title: "Call the Hounds!"
-            icon: LOCALHOST_URL/local/icons/badge_dog.png
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dog.png
           - action: dismiss
             title: Dismiss
-            icon: LOCALHOST_URL/local/icons/badge_dismiss.png
-          image: "LOCALHOST_URL/local/motion/recent-motion-overall.jpg"
+            icon: https://thisisgabes.asuscomm.com:8008/local/icons/badge_dismiss.png
+          image: "https://thisisgabes.asuscomm.com:8008/local/motion/recent-motion-overall.jpg"
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/cctv.png
-          badge: LOCALHOST_URL/local/icons/badge_camera.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/cctv.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_camera.png
           timestamp: '%m'
-          url: LOCALHOST_URL/states/group.homecams
+          url: https://thisisgabes.asuscomm.com:8008/states/group.homecams
           vibrate: 700, 700, 700
         message: Motion in living room at {{ as_timestamp(now()) | timestamp_custom('%H:%M', true) }}
         title: "Intruder Alert!"
@@ -1771,6 +1937,35 @@
       entity_id: input_boolean.amazon_ato
     - service: shell_command.amazon_ato_off
 
+- alias: Amazon ATO Nightly Top Off
+  trigger:
+    - platform: time
+      at: '23:30:00'
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.amazon_ato
+
+- alias: Amazon ATO Low Top Off
+  trigger:
+    - platform: time
+      at: '20:30:00'
+  condition:
+    - condition: state
+      entity_id: sensor.amazonpifloat
+      state: 'Low'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.amazon_ato
+    - delay: '00:02:00'
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.amazon_ato
+    - delay: '00:02:00'
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.amazon_ato
+    - delay: '00:02:00'
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.amazon_ato
+
 - alias: Amazon ATO Level Notify
   trigger:
     - platform: state
@@ -1782,10 +1977,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/fish_school.png
-          badge: LOCALHOST_URL/local/icons/badge_pipe.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/fish_school.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_pipe.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/6
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
           vibrate: 700, 700, 700
         message: "The closet tank needs water soon"
         title: "Feeling Low"
@@ -1796,19 +1991,6 @@
       data:
         message: "The closet tank needs water soon"
         title: "Feeling Low"
-
-- alias: Amazon ATO Refill
-  trigger:
-    - platform: state
-      entity_id: sensor.amazonpifloat
-      from: 'OK'
-      to: 'Low'
-  action:
-    - service: shell_command.amazon_ato_on
-    - delay: '00:00:20'
-    - service: input_boolean.turn_off
-      entity_id: input_boolean.amazon_ato
-    - service: shell_command.amazon_ato_off
 
 #Bed Occupancy
 - alias: Bed Set
@@ -1885,12 +2067,15 @@
         - light.bedroom_desk
         - light.kitchen_2
         - light.table
+        - light.thundercloud
       data:
         transition: 450
     - service: light.turn_off
-      entity_id: light.entry_light
-    - service: script.turn_on
-      entity_id: script.sleep_mode_cool_room
+      entity_id: 
+        - light.entry_light
+        - light.et_figure
+#    - service: script.turn_on
+#      entity_id: script.sleep_mode_cool_room
 
 - alias: Bed Occupied Tasks Daytime
   trigger:
@@ -1919,7 +2104,7 @@
     conditions:
       - condition: time
         after: '22:00:00'
-        before: '04:00:00'
+        before: '05:00:00'
       - condition: state
         entity_id: binary_sensor.people_home
         state: 'on'
@@ -1927,9 +2112,19 @@
     - service: light.turn_on
       entity_id: light.bedside_table
       data:
-        transition: 5000
+        transition: 1000
         brightness: 120
         rgb_color: [115,50,168]
+    - service: light.turn_on
+      entity_id: light.kitchen
+      data:
+        transition: 500
+        brightness: 100
+        rgb_color: [115,50,168]
+    - service: switch.turn_on
+      entity_id: switch.et_chest
+    - service: switch.turn_on
+      entity_id: switch.et_eyes
 
 - alias: Bed Not Occupied Tasks Morning
   trigger:
@@ -1958,6 +2153,11 @@
         transition: 10000
         brightness: 120
         rgb_color: [115,50,168]
+    - service: browser_mod.navigate
+      data:
+        navigation_path: /lovelace/21
+        deviceID:
+          - browser_note_kiosk
 
 - alias: Light on before bed
   trigger:
@@ -2711,7 +2911,7 @@
       entity_id: input_boolean.roomba_ran
       state: 'off'
     - condition: time
-      after: '10:00'
+      after: '11:00'
       before: '20:00'
     - condition: state
       entity_id: vacuum.roomba
@@ -2915,10 +3115,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/roomba.png
-          badge: LOCALHOST_URL/local/icons/badge_roomba.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/roomba.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_roomba.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/6
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
           vibrate: 700, 700, 700
         message: "Roomba is stuck"
         title: "Send Help!"
@@ -2948,10 +3148,10 @@
       data:
         data:
           renotify: 1
-          icon: LOCALHOST_URL/local/icons/dust.png
-          badge: LOCALHOST_URL/local/icons/badge_roomba.png
+          icon: https://thisisgabes.asuscomm.com:8008/local/icons/dust.png
+          badge: https://thisisgabes.asuscomm.com:8008/local/icons/badge_roomba.png
           timestamp: '%m'
-          url: LOCALHOST_URL/lovelace/6
+          url: https://thisisgabes.asuscomm.com:8008/lovelace/6
           vibrate: 700, 700, 700
         message: "Roomba is full"
         title: "I ate too much!"

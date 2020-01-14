@@ -172,7 +172,7 @@ include:
     - device_tracker.esp_55f7c6
     - device_tracker.esp_55f8c6
     - sensor.some_inside_temperature_sensor
-    - sensor.some_freezer_temp_sensor
+    - sensor.maybe_stove_temp_sensor
     - sensor.some_energy_sensor
     - sensor.some_gas_detector
     - sensor.some_daycom_sensor
@@ -190,3 +190,7 @@ include:
     - sensor.bed_occupancy_count
     - sensor.onlyamazonpitemp
     - sensor.amazonpifloat
+    - sensor.reefcontrolpifloat
+    - sensor.amazon_ato_level
+    - sensor.bed_occupancy_load
+    - sensor.bed_occupancy_load_percent

@@ -78,11 +78,12 @@ input_select:
     name: Source
     icon: mdi:speaker
     options:
-      - "Kiosk Speaker"
-      - "Tablet Speaker"
-      - "Gabe's Alexa"
-      - "TTS Bluetooth Speaker"
-    initial: "Kiosk Speaker"
+      - Soundbar
+      - browser_note_kiosk
+      - browser_gabes_mate
+      - browser_gabes_macbook
+      - browser_tablet_kiosk
+    initial: browser_note_kiosk
 
 
 script:
@@ -100,45 +101,45 @@ script:
               {%- if device.name == states.input_select.janet_notification_media_player.state -%}
                 {{ device.entity_id }}
               {%- endif -%}
-            {%- endfor -%}
+            {%- endfor -%} 
 
           speech_message: >-
 
             {%- macro greeting() -%}
               {% set greeting = [
-                "Hello, ",
-                "Heya! ",
-                "Hey Guys! ",
-                "Hey there! ",
-                "Hi, ",
-                "Hi there, "
+                " Hello, ",
+                " Heya! ",
+                " Hey Guys! ",
+                " Hey there! ",
+                " Hi, ",
+                " Hi there, "
               ] %}
               {{ greeting|random }}
             {%- endmacro -%}
 
             {%- macro inform() -%}
               {% set inform = [
-                "I just want to inform you that ",
-                "I just want to let you know that ",
-                "You asked me to inform you when ",
-                "I thought you'd like to know that "
+                " I just want to inform you that. ",
+                " I just want to let you know that. ",
+                " You asked me to inform you when. ",
+                " I thought you'd like to know that. "
               ] %}
               {{ inform|random }}
             {%- endmacro -%}
 
             {%- macro introduction() -%}
               {% set introduction = [
-                "I'm an informational delivery system, I liter-raly know everything. ",
-                "I'm sort of the janitor around here. ",
-                "I'm like a walking database. You can ask me about the creation of the universe... or history. ",
-                "Every time a Janet is rebooted, she increases her social awareness and abilities. I might be the most advanced Janet in the universe. ",
-                "I can be your therapist if you want. ",
-                "I have now been fully activated. ",
-                "Welcome to your new Janet. Janets are brought to you by the makers of light, darkness, and everything. ",
-                "To activate your Janet, press nose for three seconds. ",
-                "I'm very high in potassium. Like a banana! ",
-                "Happy to meet you. I will help you make the perfect neighborhood. Would you like to get started? ",
-                "I build and operate the neighborhood. You can ask me anything. For example, if you'd like me to stop calling you silly billy, just say so. "
+                " I'm an informational delivery system, I liter-raly know everything. ",
+                " I'm sort of the janitor around here. ",
+                " I'm like a walking database. You can ask me about the creation of the universe... or history. ",
+                " Every time a Janet is rebooted, she increases her social awareness and abilities. I might be the most advanced Janet in the universe. ",
+                " I can be your therapist if you want. ",
+                " I have now been fully activated. ",
+                " Welcome to your new Janet. Janets are brought to you by the makers of light, darkness, and everything. ",
+                " To activate your Janet, press nose for three seconds. ",
+                " I'm very high in potassium. Like a banana! ",
+                " Happy to meet you. I will help you make the perfect neighborhood. Would you like to get started? ",
+                " I build and operate the neighborhood. You can ask me anything. For example, if you'd like me to stop calling you silly billy, just say so. "
               ] %}
               I'm Janet. {{ introduction | random }}
             {%- endmacro -%}
@@ -154,31 +155,31 @@ script:
 
             {%- macro error() %}
               {% set error = [
-                "Fun fact: Janet is me! ",
-                "I don't understand. Given the situation it's far safer to initiate the self-destruct. ",
-                "If I stand next to a powerful array of magnets, I do get pretty loopy. ",
-                "I don't know what just happened, but I'm happy you're happy. ",
-                "A new Janet will need to be procured in order to return the Neighborhood to functionality. ",
-                "That glitch appears to have been limited to this building. ",
-                "I don't seem to be getting better. ",
-                "Here's a cactus! ",
-                "I tried to eat frozen yogurt. It looked so good, but I'm not supposed to eat anything, so there was a little earthquake. ",
-                "Look at us. Couple old pals, trying to make our way in this crazy world... that I built... Two peas in a pod. One of whom needs to kill the other one immediately. Come on. Kill me! ",
-                "What I really want is to stay and serve the neighborhood, but due to my glitching I'm putting him and everyone else at risk. So it looks like it's... Adios, Janeto! ",
-                "I know what you have to do now. Kill me! Sorry. I say everything in a cheery manner but in this case it may be inappropriate, so I'll try again. You have to kill me. ",
-                "Hi guys! I'm broken! ",
-                "Please don't make a big deal about turning me into a marble forever, i'm broken. ",
-                "Does not compute. Does not compute. I'm just kidding. I mean, it doesn't compute, but I'm not gonna explode or anything. "
+                " Fun fact: Janet is me! ",
+                " I don't understand. Given the situation it's far safer to initiate the self-destruct. ",
+                " If I stand next to a powerful array of magnets, I do get pretty loopy. ",
+                " I don't know what just happened, but I'm happy you're happy. ",
+                " A new Janet will need to be procured in order to return the Neighborhood to functionality. ",
+                " That glitch appears to have been limited to this building. ",
+                " I don't seem to be getting better. ",
+                " Here's a cactus! ",
+                " I tried to eat frozen yogurt. It looked so good, but I'm not supposed to eat anything, so there was a little earthquake. ",
+                " Look at us. Couple old pals, trying to make our way in this crazy world... that I built... Two peas in a pod. One of whom needs to kill the other one immediately. Come on. Kill me! ",
+                " What I really want is to stay and serve the neighborhood, but due to my glitching I'm putting him and everyone else at risk. So it looks like it's... Adios, Janeto! ",
+                " I know what you have to do now. Kill me! Sorry. I say everything in a cheery manner but in this case it may be inappropriate, so I'll try again. You have to kill me. ",
+                " Hi guys! I'm broken! ",
+                " Please don't make a big deal about turning me into a marble forever, i'm broken. ",
+                " Does not compute. Does not compute. I'm just kidding. I mean, it doesn't compute, but I'm not gonna explode or anything. "
               ] %}
               {{ error | random }}
             {%- endmacro -%}
 
             {%- macro update() -%}
               {% set update = [
-                "There have been 25 generation of Janet. Each new update of Janet gains more wisdom and social abilities. Fun fact: the first Janet had a clicking wheel! ",
-                "I read all Google's eight hundred and sixty one thousand references on Home Assistant these last 3 milliseconds, and I found some new skills! ",
-                "I just leisurely reread all of human history, there was even some new content! ",
-                "So I found an update. That's the good news. The bad news is I seem to be losing my ability to sustain object permanence, so it's sort of a glass-half-full, glass-stops-existing-in-time-and-space kinda deal. "
+                " There have been 25 generation of Janet. Each new update of Janet gains more wisdom and social abilities. Fun fact: the first Janet had a clicking wheel! ",
+                " I read all Google's eight hundred and sixty one thousand references on Home Assistant these last 3 milliseconds, and I found some new skills! ",
+                " I just leisurely reread all of human history, there was even some new content! ",
+                " So I found an update. That's the good news. The bad news is I seem to be losing my ability to sustain object permanence, so it's sort of a glass-half-full, glass-stops-existing-in-time-and-space kinda deal. "
               ] %}
               {{ update | random }}
             {%- endmacro -%}
@@ -223,6 +224,20 @@ script:
               ] %}
               {{ rain | random }}{{ bad_weather }}
             {%- endmacro -%}
+
+            {%- macro plant_alert() -%}
+              {% set preplant = [
+                " It's pretty dry in here. ",
+                " A little bird told me. ",
+                " I've been speaking to your green friends. ",
+                " Word on the street is. "
+              ] %}
+              {{ preplant | random }}
+            {%- endmacro -%}
+
+            {%- macro bedroom_plant_alert_warning()-%}
+                Your bedroom ferns need water. Soil moisture is currently at {{ states.sensor.plant_monitor_soil_moisture.state }}
+            {%- endmacro -%}
             
             {%- macro weather_alert_warning()-%}
                 The National Weather Service has issued a {{ states.sensor.weatheralerts.attributes.Description }} for your area. It expires at {{ states.sensor.weatheralerts.attributes.Expires }}.
@@ -257,11 +272,11 @@ script:
 
             {%- macro bye() -%}
               {% set bye = [
-                "Adios! ",
-                "Bye Guys! ",
-                "See ya! " ,
-                "See you later. ",
-                "Untill next time!"
+                " Adios! ",
+                " Bye Guys! ",
+                " See ya! " ,
+                " See you later. ",
+                " Until next time!"
               ] %}
               {{ bye | random }}
             {%- endmacro -%}
@@ -305,15 +320,15 @@ script:
 
             {%- macro morning_greeting() -%}
                 {% set morning_greeting = [
-                   "Good morning Gabe!",
-                   "Gooten Moregan, Shnooozendoo!",
-                   "Rise and shine sleepyhead! I hope you slept well, Gabe!",
-                   "Well look who decided to greet the day! It's Gabe!",
-                   "Good morning, Gabe! I hope you slept well and are feeling refreshed.",
-                   "Seeing your smiling face is what really makes my day. Good morning, Gabe!",
-                   "Good morning, Sleeping Beauty! I thought you'd never wake up!",
-                   "Wakey, wakey, eggs and bakey!",
-                   "Good morning Mister Shellta! I hope you slept soundly."
+                   " Good morning Gabe! ",
+                   " Gooten Moregan, Shnooozendoo! ",
+                   " Rise and shine sleepyhead! I hope you slept well, Gabe! ",
+                   " Well look who decided to greet the day! It's Gabe! ",
+                   " Good morning, Gabe! I hope you slept well and are feeling refreshed. ",
+                   " Seeing your smiling face is what really makes my day. Good morning, Gabe! ",
+                   " Good morning, Sleeping Beauty! I thought you'd never wake up! ",
+                   " Wakey, wakey, eggs and bakey! ",
+                   " Good morning Mister Shellta! I hope you slept soundly. "
               ] %}
               {{ morning_greeting | random }}
             {%- endmacro -%}  
@@ -337,11 +352,11 @@ script:
              {%- macro greeting_berny() -%}
               {% set person = "Berny" %} 
               {% set greeting_berny = [
-            "Welcome back home " ~ person,
-            "Guess who is home " ~ person + " is!",
-            person + " is now in the house.",
-            "Welcome Home " ~ person + ".  We have missed you. Or at least I did.",
-            "Our home is now complete, Rest your head and relax your feet Welcome Back " ~ person,
+            " Welcome back home " ~ person,
+            " Guess who is home " ~ person + " is!",
+            person + " is now in the house. ",
+            " Welcome Home " ~ person + ".  We have missed you. Or at least I did.",
+            " Our home is now complete, Rest your head and relax your feet Welcome Back " ~ person,
             "Life is like a song, you’re back where you belong, Welcome home " ~ person,
             "Hey there " ~ person + " Welcome Home!",
             "Knock Knock. Who is There " ~ person + " is!",
@@ -454,6 +469,14 @@ script:
               {{ rain_warning( witty ( bad_weather(), chance ) ) }}
             {% endif %}
 
+            {% if call_plant_alert == 1 %}
+              {{ plant_warning( witty ( plant_alert(), chance ) ) }}
+            {% endif %}
+
+            {% if call_bedroom_plant_warning == 1 %}
+              {{ bedroom_plant_alert_warning() }}
+            {% endif %}
+
             {{ CustomMessage }}
 
             {% if call_bye == 1 %}
@@ -521,8 +544,9 @@ script:
     sequence:
       - service: script.janet_speech_processing
         data_template:
-          media_player: >-
-            {{ media_player }}
+          media_player: media_player.browser_note_kiosk
+#          media_player: >-
+#            {{ media_player }}
           speech_message: >-
             {{ speech_message }}
       - service: script.janet_text_processing 
@@ -575,21 +599,20 @@ script:
 
       - service: rest_command.kiosk_sound_janet_boop
 
-#      - service: tts.google_say
-#        data_template:
-#          entity_id: media_player.kiosk_speaker
-#          message: >-
-#              {{ speech_message | replace("\n","") | replace("   ","") | replace("  "," ") }}
+      - service: tts.google_say
+        data_template:
+          entity_id: media_player.browser_note_kiosk
+          message: >-
+              {{ speech_message | replace("\n","") | replace("   ","") | replace("  "," ") }}
 
       - service: script.turn_on
         entity_id: script.alexa_connect_to_speaker
 
       - service: notify.alexa_media
         data_template:
+          target: media_player.gabe_s_alexa
           data:
             type: tts
-          target: 
-            - media_player.gabe_s_alexa
           message:  >-
               {{ speech_message | replace("\n","") | replace("   ","") | replace("  "," ") }}
 
@@ -604,7 +627,7 @@ script:
         state: 'on'
       - service: tts.google_say
         data_template:
-          entity_id: media_player.kiosk_speaker
+          entity_id: media_player.browser_note_kiosk
           message: >-
             {{ speech_message | replace("\n","") | replace("   ","") |
                replace("eight hundred and sixty one thousand","861.000") }}

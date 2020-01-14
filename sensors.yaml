@@ -790,7 +790,7 @@
       content-type: application/json
       Referer: http://amazoncontrolpi.local/
       Cookie: !secret amazonpi_cookie
-  value_template: '{{ value_json.current[-1].temperature | round(2) }}'
+  value_template: '{{ value_json.current[-1].value | round(2) }}'
   unit_of_measurement: '°F'
 
 - platform: rest
@@ -827,74 +827,11 @@
     {% endif %}
 
 - platform: rest
-  name: Garden Light Dummy Switch
-  username: !secret amazonpi_username
-  password: !secret amazonpi_password
-  authentication: basic
-  resource: http://amazoncontrolpi.local/api/equipment/5
-  headers:
-      Connection: keep-alive
-      content-type: application/json
-      Referer: http://amazoncontrolpi.local/
-      Cookie: !secret amazonpi_cookie
-  value_template: >-
-    {% set float_status = value_json.on %}
-    {% if float_status == false %}Off
-    {% elif float_status == true %}On
-    {% else %}n/a
-    {% endif %}
-
-- platform: rest
-  name: Garden Light PWM Switch
-  username: !secret amazonpi_username
-  password: !secret amazonpi_password
-  authentication: basic
-  resource: http://amazoncontrolpi.local/api/equipment/6
-  headers:
-      Connection: keep-alive
-      content-type: application/json
-      Referer: http://amazoncontrolpi.local/
-      Cookie: !secret amazonpi_cookie
-  value_template: >-
-    {% set float_status = value_json.on %}
-    {% if float_status == false %}Off
-    {% elif float_status == true %}On
-    {% else %}n/a
-    {% endif %}
-
-- platform: rest
-  name: GardenWaterInfo
-  username: !secret amazonpi_username
-  password: !secret amazonpi_password
-  authentication: basic
-  json_attributes:
-    - current
-  resource: http://amazoncontrolpi.local/api/doser/pumps/4/usage
-  headers:
-      Connection: keep-alive
-      content-type: application/json
-      Referer: http://amazoncontrolpi.local/
-      Cookie: !secret amazonpi_cookie
-  value_template: '{{ value_json.time }}'
-
-- platform: rest
   name: Amazon Camera Config
   username: !secret amazonpi_username
   password: !secret amazonpi_password
   authentication: basic
   resource: http://amazoncontrolpi.local/api/camera/config
-  headers:
-      Connection: keep-alive
-      content-type: application/json
-      Referer: http://amazoncontrolpi.local/
-      Cookie: !secret amazonpi_cookie
-
-- platform: rest
-  name: Garden Lights
-  username: !secret amazonpi_username
-  password: !secret amazonpi_password
-  authentication: basic
-  resource: http://amazoncontrolpi.local/api/lights/2
   headers:
       Connection: keep-alive
       content-type: application/json
@@ -1321,12 +1258,15 @@
     latest_reef_stats_calcium:
       friendly_name: 'Reef Test Calcium'
       value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[6].split(",")[0] | float }}'
+    latest_reef_stats_phos:
+      friendly_name: 'Reef Test Phosphates'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[7].split(",")[0] | float }}'
     latest_reef_stats_kh:
       friendly_name: 'Reef Test kH'
-      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[7].split(",")[0] | float }}'
+      value_template: '{{ states.sensor.reef_stats_raw.state.split(",")[8].split(",")[0] | float }}'
     latest_reef_stats_water_change:
       friendly_name: 'Reef Test Water Change'
-      value_template: "{{ (states.sensor.reef_stats_raw.state.split(',')[5])|timestamp_custom('%m %d, %Y', false) }}"
+      value_template: "{{ (states.sensor.reef_stats_raw.state.split(',')[9])|timestamp_custom('%m %d, %Y', false) }}"
 
 - platform: file
   name: 'NOAA Daily Reef Temp Raw'
@@ -1564,7 +1504,7 @@
       friendly_name: 'Date'
 
 #Bustime Sensors
-#- platform: gtfs
+#- platform: gtfs_realtime
 #  name: Next Bus
 #  trip_update_url: !secret gtfs_bus_trip_update_url
 #  vehicle_position_url: !secret gtfs_bus_trip_position_url
@@ -1580,7 +1520,235 @@
 #    route: M15
 #    stopid: 405320
 
-#- platform: gtfs
+#Bus M15
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 Stops 0 Local Uptown Allen at Grand
+  select: "ArrivalProximityText"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 0 Distance Local Uptown Allen at Grand
+  select: "DistanceFromStop"
+  index: 0
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 0 Destination Local Uptown Allen at Grand
+  select: "DestinationName"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 0 Name Local Uptown Allen at Grand
+  select: "PublishedLineName"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 Stops 1 Local Uptown Allen at Grand
+  select: "ArrivalProximityText"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 1 Distance Local Uptown Allen at Grand
+  select: "DistanceFromStop"
+  index: 1
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 1 Name Local Uptown Allen at Grand
+  select: "PublishedLineName"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 1 Destination Local Uptown Allen at Grand
+  select: "DestinationName"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 2 Stops Local Uptown Allen at Grand
+  select: "ArrivalProximityText"
+  index: 2
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 2 Distance Local Uptown Allen at Grand
+  select: "DistanceFromStop"
+  index: 2
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 2 Name Local Uptown Allen at Grand
+  select: "PublishedLineName"
+  index: 2
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15 2 Destination Local Uptown Allen at Grand
+  select: "DestinationName"
+  index: 2
+
+#Bus M15SBS
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 0 Stop Uptown Allen at Grand
+  select: "ArrivalProximityText"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 0 Distance Uptown Allen at Grand
+  select: "DistanceFromStop"
+  index: 0
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 0 Name Uptown Allen at Grand
+  select: "PublishedLineName"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 0 Destination Uptown Allen at Grand
+  select: "DestinationName"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 1 Stop Uptown Allen at Grand
+  select: "ArrivalProximityText"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 1 Distance Uptown Allen at Grand
+  select: "DistanceFromStop"
+  index: 1
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 1 Name Uptown Allen at Grand
+  select: "PublishedLineName"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 1 Destination Uptown Allen at Grand
+  select: "DestinationName"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 2 Stop Uptown Allen at Grand
+  select: "ArrivalProximityText"
+  index: 2
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 2 Distance Uptown Allen at Grand
+  select: "DistanceFromStop"
+  index: 2
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 2 Name Uptown Allen at Grand
+  select: "PublishedLineName"
+  index: 2
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=405320&LineRef=MTA%20NYCT_M15%2B&version=2&StopMonitoringDetailLevel=minimum
+  name: SIRI Bus M15SBS Local 2 Destination Uptown Allen at Grand
+  select: "DestinationName"
+  index: 2
+
+#Bus M14A
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 0 Stop Crosstown at Clinton
+  select: "ArrivalProximityText"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 0 Distance Crosstown at Clinton
+  select: "DistanceFromStop"
+  index: 0
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 0 Name Crosstown at Clinton
+  select: "PublishedLineName"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 0 Destination Crosstown at Clinton
+  select: "DestinationName"
+  index: 0
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 1 Stop Crosstown at Clinton
+  select: "ArrivalProximityText"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 1 Distance Crosstown at Clinton
+  select: "DistanceFromStop"
+  index: 1
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 1 Name Crosstown at Clinton
+  select: "PublishedLineName"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 1 Destination Crosstown at Clinton
+  select: "DestinationName"
+  index: 1
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 2 Stop Crosstown at Clinton
+  select: "ArrivalProximityText"
+  index: 2
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 2 Distance Crosstown at Clinton
+  select: "DistanceFromStop"
+  index: 2
+  unit_of_measurement: meters
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 2 Name Crosstown at Clinton
+  select: "PublishedLineName"
+  index: 2
+
+- platform: scrape
+  resource: http://bustime.mta.info/api/siri/stop-monitoring.xml?key=5c0f0368-aa51-42db-adf0-a437063038bb&OperatorRef=MTA&MonitoringRef=401150&version=2&StopMonitoringDetailLevel=minimum&LineRef=MTA%20NYCT_M14A%2B
+  name: SIRI Bus M14A 2 Destination Crosstown at Clinton
+  select: "DestinationName"
+  index: 2
+
+#- platform: gtfs_realtime
 #  name: Essex Subway B D F M
 #  trip_update_url: !secret gtfs_subway1_trip_update_url
 #  offset: 10
@@ -1601,7 +1769,7 @@
 #    stopid: F16S
 #    route: F
 
-#- platform: gtfs
+#- platform: gtfs_realtime
 #  name: Essex Subway J Z
 #  trip_update_url: !secret gtfs_subway2_trip_update_url
 #  offset: 10
@@ -1794,14 +1962,24 @@
     npr_news_mp3_link:
       friendly_name: 'NPR News mp3 link'
       value_template: >
-        {{(states.sensor.news_npr_audio.attributes | string).split("'href': '")[1].split("?")[0]}}
+        {{ states.sensor.news_npr_audio.attributes.entries[0].link }}
 
 - platform: template
   sensors:
     npr_news_mp3_date:
       friendly_name: 'NPR News mp3 date'
       value_template: >
-        {{(states.sensor.news_npr_audio.attributes | string).split("'published': '")[1].split("'")[0]}}
+        {{ states.sensor.news_npr_audio.attributes.entries[0].title }}
+
+- platform: feedparser
+  name: news_npr_audio
+  feed_url: 'https://www.npr.org/rss/podcast.php?id=500005'
+  date_format: '%a, %d %b %I:%M %p'
+  inclusions:
+    - title
+    - link
+    - description
+    - pubDate
 
 #- platform: feedparser
 #  name: sfgabe Feed
@@ -1861,6 +2039,50 @@
     - Job Percentage
     - Time Elapsed
     - Time Remaining
+
+- platform: rest
+  name: Octoprint Power
+  resource: !secret octoprint_enclosure
+  headers:
+      content-type: application/json
+  json_attributes:
+    - status
+    - index_id
+
+- platform: rest
+  name: Octoprint Timelapse
+  resource: !secret octoprint_timelapse
+  headers:
+      content-type: application/json
+  json_attributes:
+    - files
+
+- platform: feedparser
+  name: octoprint_timelapse_feed
+  feed_url: !secret octoprint_timelapse
+#  inclusions:
+#    - files
+
+- platform: feedparser
+  name: alexa_bluetooth_states_feed
+  feed_url: 'https://alexa.amazon.com/api/bluetooth?cached=false'
+#  inclusions:
+#    - bluetoothStates
+
+- platform: template
+  sensors:
+    octoprint_timelapse_link:
+      friendly_name: 'Octoprint Timelapse link'
+      value_template: >
+        {{ states.sensor.octoprint_timelapse.attributes.entries[0].url }}
+    octoprint_timelapse_date:
+      friendly_name: 'Octoprint Timelapse date'
+      value_template: >
+        {{ states.sensor.octoprint_timelapse.attributes.entries[0].date }}
+    octoprint_timelapse_name:
+      friendly_name: 'Octoprint Timelapse name'
+      value_template: >
+        {{ states.sensor.octoprint_timelapse.attributes.entries[0].name }}
 
 - platform: template
   sensors:
@@ -2237,27 +2459,29 @@
     reef_moonphases:
       entity_id: sensor.reef_weather_moon_icon
       friendly_name: 'Reef Moon'
-      value_template: '{{ states.sensor.reef_weather_moon_phase_1d.state }}'
+      value_template: '{{ states.sensor.reef_weather_moon_phase_0d.state }}'
       entity_picture_template: >
-        {% set mphase = states.sensor.reef_weather_moon_phase_1d.state | int %}
+        {% set mphase = states.sensor.reef_weather_moon_phase_0d.state | float %}
         {% if mphase == 0.0 -%} 
            /local/images/moonphases/NNewMoon.jpg
-        {% elif mphase > 0.0 -%} 
-           /local/images/moonphases/NWaxingCrescent.jpg
         {% elif mphase == 0.25 -%} 
            /local/images/moonphases/NFirstQuarter.jpg
-        {% elif mphase > 0.25 -%} 
-           /local/images/moonphases/NWaxingGibbous.jpg
         {% elif mphase == 0.5 -%} 
            /local/images/moonphases/NFullMoon.jpg
-        {% elif mphase > 0.5 -%} 
-           /local/images/moonphases/NWaningGibbous.jpg
         {% elif mphase == 0.75 -%} 
            /local/images/moonphases/NLastQuarter.jpg
+        {% elif mphase == 1 -%} 
+           /local/images/moonphases/NNewMoon.jpg
         {% elif mphase > 0.75 -%} 
            /local/images/moonphases/NWaningCrescent.jpg
+        {% elif mphase > 0.5 -%} 
+           /local/images/moonphases/NWaningGibbous.jpg
+        {% elif mphase > 0.25 -%} 
+           /local/images/moonphases/NWaxingGibbous.jpg
+        {% elif mphase > 0.0 -%} 
+           /local/images/moonphases/NWaxingCrescent.jpg
         {% else %}
-           /local/images/moonphases/NNewMoon.jpg
+           n/a
         {% endif %}
 
 #alarm clock
@@ -2301,14 +2525,14 @@
     weather_alert_active_nyc:
       value_template: >-
         {% if states.sensor.weatheralerts.state == "unknown" %}Off
-        {% elif states.sensor.weatheralerts.state != "unknown" %}On
-        {% else %}n/a
+        {% elif states.sensor.weatheralerts.state == "No alerts" %}Off
+        {% else %}On
         {% endif %}
     weather_alert_active_hbg:
       value_template: >-
         {% if states.sensor.weatheralerts_2.state == "unknown" %}Off
-        {% elif states.sensor.weatheralerts_2.state != "unknown" %}On
-        {% else %}n/a
+        {% elif states.sensor.weatheralerts_2.state == "No alerts" %}Off
+        {% else %}On
         {% endif %}
     outside_alerts:
       value_template: >
@@ -2331,10 +2555,12 @@
         {{ (states.sensor.gps_occupancy_chance.state | float | round(0)) }}
 
 - platform: weatheralerts
-  sameid: '036061'
+  zone: '072'
+  state: NY
 
 - platform: weatheralerts
-  sameid: '042043'
+  zone: '057'
+  state: PA
 
 - platform: cert_expiry
   host: !secret cert_expiry_host
@@ -2372,13 +2598,13 @@
     protocol: mumbi
 
 - platform: pilight
-  name: 'Maybe Hallway Motion Detector'
+  name: 'Maybe Closet Motion Detector'
   variable: 'state'
   payload:
     protocol: rc101
 
 - platform: pilight
-  name: 'Maybe Closet Motion Detector'
+  name: 'Maybe Hallway Motion Detector'
   variable: 'state'
   payload:
     protocol: heitech
@@ -2394,14 +2620,14 @@
   variable: 'temperature'
   payload:
     protocol: tfa
-  unit_of_measurement: '°C'
+  unit_of_measurement: '°F'
 
 - platform: pilight
-  name: 'Some Freezer Temp Sensor'
+  name: 'Maybe Stove Temp Sensor'
   variable: 'temperature'
   payload:
     protocol: auriol
-  unit_of_measurement: '°C'
+  unit_of_measurement: '°F'
 
 - platform: template
   sensors:
@@ -2539,9 +2765,9 @@
       friendly_name: 'Soundbar Connected'
       value_template: >
         {%- if state_attr('media_player.gabe_s_alexa', 'source') == '[AV] Samsung Soundbar K360 K-Series' %}
-         On
+         on
         {%- else -%}
-         Off
+         off
         {%- endif %}
       entity_id: sensor.soundbar_connected
 
@@ -2607,16 +2833,6 @@
 
 #Bed Sensor
 - platform: mqtt
-  state_topic: "temp-bedroom/reading"
-  name: Bedroom Temp
-  value_template: "{{ value }}"
-
-- platform: mqtt
-  state_topic: "humidity-bedroom/reading"
-  name: Bedroom Humidity
-  value_template: "{{ value }}"
-
-- platform: mqtt
   state_topic: "bed_occupancy/reading/load"
   name: Bed Occupancy Load
   value_template: "{{ value }}"
@@ -2630,11 +2846,14 @@
 
 - platform: template
   sensors:
+    bed_occupancy_load_percent:
+      value_template: '{{ states("sensor.bed_occupancy_load") | float / 10 | round(0) }}'
+      unit_of_measurement: "%"
     bed_occupancy_count:
       icon_template: >-
         {% set bed_load = states.sensor.bed_occupancy_load.state | int %}
         {% if bed_load < 300 %}
-          icon: mdi:stop
+          icon: mdi:bed-empty
         {% elif 301 <= bed_load < 1700 %}
           icon: mdi:bed-king
         {% elif 1701 <= bed_load < 3000 %}

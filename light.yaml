@@ -23,6 +23,13 @@
         data_template:
           brightness: "{{ brightness }}"
 
+    et_figure:
+      friendly_name: "ET Figure"
+      turn_on:
+        service: script.et_lightshow
+      turn_off:
+        service: script.et_off
+
 #entry light
 - platform: switch
   name: "Entry Light"

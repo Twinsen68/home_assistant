@@ -56,16 +56,16 @@ automation:
           call_greeting: 1
           call_update: 1
 
-  - alias: Janet Rain Alert
-    trigger:
-      - platform: state
-        entity_id: sensor.dark_sky_icon_0h
-        to: 'rain'
-    action:
-      - service: script.janet_speech_engine
-        data:
-          call_inform: 1
-          call_rain_warning: 1
+#  - alias: Janet Rain Alert
+#    trigger:
+#      - platform: state
+#        entity_id: sensor.dark_sky_icon_0h
+#        to: 'rain'
+#    action:
+#      - service: script.janet_speech_engine
+#        data:
+#          call_inform: 1
+#          call_rain_warning: 1
 
   - alias: Weather Alert Notify NYC
     trigger:

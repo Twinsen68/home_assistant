@@ -12,8 +12,8 @@
 #  cache_dir: /tmp/tts           
 # Optional - make sure it matches the same setting in TTS config
 
-- platform: floorplan_speaker
-  name: Kiosk Speaker
+#- platform: floorplan_speaker
+#  name: Kiosk Speaker
 
-- platform: floorplan_speaker
-  name: Tablet Speaker
+#- platform: floorplan_speaker
+#  name: Tablet Speaker

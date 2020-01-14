@@ -480,14 +480,25 @@ binary_sensor.people_home:
 #  templates:
 #    hidden: "return (state === 'off' );"
 
-#climate.thermostat:
-#  templates:
-#    icon: >
-#      if (state === 'heat') return 'mdi:fire';
-#      if (state === 'cool') return 'mdi:snowflake';
-#      if (state === 'idle') return 'mdi:sleep';
-#      return 'mdi:power-off';
-#    icon_color: >
-#      if (state === 'heat') return 'red';
-#      if (state === 'cool') return 'blue';
-#      if (state === 'idle') return 'black';
+climate.octo_tank_therm:
+  templates:
+    icon: >
+      if (state === 'heat') return 'mdi:fire';
+      if (state === 'cool') return 'mdi:snowflake';
+      if (state === 'idle') return 'mdi:sleep';
+      return 'mdi:power-off';
+    icon_color: >
+      if (state === 'heat') return 'red';
+      if (state === 'cool') return 'blue';
+      if (state === 'idle') return 'black';
+climate.reef_tank_therm:
+  templates:
+    icon: >
+      if (state === 'heat') return 'mdi:fire';
+      if (state === 'cool') return 'mdi:snowflake';
+      if (state === 'idle') return 'mdi:sleep';
+      return 'mdi:power-off';
+    icon_color: >
+      if (state === 'heat') return 'red';
+      if (state === 'cool') return 'blue';
+      if (state === 'idle') return 'black';

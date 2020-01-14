@@ -77,11 +77,11 @@ logger:
   default: error
   logs:
 #    homeassistant.components: info
-    homeassistant.components.sensor.rest: warning
+#    homeassistant.components.sensor.rest: warning
     homeassistant.components.camera.generic: critical
     homeassistant.helpers.template: critical
     homeassistant.core: error
-    homeassistant.components.websocket_api: debug
+#    homeassistant.components.websocket_api: debug
 
 weather: 
   - platform: darksky
@@ -97,7 +97,7 @@ sun:
 # Text to speech
 tts:
   - platform: google_translate
-    base_url: !secret config_base_url
+    base_url: !secret config_base_url_full
 #    key_file: !secret tts_keyfile
     service_name: google_say
 #    language: en-US
@@ -135,14 +135,6 @@ vacuum:
 
 #Alexa
 alexa:
-
-alexa_media:
-  accounts:
-    - email: !secret alexa_email
-      password: !secret alexa_password
-      url: amazon.com
-      include_devices:
-        - "Gabe's Alexa"
 
 #IFTTT
 ifttt:

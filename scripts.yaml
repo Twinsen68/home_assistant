@@ -383,43 +383,45 @@ reeftank_full_moon:
   alias: "Reef Full Moon"
   sequence:
     - delay:
-        seconds: 600
-    - service: remote.send_command
-      data_template:
-        entity_id: remote.gabes_harmony_hub
-        device: 'Generic LED'
-        command: ['FastForward']
-    - delay:
-        seconds: 3600
-    - service: remote.send_command
-      data_template:
-        entity_id: remote.gabes_harmony_hub
-        device: 'Generic LED'
-        command: ['FastForward']
-    - delay:
-        seconds: 3600
-    - service: remote.send_command
-      data_template:
-        entity_id: remote.gabes_harmony_hub
-        device: 'Generic LED'
-        command: ['FastForward']
-    - delay:
-        seconds: 3600
-    - service: remote.send_command
-      data_template:
-        entity_id: remote.gabes_harmony_hub
-        device: 'Generic LED'
-        command: ['FastForward']
+        seconds: 300
     - service: homeassistant.turn_on
-      entity_id: switch.kessil_light_level_12
+      entity_id: rest_command.diurnal_reef_full_moon
+    - delay:
+        seconds: 300
     - service: switch.turn_on
       entity_id: switch.06200940dc4f22cbb94b_4
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 'Generic LED'
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 'Generic LED'
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 'Generic LED'
+        command: ['FastForward']
+    - delay:
+        seconds: 3600
+    - service: remote.send_command
+      data_template:
+        entity_id: remote.gabes_harmony_hub
+        device: 'Generic LED'
+        command: ['FastForward']
     - delay:
         seconds: 7200
     - service: switch.turn_off
       entity_id: switch.06200940dc4f22cbb94b_4
-    - service: homeassistant.turn_off
-      entity_id: switch.kessil_light_level_12
+    - service: homeassistant.turn_on
+      entity_id: rest_command.set_diurnal_reef_lights
     - service: remote.send_command
       data_template:
         entity_id: remote.gabes_harmony_hub
@@ -506,6 +508,26 @@ freshwater_feeder_script:
   alias: "Feed the Fish"
   sequence:
     - service: switch.turn_on
+      entity_id: switch.octofishfeeder
+    - delay:
+        seconds: 20
+    - service: switch.turn_off
+      entity_id: switch.octofishfeeder
+    - delay:
+        seconds: 240
+    - service: switch.turn_on
+      entity_id: switch.octofishfeeder
+    - delay:
+        seconds: 20
+    - service: switch.turn_off
+      entity_id: switch.octofishfeeder
+    - delay:
+        seconds: 240
+    - service: switch.turn_on
+      entity_id: switch.octofishfeeder
+    - delay:
+        seconds: 20
+    - service: switch.turn_off
       entity_id: switch.octofishfeeder
     - service: downloader.download_file
       data_template:
@@ -744,6 +766,11 @@ kiosk_good_morning:
         option: 72
     - delay:
         seconds: 480
+    - service: browser_mod.navigate
+      data:
+        navigation_path: /lovelace/20
+        deviceID:
+          - browser_note_kiosk
     - service: input_boolean.turn_off
       entity_id: input_boolean.alarm_went_off
 #    - service: rest_command.kiosk_sound_incomingtransmission
@@ -753,12 +780,17 @@ kiosk_good_morning:
       data:
         call_morning_greeting: 1
         call_morning_weather: 1
-#    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_type: sound
+        media_content_id: amzn_sfx_trumpet_bugle_03
+#    - wait_template: "{{ not is_state( media_player.browser_note_kiosk, 'playing') }}"
 #      timeout: 00:00:10
 #    - service: script.janet_speech_engine
 #      data:
 #        call_morning_news: 1
-#    - wait_template: "{{ not is_state( media_player.kiosk_speaker, 'playing') }}"
+#    - wait_template: "{{ not is_state( media_player.browser_note_kiosk, 'playing') }}"
 #      timeout: 00:00:10
 #    - service: rest_command.kiosk_sound_startrek_computer2
 #    - delay:
@@ -772,6 +804,11 @@ kiosk_good_morning:
         brightness: 255
         transition: 120
     - service: rest_command.kiosk_sound_npr_news
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.browser_note_kiosk
+        media_content_id: /local/images/npr_news.mp3
+        media_content_type: music
     - delay:
         seconds: 350.00
     - condition: template
@@ -801,7 +838,7 @@ kiosk_good_morning:
     - delay:
         seconds: 650.00
     - service: media_player.media_stop
-      entity_id: media_player.kiosk_speaker
+      entity_id: media_player.browser_note_kiosk
     - service: automation.turn_off
       entity_id: automation.morning_greeting_update
 
@@ -812,16 +849,56 @@ kiosk_play_the_news:
         url: "{{ states('sensor.npr_news_mp3_link') }}"
         filename: "npr_news.mp3"
         overwrite: true
-    - service: notify.kiosk
+    - service: tts.google_say
       data:
+        entity_id: media_player.browser_note_kiosk
         message: "Greetings Sir! Please wait while I download the news."
     - delay:
         seconds: 120.00
     - service: rest_command.kiosk_sound_npr_news
 
+soundfx_drumriff:
+  sequence:
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_type: sound
+        media_content_id: amzn_sfx_drum_comedy_02
+
+soundfx_bugle:
+  sequence:
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_type: sound
+        media_content_id: amzn_sfx_trumpet_bugle_03
+
+soundfx_applause:
+  sequence:
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_type: sound
+        media_content_id: amzn_sfx_crowd_applause_03
+
 fart_machine:
   sequence:
-    - service: rest_command.kiosk_sound_fart1
+#    - service: media_player.play_media
+#      data:
+#        entity_id: media_player.browser_note_kiosk
+#        media_content_id: /local/sounds/farts/fart{{ [ "1" , "2" , "3" , "4" , "5" , "6" , "7" , "9" , "10" , "11" , "12" , "13" , "14 " ] |random }}.mp3
+#        media_content_type: music
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.browser_note_kiosk
+        media_content_id: /local/sounds/farts/fart2.mp3
+        media_content_type: music
+    - delay: 00:00:03
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.gabe_s_alexa
+        media_content_type: sound
+        media_content_id: body_03
 
 get_mailbox_temp:
   sequence:
@@ -924,6 +1001,9 @@ welcome_lights_on:
         rgb_color: [255,182,109]
         brightness: 50
         transition: 30
+    - service: script.turn_on
+      data:
+        entity: script.et_lightshow
 
 #Bed Occupancy
 zero_bed:
@@ -935,6 +1015,80 @@ zero_bed:
         payload: '0'
 
 #Lighting Scripts
+et_lightshow:
+  sequence:
+    - service: switch.turn_off
+      entity_id: switch.et_heartbeat
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_blink
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_finger_blink
+    - delay:
+        seconds: 5
+    - service: switch.turn_on
+      entity_id: switch.et_heartbeat
+    - delay:
+        seconds: 5
+    - service: switch.turn_on
+      entity_id: switch.et_blink
+    - delay:
+        seconds: 5
+    - service: switch.turn_on
+      entity_id: switch.et_finger_blink
+    - delay:
+        seconds: 20
+    - service: switch.turn_off
+      entity_id: switch.et_heartbeat
+    - delay:
+        seconds: 5
+    - service: switch.turn_off
+      entity_id: switch.et_blink
+    - delay:
+        seconds: 5
+    - service: switch.turn_off
+      entity_id: switch.et_finger_blink
+    - delay:
+        seconds: 2
+    - service: switch.turn_on
+      entity_id: switch.et_eyes
+    - delay:
+        seconds: 5
+    - service: switch.turn_on
+      entity_id: switch.et_chest
+    - delay:
+        seconds: 5
+    - service: switch.turn_on
+      entity_id: switch.et_finger
+
+et_off:
+  sequence:
+    - service: switch.turn_off
+      entity_id: switch.et_heartbeat
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_blink
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_finger_blink
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_eyes
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_chest
+    - delay:
+        seconds: 2
+    - service: switch.turn_off
+      entity_id: switch.et_finger
+
 lights_chill_blue:
   sequence:
     - service: homeassistant.turn_on
@@ -1180,8 +1334,8 @@ alexa_set_volume:
 
 alexa_tts:
   sequence: 
-    - service: script.turn_on
-      entity_id: script.alexa_connect_to_speaker
+#    - service: script.turn_on
+#      entity_id: script.alexa_connect_to_speaker
     - service: script.turn_on
       entity_id: script.alexa_set_volume
     - delay: '00:00:01'      
@@ -1193,9 +1347,9 @@ alexa_tts:
 alexa_morning_weather:
   alias: Alexa Morning Weather
   sequence:
-    - service: script.turn_on
-      entity_id: script.alexa_connect_to_speaker
-    - delay: '00:00:01' 
+#    - service: script.turn_on
+#      entity_id: script.alexa_connect_to_speaker
+#    - delay: '00:00:01' 
     - service: script.turn_on
       entity_id: script.alexa_set_volume
     - delay: '00:00:01' 
@@ -1208,8 +1362,8 @@ alexa_morning_weather:
 alexa_joke:
   alias: Alexa Joke
   sequence:
-    - service: script.turn_on
-      entity_id: script.alexa_connect_to_speaker
+#    - service: script.turn_on
+#      entity_id: script.alexa_connect_to_speaker
     - service: script.turn_on
       entity_id: script.alexa_set_volume
     - delay: '00:00:01' 
@@ -1260,18 +1414,18 @@ alexa_livingroom_ac_on:
   alias: Alexa Livingroom AC On
   sequence:
   - data:
-      entity_id: media_player.gabe_s_alexa
       media_content_id: livingroomacon
       media_content_type: routine
+      entity_id: media_player.gabe_s_alexa
     service: media_player.play_media
 
 alexa_livingroom_ac_off:
   alias: Alexa Livingroom AC Off
   sequence:
   - data:
-      entity_id: media_player.gabe_s_alexa
       media_content_id: livingroomacoff
       media_content_type: routine
+      entity_id: media_player.gabe_s_alexa
     service: media_player.play_media
 
 alexa_livingroom_ac_set:
@@ -1364,7 +1518,7 @@ alexa_connect_to_speaker:
   alias: Alexa Connect to Speaker
   sequence:
     - condition: template
-      value_template:  '{{ (states.sensor.soundbar_connected.state) != "On" }}'
+      value_template:  '{{ (states.sensor.soundbar_connected.state) != "on" }}'
     - service: media_player.select_source
       data:
         source: "[AV] Samsung Soundbar K360 K-Series"
@@ -1382,9 +1536,9 @@ radio_tune:
 #         entity_id: media_player.soundbar
 #         volume_level: '0.20'
      - service: media_player.play_media
-#       entity: media_player.kiosk_speaker
+#       entity: media_player.browser_note_kiosk
        data_template:
-         entity_id: media_player.kiosk_speaker
+         entity_id: media_player.browser_note_kiosk
          media_content_type: music
          media_content_id: >
             {% if is_state("input_select.radio_station", "BBC News") %} https://fm939.wnyc.org/wnycfm-web?nyprBrowserId=60b090e836734000
